@@ -93,6 +93,7 @@ class MenuData(object):
         self.MySql = MS.GetData(u'Menu2.db', u'')
         self.ToSql = MS.SetData(u'', u'',u'')
 
+
     def menuBar(self):
         self.mbar = []
         for row in self.MySql.AmenuBar(ext=' and menubar.mbarid < 9999  '):
@@ -116,6 +117,18 @@ class MenuData(object):
                 self.mitem.append(itm)
         #print( self.mitem)
         return self.mitem
+    def menuItem2(self, i):
+        bitm = self.MySql.AmenuItm(i)
+        mitem = []
+        for itm in bitm:
+            if itm[-1] == 'S':
+                sitem = []
+                sitem.append(itm)
+                sitem.append(self.menuItem2(itm[0]))
+                mitem.append(sitem)
+            else:
+                mitem.append(itm)
+        return mitem
 
     def menuDir(self):
         self.Bdir = self.MySql.DirBar()
@@ -126,36 +139,119 @@ class MenuData(object):
         return self.mdir
 
 
-class AuiMenu(wx.MenuBar):
+class AppMenu(wx.MenuBar):
     def __init__(self):
         wx.MenuBar.__init__(self, style=0)
         self.m = MenuData()
-        print(self.m.menuBar())
+        #print(self.m.menuBar())
         self.createMenuBar()
-
 
     def createMenuBar(self):
         for eachmenu in self.m.menuBar():
             menutitle = eachmenu[1]
-            print(self.m.menuItem(eachmenu[0]))
-            self.Append(self.createMenuItem(self.m.menuItem(eachmenu[0])),menutitle)
+            #print('MenuItem 2:',self.m.menuItem2(eachmenu[0]))
+            #self.Append(self.createMenuItem(self.m.menuItem(eachmenu[0])),menutitle)
+            self.Append(self.createMenuItem2(self.m.menuItem2(eachmenu[0])), menutitle)
+        return self
 
-    def createMenuItem(self, menudata):
-        self.menu = wx.Menu()
+    def createMenuItem2(self, menudata):
+        menu = wx.Menu()
+        #print(menudata)
+        for eachitem in menudata:
+            if type(eachitem) != list:
+                eachid, eachlabel, eachstatus, shortcut, eachicon, eachtype = eachitem
+                if not eachlabel:
+                    menu.AppendSeparator()
+                    continue
+                else:
+                    itmlbl = eachlabel
+                    if shortcut != '':
+                        itmlbl += '\t' + shortcut
+                if eachtype == 'C':
+                    menuitem = menu.AppendCheckItem(eachid, itmlbl, eachstatus)
+                elif eachtype == 'R':
+                    menuitem = menu.AppendRadioItem(eachid, itmlbl, eachstatus)
+                elif eachtype == 'N':
+                    menuitem = menu.Append(eachid, itmlbl, eachstatus)
+                #elif eachtype == 'S':
+                #    self.menu.AppendSubMenu(self.createMenuItem2(eachitem), eachlabel, eachstatus)
+                    #return self.menu
 
-        return self.menu
+                else:
+                    wx.MessageBox('Error In Menu Database. Please connect to Programmer')
+            elif type(eachitem) == list:
+                #print('This list send:', eachitem[1])
+                subroot = self.createMenuItem2(eachitem[1])
+                menuitem = menu.AppendSubMenu(subroot, eachitem[0][1])
+                #self.createMenuItem2(eachitem)
+                pass
+            else:
+                wx.MessageBox('Error In Menu Database. Please connect to Programmer')
+        return menu
 
-    def AddItem(self):
+
+    def Onmenu(self, event):
+        self.mid = event.GetId()
+
+    def GetItemId(self):
+        return self.menuItem
+
+    def AddItem(self,Mbar,Data,Bar='B'):
+        if Bar == 'B':
+            imnu = self._BackMyMenu(Mbar)
+        else:
+            imnu = self._findsubmenu(Mbar)
+            #print(imnu)
+        lbl = self.ChkShrtCut(Data)
+        iitm = imnu.Append(int(Data[0]),lbl,Data[5])
+        if Data[3] != '':
+            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
+        #print(iitm)
+
+    def AddSubMenu(self,Mbar,Data,Bar='B'):
+        if Bar == 'B':
+            imnu = self._BackMyMenu(Mbar)
+        else:
+            imnu = self._findsubmenu(Mbar)
+        lbl = self.ChkShrtCut(Data)
+        iitm = imnu.AppendSubMenu(self.createSubmenu(Data[0]),lbl)
+        if Data[3] != '':
+            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
         pass
 
-    def AddSubMenu(self):
-        pass
+    def AddSepar(self,title):
+        imnubar = self.FindMenu(title)
+        itmmnu = self.GetMenu(imnubar)
+        #print(itmmnu)
+        itmmnu.AppendSeparator()
 
-    def AddSepar(self):
-        pass
+    def AddCheck(self,Mbar,Data):
+        imnu = self._BackMyMenu(Mbar)
+        lbl = self.ChkShrtCut(Data)
+        iitm = imnu.AppendCheckItem(int(Data[0]),lbl,Data[5])
 
-    def AddCheck(self):
-        pass
+    def AddRadio(self,Mbar,Data):
+        imnu = self._BackMyMenu(Mbar)
+        lbl = self.ChkShrtCut(Data)
+        iitm = imnu.AppendRadioItem(int(Data[0]), lbl)
 
-    def AddRadio(self):
-        pass
+    def _BackMyMenu(self,Mbar):
+        imnubar = self.FindMenu(Mbar)
+        itmmnu = self.GetMenu(imnubar)
+        #print(itmmnu)
+        return itmmnu
+
+    def _findsubmenu(self,Sub):
+        lstbar = self.GetMenus()
+        for bar in lstbar:
+            lst = bar[0].GetMenuItems()
+            for l in lst:
+                if l.IsSubMenu() and l.GetItemLabel() == Sub:
+                    #print(l.GetSubMenu())
+                    return l.GetSubMenu()
+
+    def ChkShrtCut(self,Data):
+        if Data[4] != '':
+            return Data[2]+'\t'+Data[4]
+        else:
+            return Data[2]

@@ -26,6 +26,7 @@ class GetData:
     def gBarN(self, mbar=1):
         return sq.wxsqsnd(self.DBF,u'menubar',u'mbarname',u'mbarid',mbar)
 
+
     def AmenuBar(self, Access=u'FFFF',ext=''):
         return sq.wxsqltxt(self.DBF, """ SELECT distinct *
                                          FROM menubar,access
@@ -54,6 +55,9 @@ class GetData:
                                         """)
     def AllBar(self,ext=''):
         return sq.wxsqltxt(self.DBF,"""SELECT * FROM menubar %s"""%ext)
+
+    def AllSub(self, ext=''):
+        return sq.wxsqltxt(self.DBF,"""SELECT * FROM mitem %s"""%ext)
 
     def RevItem(self):
         return sq.wxsqltxt(self.DBF,"""select mitem.itemname,mitem.itemid 
@@ -109,7 +113,7 @@ class GetData:
     def Acclvl(self,accid=''):
         return sq.wxsqltxt(self.DBF, """ select * from access where access.acclvlid = '%s' """ % accid)
     def gBarItm(self,mbar=''):
-        return  sq.wxsqltxt(self.DBF,""" select distinct mitem.mbarid , mitem.itemid , mitem.extid 
+        return  sq.wxsqltxt(self.DBF,""" select distinct mitem.mbarid , mitem.itemid , mitem.extid , extended.acclvlid
                                      from mitem,extended 
                                      where mitem.mbarid = %s""" % mbar)
     def getHndlr(self, prgnam = u''):

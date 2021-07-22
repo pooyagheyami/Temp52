@@ -74,10 +74,14 @@ class MainWin(wx.Frame):
 
         # Menu of Program==============
 
-        menu = MM.MainMenu()
-        imenu = menu.createMenuBar()
-        if imenu != None:
-            self.UpdateMenu(imenu, menu)
+        #menu = MM.MainMenu()
+        menu = MM.AppMenu()
+        #imenu = menu.createMenuBar()
+        #print(menu,menu.GetMenus())
+        #self.SetMenuBar(menu)
+        if menu.GetMenus() != None:
+            self.SetMenuBar(menu)
+        #    self.UpdateMenu(imenu, menu)
 
         statusBar = self.CreateStatusBar(2,wx.STB_ELLIPSIZE_END|wx.STB_ELLIPSIZE_MIDDLE|wx.STB_SHOW_TIPS|wx.STB_SIZEGRIP, wx.ID_ANY)
         statusBar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))

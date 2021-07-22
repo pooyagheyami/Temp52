@@ -448,8 +448,6 @@ class MyPanel3 ( wx.Panel ):
                 self.fld2.SetValue(str(101))
                 self.fld3.SetValue('11aa')
 
-        event.Skip()
-
     def bardir(self, event):
         mydir = event.GetEventObject().GetPath()
         mydir.replace(GUI_PATH,u"GUI.")
