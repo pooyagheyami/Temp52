@@ -64,7 +64,7 @@ class MyPanel1 ( wx.Panel ):
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
 		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'watch_window.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn4.SetToolTip(u"")
+		self.btn4.SetToolTip(u"Show")
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
