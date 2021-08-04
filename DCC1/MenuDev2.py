@@ -327,9 +327,9 @@ class MyPanel1 ( wx.Panel ):
 			pass
 		elif int(self.itmcod) > 1000:
 			data = self.MyMenu.getmItem(int(self.itmcod))
-			#print(data)
+			print(data)
 			# print(self.itmnam)
-			self.edtit(None)
+			#self.edtit(None)
 		else:
 			print(self.itmnam, self.itmcod)
 		event.Skip()
@@ -409,7 +409,7 @@ class MyPanel1 ( wx.Panel ):
 				self.chk1.SetValue(1)
 		if code > 1000:
 			self.itmdata = self.bardata = data = self.MyMenu.getmItem(code)[0]
-			print(data)
+			#print(data)
 			if data[3] == 'S':
 				bn = (data[2],)
 			else:
@@ -476,23 +476,15 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def edtit( self, event ):
-		print(self.bardata)
+		#print(self.bardata)
 		if self.bardata[2] == None:
 			wx.MessageBox('You can NOT edit Separator line')
 			return 1
 		U = self.getfild()
-		print(U)
-		print(self.prgfld.GetValue())
+		#print(U)
+		#print(self.prgfld.GetValue())
 		Hndl = self.prgfld.GetValue()
 		Hndlid = 10001
-		if U[7]:
-			dn = 0
-		else:
-			dn = 1
-		if U[8]:
-			sh = '0000'
-		else:
-			sh = 'FFFF'
 
 		self.DoMenu.Table = u'mitem'
 		self.DoMenu.Upditem(u'itemname = ?, itemtyp = ? , handlerid = ?  where itemid = %d' % self.bardata[1],[U[2], U[6], Hndlid])
@@ -502,7 +494,7 @@ class MyPanel1 ( wx.Panel ):
 		                      [U[5], U[3].replace(ICON16_PATH, ''), U[4], U[5]])
 
 		self.DoMenu.Table = u'access'
-		self.DoMenu.Upditem(u'acclvl = ? , disenable = ?  where acclvlid = "%s" ' % self.bardata[11], [sh, dn])
+		self.DoMenu.Upditem(u'acclvl = ? , disenable = ?  where acclvlid = "%s" ' % self.bardata[11], [D[8], D[7]])
 
 		self.ChngMnu(U)
 
@@ -573,9 +565,6 @@ class MyPanel1 ( wx.Panel ):
 				print(i.GetId())
 				print(i.GetItemLabel())
 
-
-		event.Skip()
-
 	def aplit( self, event ):
 		D = self.getfild()
 		#print(D, self.newsub, self.newone)
@@ -593,27 +582,23 @@ class MyPanel1 ( wx.Panel ):
 
 			Dsri1 = [BrM, int(D[0]), D[2], D[6], extid, hndid]
 			Dsri2 = [extid, D[5], D[3], D[4], D[5], D[1], 1]
-			if D[7]:
-				dn = 0
-			else:
-				dn = 1
-			if D[8]:
-				sh = '0000'
-			else:
-				sh = 'FFFF'
-			Dsri3 = [D[1], 1, sh, dn]
+
+			self.Add2Menu(D)
+
+			Dsri3 = [D[1], 1, D[8], D[7]]
 			self.DoMenu.Table = u'mitem'
 			self.DoMenu.Additem(u'mbarid, itemid, itemname, itemtyp, extid, handlerid ', Dsri1)
 			self.DoMenu.Table = u'extended'
 			self.DoMenu.Additem(u'extid, status, icon, shortcut, help, acclvlid, grpid', Dsri2)
 			self.DoMenu.Table = u'access'
 			self.DoMenu.Additem(u'acclvlid, userid, acclvl, disenable', Dsri3)
-			self.Add2Menu(D)
+			#self.Add2Menu(D)
 			wx.MessageBox(u'you successful add menu ')
 
 			self.DVC1.DeleteAllItems()
 			self.fillList()
 			self.Refresh()
+			self.newone = False
 
 		elif self.newsub:
 			extid = D[0][0] + D[0][-1] + D[6] + D[2][-1] + D[2][0] + D[0][1:]
@@ -625,66 +610,85 @@ class MyPanel1 ( wx.Panel ):
 			BrM = int(self.itmcod)
 			Dsri1 = [BrM, int(D[0]), D[2], D[6], extid, hndid]
 			Dsri2 = [extid, D[5], D[3], D[4], D[5], D[1], 1]
-			if D[7]:
-				dn = 0
-			else:
-				dn = 1
-			if D[8]:
-				sh = '0000'
-			else:
-				sh = 'FFFF'
-			Dsri3 = [D[1], 1, sh, dn]
+			print(D[7],D[8])
+
+			self.Add2Menu(D)
+
+			Dsri3 = [D[1], 1, D[8], D[7]]
 			self.DoMenu.Table = u'mitem'
 			self.DoMenu.Additem(u'mbarid, itemid, itemname, itemtyp, extid, handlerid ', Dsri1)
 			self.DoMenu.Table = u'extended'
 			self.DoMenu.Additem(u'extid, status, icon, shortcut, help, acclvlid, grpid', Dsri2)
 			self.DoMenu.Table = u'access'
 			self.DoMenu.Additem(u'acclvlid, userid, acclvl, disenable', Dsri3)
-			self.Add2Menu(D)
+			#self.Add2Menu(D)
 			wx.MessageBox(u'you successful add menu ')
 
 			self.DVC1.DeleteAllItems()
 			self.fillList()
 			self.Refresh()
+		else:
+			wx.MessageBox(u'Please Use Edit icon or first Add item')
 
 		event.Skip()
 
+	def chkshrtcut(self,Data):
+	    if Data[4] != '':
+		    return Data[2] + '\t' + Data[4]
+	    else:
+		    return Data[2]
+
 	def Add2Menu(self, D):
 		mw = self.FindWindowByName('main')
-		mb = mw.GetMenuBar()
-		lmb = mb.GetMenus()
-		#print(self.bardata,D)
+		#mb = mw.GetMenuBar()
+		#lmb = mb.GetMenus()
+		print(self.bardata,D)
+		#mnuitm = [i[0] for i in lmb if self.bardata[1] in i]
+		#print(mnuitm,lmb,mb)
+		print(mw.menu)
+		mb = mw.menu
 		if D[6] == 'N':
 			if type(self.bardata[1]) == str:
-				mb.AddItem(self.bardata[1],D)
+				mb.AddItem2(self.bardata[1],D)
 			elif type(self.bardata[1]) == int and type(self.bardata[2]) == str:
-				mb.AddItem(self.bardata[2], D, self.bardata[3])
+				mb.AddItem2(self.bardata[2], D, self.bardata[3])
+
+		if D[6] == 'S':
+			if type(self.bardata[1]) == str:
+				mb.AddSubMenu2(self.bardata[1],D)
+			elif type(self.bardata[1]) == int and type(self.bardata[2]) == str:
+				mb.AddSubMenu2(self.bardata[2], D, self.bardata[3])
+
+
+		#if D[6] == 'N':
+		#	if type(self.bardata[1]) == str:
+		#		mb.AddItem(self.bardata[1],D)
+		#	elif type(self.bardata[1]) == int and type(self.bardata[2]) == str:
+		#		mb.AddItem(self.bardata[2], D, self.bardata[3])
 		if D[6] == 'C':
 			mb.AddCheck(self.bardata[1],D)
 		if D[6] == 'R':
 			mb.AddRadio(self.bardata[1],D)
-		if D[6] == 'S':
-			if type(self.bardata[1]) == str:
-				mb.AddSubMenu(self.bardata[1],D)
-			elif type(self.bardata[1]) == int and type(self.bardata[2]) == str:
-				mb.AddSubMenu(self.bardata[2], D, self.bardata[3])
-
+		#if D[6] == 'S':
+		#	if type(self.bardata[1]) == str:
+		#		mb.AddSubMenu(self.bardata[1],D)
+		#	elif type(self.bardata[1]) == int and type(self.bardata[2]) == str:
+		#		mb.AddSubMenu(self.bardata[2], D, self.bardata[3])
 
 	def ChngMnu(self, D):
 		mw = self.FindWindowByName('main')
 		mb = mw.GetMenuBar()
 		lmb = mb.GetMenus()
 		mitm = mb.FindItemById(self.bardata[1])
-		print(mitm)
+		#print(mitm)
 		mnu = mitm.GetMenu()
-		print(mb)
-		print(mnu)
+		#print(mb)
+		#print(mnu)
 		if D[6] == 'S':
 			#mb.CngSubMenu(mitm,D,1)
 			mitm.SetSubMenu(mnu)
-
-
-		print(mitm.IsSubMenu())
+			wx.MessageBox('Please Close Application Now!')
+		#print(mitm.IsSubMenu())
 		if D[4] != '':
 			lbl = D[2] + '\t' + D[4]
 		else:
@@ -719,8 +723,10 @@ class MyPanel1 ( wx.Panel ):
 
 	def gnrcod( self, event ):
 		if self.fld1.GetValue() == '':
-			#print(self.bardata)
-			britm = self.MyMenu.gItem(int(self.bardata[0]), "or mitem.mbarid > %d and mitem.mbarid < %d" % (int(self.bardata[0]*10),int(str(self.bardata[0])[0]+'999')  ) )
+			scod = int(str(self.bardata[0])[0])
+			barcod = self.MyMenu.AllBar(u" where menubar.mbarid/100 = %d " %scod)[0][0]
+			#print(barcod)
+			britm = self.MyMenu.gItem(int(barcod), "or mitem.mbarid > %d and mitem.mbarid < %d" % (int(scod*1000), int(str(scod)+'999')) )
 			#print(britm,type(britm))
 			if britm != []:
 				#print(britm[-1][1] + 1)
@@ -797,8 +803,14 @@ class MyPanel1 ( wx.Panel ):
 			Data7 = 'S'
 		else:
 			Data7 = ''
-		Data8 = self.chk1.GetValue()
-		Data9 = self.chk2.GetValue()
+		if self.chk1.GetValue():
+			Data8 = 0
+		else:
+			Data8 = 1
+		if self.chk2.GetValue():
+			Data9 = '0000'
+		else:
+			Data9 = 'FFFF'
 		return [Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9]
 
 	def Splt1OnIdle( self, event ):
@@ -991,9 +1003,9 @@ class MyPanel3 ( wx.Panel ):
     def atocod(self, event):
         if self.Buttom == _('Create'):
             allbar = self.GetMenu.AllBar('where mbarid < 9999')
-            print(allbar)
+            #print(allbar)
             if allbar != [] :
-                print(allbar[-1][0]+100)
+                #print(allbar[-1][0]+100)
                 alphabt = '_abcdefghijklmnopqrstuvwxyz'
                 lnumstr = str(allbar[-1][0]+100)[0]
                 rnumstr = str(allbar[-1][0]+100)[-1]
@@ -1063,7 +1075,7 @@ class MyPanel3 ( wx.Panel ):
 		    self.SetMenu.Upditem(u'mbarname = ? , mbardir = ?  where mbarid = %s ' % self.Data[1],(data1,self.newdir))
 		    data4 = self.box1val
 		    data5 = self.box2val
-		    print(data5,data4)
+		    #print(data5,data4)
 		    self.SetMenu.Table = u'access'
 		    self.SetMenu.Upditem(u'acclvl = ? , disenable = ? where acclvlid = "%s" ' % self.Data[2],(data5, int(data4)))
 		    mb.SetMenuLabel(mb.FindMenu(self.oldbar),data1)

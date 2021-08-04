@@ -72,10 +72,15 @@ class GetData:
             FROM mitem join handler on mitem.handlerid = handler.handlerid
             WHERE mitem.itemid = %s  """ %itemid)
 
+    #def MnuDir(self,itemid=''):
+    #    return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
+    #          FROM mitem  JOIN menubar
+    #          ON mitem.mbarid = menubar.mbarid
+    #          WHERE mitem.itemid =  %s  """ %itemid)
     def MnuDir(self,itemid=''):
         return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
-              FROM mitem  JOIN menubar
-              ON mitem.mbarid = menubar.mbarid
+              FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
+			  JOIN menubar ON handler.prgdir = menubar.mbarid
               WHERE mitem.itemid =  %s  """ %itemid)
 
     def SubDir(self,itemsub=''):

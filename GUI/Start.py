@@ -12,7 +12,7 @@ class MySplashScreen(wx.adv.SplashScreen):
     def __init__(self, window):
         self.window = window
         #bmp = wx.Image(opj(SPALSH_PATH+"splash3.jpg")).ConvertToBitmap()
-        bmp = wx.Bitmap(os.path.normpath(os.path.join(SPALSH_PATH + "src18.png")),wx.BITMAP_TYPE_PNG)
+        bmp = wx.Bitmap(os.path.normpath(os.path.join(SPALSH_PATH + "Fount1.png")),wx.BITMAP_TYPE_PNG)
         wx.adv.SplashScreen.__init__(self, bmp,
                                  wx.adv.SPLASH_CENTRE_ON_SCREEN | wx.adv.SPLASH_TIMEOUT,
                                  7000, None, style=wx.BORDER_NONE|

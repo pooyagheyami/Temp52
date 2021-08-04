@@ -59,7 +59,7 @@ class ToolData(object):
 
 class MyToolbar(wx.ToolBar):
     data = []          #wx.TB_NODIVIDER | wx.NO_BORDER | wx.TB_FLAT |
-    def __init__(self,parent,style=  wx.TB_HORIZONTAL | wx.TB_DEFAULT_STYLE):
+    def __init__(self,parent,style=  wx.TB_FLAT):
         wx.ToolBar.__init__(self,parent,style=style)
         self.mytb = []
         self.mytp = {}
@@ -82,13 +82,24 @@ class MyToolbar(wx.ToolBar):
         self.Realize()
         return self
 
-    def GetToolid(self):
-        return 101
-    '''
-    def CreatList(self,data):
-        for d in data:
-            if d[0]//100 not in self.mytp:
-                self.mytp[d[0]//100] = [d]
+    def GetToolid(self, id):
+        return self.FindById(id)
+
+class MyAuiToolbar(wx.aui.AuiToolBar):
+    data = []
+    def __init__(self, parent , style = wx.aui.AUI_TB_DEFAULT_STYLE|wx.aui.AUI_TB_GRIPPER|wx.aui.AUI_TB_PLAIN_BACKGROUND):
+        wx.aui.AuiToolBar.__init__(self,parent,style = style )
+        self.mytb = []
+        self.mytp = {}
+        #self.CreatTool(self.data)
+
+    def CreatTool(self,tbData):
+        for tb in tbData :
+            if str(tb[1]) == '' or tb[1] == None:
+                self.AddSeparator()
             else:
-                self.mytp[d[0]//100].append(d)
-    '''
+                self.mytb.append( self.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICON32_PATH+tb[2], wx.BITMAP_TYPE_ANY),
+                                               wx.NullBitmap, wx.ITEM_NORMAL, str(tb[3]), wx.EmptyString, None) )
+        self.Realize()
+        return self
+

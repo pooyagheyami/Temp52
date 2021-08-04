@@ -32,6 +32,7 @@ class MyLstPnl(object):
         return self.PrP
 
     def GetAuiInfo(self,InfoList):
+        print(InfoList)
         myInfo = wx.aui.AuiPaneInfo()
         if ' Left' in InfoList:
             myInfo.Left()
@@ -41,10 +42,14 @@ class MyLstPnl(object):
             myInfo.Top()
         if ' Bottom' in InfoList:
             myInfo.Bottom()
+        if ' Center' in InfoList:
+            myInfo.Center()
         if ' PinButton' in InfoList:
             myInfo.PinButton(True)
         if ' Dock' in InfoList:
             myInfo.Dock()
         if ' Resizable' in InfoList:
             myInfo.Resizable()
+        if ' Hide' in InfoList:
+            myInfo.Hide()
         return myInfo

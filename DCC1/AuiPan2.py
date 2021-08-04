@@ -11,6 +11,8 @@ import wx
 import wx.xrc
 import wx.dataview
 
+from Config.Init import *
+
 ###########################################################################
 ## Class MyPanel5
 ###########################################################################
@@ -35,41 +37,53 @@ class MyPanel1 ( wx.Panel ):
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.DVC1 = wx.dataview.DataViewCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.Col1 = self.DVC1.AppendTextColumn( u"Name Pane", 0, wx.dataview.DATAVIEW_CELL_INERT, 178, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendTextColumn( u"ID", 1, wx.dataview.DATAVIEW_CELL_INERT, 45, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col1 = self.DVC1.AppendTextColumn( u"ID", 0, wx.dataview.DATAVIEW_CELL_INERT, 45, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendTextColumn( u"Name Pane", 1, wx.dataview.DATAVIEW_CELL_INERT, 178, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn1.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_NEW, wx.ART_OTHER ) )
+		self.btn1.SetBitmap(wx.Bitmap( ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetToolTip(u"Add")
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn2.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_UNDO, wx.ART_OTHER ) )
+		self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn2.SetToolTip(u"Edit")
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn3.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_DELETE, wx.ART_OTHER ) )
+		self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn3.SetToolTip(u"Delete")
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn4.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_PLUS, wx.ART_OTHER ) )
+		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'watch_window.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn4.SetToolTip(u"")
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn5.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_MINUS, wx.ART_OTHER ) )
+		self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn5.SetToolTip(u"Update")
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn6.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_REDO, wx.ART_OTHER ) )
+		self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'information.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn6.SetToolTip(u"Info")
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
+
+		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW | 0)
+
+		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetToolTip(u"Apply")
+		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
 		Vsz2.Add( Hsz1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
@@ -211,6 +225,19 @@ class MyPanel1 ( wx.Panel ):
 		self.chs3.SetSelection( 2 )
 		Hsz9.Add( self.chs3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
+		self.dokbtn = wx.Button(self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
+		Hsz9.Add(self.dokbtn, 0, wx.ALL, 5)
+
+		self.lbl13 = wx.StaticText(self.P2, wx.ID_ANY, u"Layer", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.lbl13.Wrap(-1)
+
+		Hsz9.Add(self.lbl13, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+
+		self.lyrspn = wx.SpinCtrlDouble(self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(40, -1),
+		                                wx.ALIGN_CENTER_HORIZONTAL | wx.SP_ARROW_KEYS, 0, 9, 0.000000, 1)
+		self.lyrspn.SetDigits(0)
+		Hsz9.Add(self.lyrspn, 0, wx.ALL, 5)
+
 
 		Vsz3.Add( Hsz9, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
@@ -264,12 +291,14 @@ class MyPanel1 ( wx.Panel ):
 		self.btn4.Bind( wx.EVT_BUTTON, self.updat )
 		self.btn5.Bind( wx.EVT_BUTTON, self.publc )
 		self.btn6.Bind( wx.EVT_BUTTON, self.prviw )
+		self.btn7.Bind( wx.EVT_BUTTON, self.aplit )
 		self.codgnr.Bind( wx.EVT_BUTTON, self.gnrcod )
 		self.stgbtn.Bind( wx.EVT_BUTTON, self.stngpn )
 		self.sizbtn.Bind( wx.EVT_BUTTON, self.otrsiz )
 		self.chs1.Bind( wx.EVT_CHOICE, self.rezfix )
 		self.chs2.Bind( wx.EVT_CHOICE, self.dokflt )
 		self.chs3.Bind( wx.EVT_CHOICE, self.lrtbc )
+		self.dokbtn.Bind(wx.EVT_BUTTON, self.dockabl)
 		self.probtn.Bind( wx.EVT_BUTTON, self.prglst )
 
 	def __del__( self ):
@@ -298,11 +327,20 @@ class MyPanel1 ( wx.Panel ):
 	def prviw( self, event ):
 		event.Skip()
 
+	def aplit( self, event ):
+		event.Skip()
+
 	def gnrcod( self, event ):
 		event.Skip()
 
 	def stngpn( self, event ):
-		event.Skip()
+		iwin = wx.Dialog(self, -1)
+		pnl = MyPanel2(iwin)
+		iwin.SetSize((500, 320))
+		iwin.ShowModal()
+		print(pnl.e)
+
+		iwin.Destroy()
 
 	def otrsiz( self, event ):
 		event.Skip()
@@ -316,6 +354,9 @@ class MyPanel1 ( wx.Panel ):
 	def lrtbc( self, event ):
 		event.Skip()
 
+	def dockabl(self, event):
+		event.Skip()
+
 	def prglst( self, event ):
 		event.Skip()
 
@@ -324,3 +365,129 @@ class MyPanel1 ( wx.Panel ):
 		self.Splt1.Unbind( wx.EVT_IDLE )
 
 
+
+
+###########################################################################
+## Class MyPanel2
+###########################################################################
+import wx.propgrid as pg
+
+
+class MyPanel2 ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,342 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+
+		self.Item = []
+		items = [('caption_visible',True),('close_button',True),('maximize_button',False),('minimize_button',False),
+		         ('pine_button',True),('pane_border',True),('show',True),('gripper',False),('center_pane',False),
+		         ('default_pane',False),('toolbar_pane',False),('moveable',True) ]
+
+
+		self.PGrid1 = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_TOOLTIPS)
+
+		self.PGrid1.Append(pg.PropertyCategory(u"AUI", u"AUI"))
+
+		for itm in items:
+			#self.Item.append( self.PGrid1.Append( pg.BoolProperty( itm[0], itm[0], value=itm[1]) )  )
+			self.PGrid1.Append(pg.BoolProperty(itm[0], itm[0], value=itm[1]))
+			self.PGrid1.SetPropertyAttribute(itm[0],"UseCheckbox", True)
+
+
+		Vsz1.Add( self.PGrid1, 1, wx.ALL|wx.EXPAND, 5 )
+
+		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
+
+
+		Vsz1.Add( Hsz1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		self.SetSizer( Vsz1 )
+		self.Layout()
+
+		# Connect Events
+		self.btn1.Bind( wx.EVT_BUTTON, self.cncl )
+		self.btn2.Bind( wx.EVT_BUTTON, self.okit )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, overide them in your derived class
+	def cncl( self, event ):
+		q = self.GetParent()
+		q.Close()
+
+	def okit( self, event ):
+		self.e = self.PGrid1.GetPropertyValues()
+		print(self.e)
+		q = self.GetParent()
+		q.Close()
+
+
+
+###########################################################################
+## Class MyPanel3
+###########################################################################
+
+class MyPanel3 ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,342 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+
+		self.PGrid1 = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_TOOLTIPS)
+		self.Item1 = self.PGrid1.Append( pg.PropertyCategory( u"Name", u"Name" ) )
+		self.Item2 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
+		self.Item3 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem4 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem5 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem6 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem7 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem8 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem9 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem10 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem11 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem12 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.m_propertyGridItem13 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		Vsz1.Add( self.PGrid1, 1, wx.ALL|wx.EXPAND, 5 )
+
+		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
+
+
+		Vsz1.Add( Hsz1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		self.SetSizer( Vsz1 )
+		self.Layout()
+
+		# Connect Events
+		self.btn1.Bind( wx.EVT_BUTTON, self.cncl )
+		self.btn2.Bind( wx.EVT_BUTTON, self.okit )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, overide them in your derived class
+	def cncl( self, event ):
+		q = self.GetParent()
+		q.Close()
+
+	def okit( self, event ):
+		event.Skip()

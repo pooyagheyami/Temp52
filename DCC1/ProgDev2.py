@@ -11,6 +11,16 @@ import wx
 import wx.xrc
 import wx.dataview
 
+from AI.OpnFil import *
+from AI.Analiz import *
+from AI.Generats import *
+
+from Config.Init import *
+
+import Database.MenuSet2 as MS
+import Database.PostGet as PG
+import GUI.proman as pro
+import importlib
 ###########################################################################
 ## Class MyPanel3
 ###########################################################################
@@ -21,6 +31,9 @@ class MyPanel1 ( wx.Panel ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+
+		self.getMData = MS.GetData(u'Menu2.db', u'')
+		self.setMDate = MS.SetData(u'', u'', u'')
 
 		self.Splt1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D|wx.SP_LIVE_UPDATE|wx.SP_NO_XP_THEME|wx.SP_THIN_SASH )
 		#self.Splt1.SetSashGravity( -1 )
@@ -35,6 +48,9 @@ class MyPanel1 ( wx.Panel ):
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.DVC1 = wx.dataview.DataViewCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+
+		#self.filllist()
+
 		self.Col1 = self.DVC1.AppendTextColumn( u"Name Program", 0, wx.dataview.DATAVIEW_CELL_INERT, 178, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		self.Col2 = self.DVC1.AppendTextColumn( u"ID", 1, wx.dataview.DATAVIEW_CELL_INERT, 45, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
@@ -43,35 +59,47 @@ class MyPanel1 ( wx.Panel ):
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn1.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_NEW, wx.ART_OTHER ) )
+		self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_add.png', wx.BITMAP_TYPE_ANY ) )
 		self.btn1.SetToolTip( u"Add" )
 
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn2.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_UNDO, wx.ART_OTHER ) )
+		self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_edit.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn2.SetToolTip(u"Edit")
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn3.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_DELETE, wx.ART_OTHER ) )
+		self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_delete.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn3.SetToolTip(u"Delete")
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn4.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_PLUS, wx.ART_OTHER ) )
+		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_form.png', wx.BITMAP_TYPE_ANY ))
+		self.btn4.SetToolTip(u"Preview")
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn5.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_MINUS, wx.ART_OTHER ) )
+		self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn5.SetToolTip(u"Update")
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn6.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_REDO, wx.ART_OTHER ) )
+		self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn6.SetToolTip(u"Apply")
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
+
+
+		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,wx.BU_AUTODRAW | 0)
+
+		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'application_lightning.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetToolTip(u"Generate")
+		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
 		Vsz2.Add( Hsz1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
@@ -88,8 +116,8 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz3.Add( self.titr, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_textCtrl31 = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
-		Vsz3.Add( self.m_textCtrl31, 1, wx.ALL|wx.EXPAND, 5 )
+		self.Desc = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+		Vsz3.Add( self.Desc, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -232,6 +260,17 @@ class MyPanel1 ( wx.Panel ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def filllist(self):
+		#self.DVC1.AppendTextColumn()
+		self.my_data = self.getMData.AllHndl("join menubar on menubar.mbarid = handler.prgdir where handler.handlerid < 90000 ")
+		print(self.my_data)
+		data = [[m[1], m[0]] for m in self.my_data ]
+		modal = wx.dataview.DataViewModel(self)
+		modal.ItemsAdded(self.DVC1,data)
+		print(model)
+		self.DVC1.AssociateModel(model)
+
+
 	def slctmnu( self, event ):
 		event.Skip()
 
@@ -272,5 +311,133 @@ class MyPanel1 ( wx.Panel ):
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 254 )
 		self.Splt1.Unbind( wx.EVT_IDLE )
+
+
+class Info(object):
+	def __init__(self, dirct, para, pub, prgno):
+		self.dirct = dirct
+		self.para = para
+		self.pub = pub
+		self.prgno = prgno
+
+	def __repr__(self):
+		return "Program Directory: %s" % self.dirct
+
+
+class Prog(object):
+	def __init__(self, id, name):
+		self.id = id
+		self.name = name
+		self.info = []
+
+	def __repr__(self):
+		return "Application :" + self.name
+
+class ProgrmLsit(wx.dataview.DataViewModel):
+	def __init__(self, Data):
+		wx.dataview.DataViewModel.__init__(self)
+		self.Data = Data
+
+	def ItemsAdded(self, parent, items):
+		pass
+
+class MyProgramList(wx.dataview.PyDataViewModel):
+	def __init__(self, Data):
+		wx.dataview.PyDataViewModel.__init__(self)
+		self.Data = Data
+		self.UseWeakRefs(True)
+
+	def GetColumnCount(self):
+		return 2
+
+	def GetColumnType(self, col):
+		mapper = {
+			0 : 'string',
+			1 : 'string',
+
+		}
+		return mapper[col]
+
+	def GetChildren(self, item, children):
+		if not item:
+			for app in self.Data:
+				children.append(self.ObjectToItem(app))
+			return len(self.Data)
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog):
+			for song in node.songs:
+				children.append(self.ObjectToItem(song))
+			return len(node.songs)
+		return 0
+
+	def IsContainer(self, item):
+		if not item:
+			return True
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog):
+			return True
+		return False
+
+	def GetParent(self, item):
+		if not item:
+			return wx.dataview.NullDataViewItem
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog):
+			return wx.dataview.NullDataViewItem
+		elif isinstance(node, Info):
+			for p in self.Data:
+				if p.name == node.Info:
+					return self.ObjectToItem(p)
+
+	def HasValue(self, item, col):
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog) and col > 0:
+			return False
+		return True
+
+	def GetValue(self, item, col):
+		node = self.ItemToObject(item)
+
+		if isinstance(node, Prog):
+			assert col == 0, "Unexpected column value for Genre objects"
+			return node.name
+
+		elif isinstance(node, Info):
+			mapper = {0: node.id,
+			          1: node.direct,
+			          2: node.para,
+			          3: node.pub,
+			          4: node.prgno,
+			          }
+			return mapper[col]
+
+		else:
+			raise RuntimeError("unknown node type")
+
+	def GetAttr(self, item, col, attr):
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog):
+			attr.SetColour('blue')
+			attr.SetBold(True)
+			return True
+		return False
+
+	def SetValue(self, variant, item, col):
+		node = self.ItemToObject(item)
+		if isinstance(node, Prog):
+			if col == 1:
+				node.dirct = value
+			elif col == 2:
+				node.para = value
+			elif col == 3:
+				node.pub = value
+			elif col == 4:
+				node.prgno = value
+		return True
+
+
+
+
+
 
 

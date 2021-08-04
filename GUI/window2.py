@@ -36,13 +36,14 @@ class MainWin(wx.Frame):
         self.config = wx.GetApp().GetConfig()
 
         TBP = self.config.Read('Toolbar')
-        BGP = self.config.Read('Background')
+        BakGrnd= self.config.Read('Background')
         #print(self.config.Read('Language'))
 
         #print(TBP,BGP,wx.Layout_RightToLeft)
-        STBT = 'A'
-        BakGrnd = BGP #"V19.jpg"
-        FrmTyp = 'BG'
+        STBT = 'B'
+        #BakGrnd = BGP #"V19.jpg"
+        AuiCenter = ''
+
 
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -50,51 +51,36 @@ class MainWin(wx.Frame):
         self.m_mgr.SetManagedWindow(self)
         #self.m_mgr.SetFlags(wx.aui.AUI_MGR_DEFAULT)
 
-        # Notebook work Attributes =============================
-        if FrmTyp == 'Notebook':
-            self.m_notebook2 = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.NB_FIXEDWIDTH)
-            self.m_mgr.AddPane(self.m_notebook2,
-                               wx.aui.AuiPaneInfo().Center().CloseButton(False).Dock().Resizable().FloatingSize(
-                                   wx.DefaultSize))
-
-            self.m_panel4 = wx.Panel(self.m_notebook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-            self.m_notebook2.AddPage(self.m_panel4, u"a page", True)
-            self.m_panel5 = wx.Panel(self.m_notebook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-            self.m_notebook2.AddPage(self.m_panel5, u"a page", False)
-            self.m_panel6 = wx.Panel(self.m_notebook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-            self.m_notebook2.AddPage(self.m_panel6, u"a page", False)
-
-            self.m_notebook2.Bind(wx.EVT_RIGHT_DOWN, self.domouse)
-            self.Bind(wx.EVT_CONTEXT_MENU, self.setmenu)
-
-        else:
+        # If like Back Gorund or Aui Center =============================
+        if AuiCenter == '':
             self.BGrnd(BakGrnd)
-
 
 
         # Menu of Program==============
 
         #menu = MM.MainMenu()
-        menu = MM.AppMenu()
+        self.menu = MM.AppMenu()
         #imenu = menu.createMenuBar()
-        #print(menu,menu.GetMenus())
+        print(self.menu,self.menu.GetMenus())
         #self.SetMenuBar(menu)
-        if menu.GetMenus() != None:
-            self.SetMenuBar(menu)
-        #    self.UpdateMenu(imenu, menu)
+        if len(self.menu.GetMenus()) != 0:
+            #self.SetMenuBar(menu)
+            self.UpdateMenu(self.menu, self.menu.GetMenus())
 
         statusBar = self.CreateStatusBar(2,wx.STB_ELLIPSIZE_END|wx.STB_ELLIPSIZE_MIDDLE|wx.STB_SHOW_TIPS|wx.STB_SIZEGRIP, wx.ID_ANY)
         statusBar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
 
-        if STBT == 'N':
+        if TBP == '1':
             self.Toolbar()
-        else:
+        elif TBP == '2':
             self.ToolPnl()
 
         # All Panel Aui=======================
         self.APnls()
 
         #self.BGrnd(BakGrnd)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.domouse)
+        self.Bind(wx.EVT_CONTEXT_MENU, self.setmenu)
 
         self.m_mgr.Update()
         self.Centre(wx.BOTH)
@@ -121,7 +107,7 @@ class MainWin(wx.Frame):
                 # self.itms.append( wx.MenuItem(self.m1, wx.ID_ANY, MnuDic[itm][0], wx.EmptyString) )
                 self.m1.Append(itm, self.MnuDic[itm][0])
                 # self.m1.Append(itm, self.itms[i])
-                # self.Bind(wx.EVT_MENU, self.OnPopupOne, id=MnuDic[itm][1])
+                #self.Bind(wx.EVT_MENU, self.OnPopupOne, id=MnuDic[itm][1])
                 i = i + 1
 
         self.PopupMenu(self.m1)
@@ -142,7 +128,6 @@ class MainWin(wx.Frame):
         a = pro.DoProgram(self.mid, 'M')
         # print dir(a)
         #s = a.size() if 'size' in dir(a) else ()
-
         win1 = wx.Frame(self, -1)
         #win1.SetSize(s)
         a.main(win1)
@@ -153,7 +138,6 @@ class MainWin(wx.Frame):
         a = pro.DoProgram(self.tid, 'T')
         # print dir(a)
         #s = a.size() if 'size' in dir(a) else ()
-
         win1 = wx.Frame(self, -1)
         #win1.SetSize(s)
         a.main(win1)
@@ -175,10 +159,7 @@ class MainWin(wx.Frame):
                     self.tb.AddTool(t[0], t[1], wx.Bitmap(ICON32_PATH+t[2],wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, t[1], t[3], None)
                     self.Bind(wx.EVT_TOOL, self.OnTool, id=t[0])
             self.tb.AddSeparator()
-
-
         self.tb.Realize()
-
 
     def ToolPnl(self):
         self.tool = []
@@ -187,7 +168,7 @@ class MainWin(wx.Frame):
         i = 0
         for T in MLT:
             #print(MLT[T])
-            MTB = MT.MyToolbar(self)
+            MTB = MT.MyAuiToolbar(self)
             MyTL = MTB.data
             #print(MyTL)
             self.tool.append( MTB.CreatTool(MLT[T]) )
@@ -218,6 +199,7 @@ class MainWin(wx.Frame):
                     if ' Layer' in FL[P]:
                         #print(FL[P][7])
                         PInfo.Layer(int(FL[P][7].strip()))
+
                     self.m_mgr.AddPane(mp,PInfo)
 
     def BGrnd(self,BGF):
@@ -231,17 +213,16 @@ class MainWin(wx.Frame):
 
     def UpdateMenu(self,imenu,menu):
         self.SetMenuBar(imenu)
-        try:
-            #print(menu.GetItemId())
-            h = menu.GetItemId()
-            h1 = menu.mid
-            #print(h.GetId(), h1)
-            self.Bind(wx.EVT_MENU_RANGE, self.OnMenu, id=h1, id2=h.GetId())
-        except AttributeError:
-            print('menu has not menuItem')
 
+        frstitm = menu[0][0].GetMenuItems()
+        lastitm = menu[-1][0].GetMenuItems()
+        if len(frstitm) != 0:
+            h = frstitm[0].GetId()
+            #h1 = lastitm[-1].GetId()
+            #print(h,h1)
+            #self.Bind(wx.EVT_MENU_RANGE, self.OnMenu, id=h1, id2=h.GetId())
+            self.Bind(wx.EVT_MENU_RANGE, self.OnMenu, id=101, id2=9999)
 
     def NewToolBar(self):
         self.toolbar = MT.MyToolbar()
         self.SetToolBar()
-
