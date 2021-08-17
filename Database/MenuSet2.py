@@ -59,6 +59,7 @@ class GetData:
     def AllSub(self, ext=''):
         return sq.wxsqltxt(self.DBF,"""SELECT * FROM mitem %s"""%ext)
 
+    '''
     def RevItem(self):
         return sq.wxsqltxt(self.DBF,"""select mitem.itemname,mitem.itemid 
                                        from mitem
@@ -66,6 +67,7 @@ class GetData:
                                             from menubar
                                             where menubar.mbardir = 'GUI.Input')
         """)
+    '''
 
     def MyProg(self,itemid=''):
         return sq.wxsqltxt(self.DBF,"""SELECT distinct mitem.handlerid, handler.prgname
@@ -82,12 +84,24 @@ class GetData:
               FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
 			  JOIN menubar ON handler.prgdir = menubar.mbarid
               WHERE mitem.itemid =  %s  """ %itemid)
+    def MnuDir2(self,itemid=''):
+        return sq.wxsqltxt(self.DBF, """SELECT Guidir.Dir
+              FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
+			  JOIN menubar ON menubar.mbarid = mitem.mbarid
+			  JOIN Guidir ON menubar.mbardir = Guidir.prgdir
+			  WHERE mitem.itemid = %s  """ %itemid)
 
     def SubDir(self,itemsub=''):
         return sq.wxsqltxt(self.DBF, """SELECT handler.prgdir
               FROM mitem  JOIN handler
               ON mitem.handlerid = handler.handlerid
               WHERE mitem.itemid = %s  """ %itemsub)
+
+    def AllGuiDir(self, ext=''):
+        return sq.wxsqltxt(self.DBF, """ SELECT * FROM Guidir %s""" %ext)
+
+    def GetDirCod(self, idir=''):
+        return sq.wxsqsnd(self.DBF,"Guidir", "hdddir", "prgdir", idir)
 
     def DoHdnl(self):
         return sq.wxsqltxt(self.DBF,"""select handler.prgname
@@ -115,6 +129,12 @@ class GetData:
             from menubar, toolbar  inner join mitem on mitem.handlerid = toolbar.handlerid
             where menubar.mbarid = mitem.mbarid
             and toolbar.toolid =  %s  """ % itolid)
+    def TolDir2(self,itolid=''):
+        return sq.wxsqltxt(self.DBF, """select distinct Guidir.Dir , toolbar.handlerid
+            from  toolbar  
+			join handler on toolbar.handlerid = handler.handlerid
+			join Guidir on handler.prgdir = Guidir.prgdir
+            and toolbar.toolid = %s   """ % itolid)
     def Acclvl(self,accid=''):
         return sq.wxsqltxt(self.DBF, """ select * from access where access.acclvlid = '%s' """ % accid)
     def gBarItm(self,mbar=''):
@@ -127,6 +147,12 @@ class GetData:
 
     def gethddir(self, dirct= u''):
         return sq.wxsqsnd(self.DBF,u'menubar',u'mbarid',u'mbardir',dirct)
+
+    def AllPanes(self):
+        return sq.wxsqltxt(self.DBF,""" select * from pans join panifo on pans.paninfoid = panifo.paninfoid """)
+
+    def ListPanes(self):
+        return sq.wxsqltxt(self.DBF," select pans.panname from pans ")
 
 
 

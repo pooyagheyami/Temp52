@@ -11,7 +11,13 @@ import wx
 import wx.xrc
 import wx.dataview
 
+import importlib
+
 from Config.Init import *
+import Database.MenuSet2 as MS
+from GUI.AuiPanel.PAui import *
+
+_ = wx.GetTranslation
 
 ###########################################################################
 ## Class MyPanel5
@@ -36,10 +42,22 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.DVC1 = wx.dataview.DataViewCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.Col1 = self.DVC1.AppendTextColumn( u"ID", 0, wx.dataview.DATAVIEW_CELL_INERT, 45, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendTextColumn( u"Name Pane", 1, wx.dataview.DATAVIEW_CELL_INERT, 178, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.Col1 = self.DVC1.AppendColumn( u"ID", 75, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( u"Name Pane", 158, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
+
+		self.MyMenu = MS.GetData(u'Menu2.db', u'')
+		self.DoMenu = MS.SetData(u'', u'', u'')
+
+		self.filllist()
+
+		self.newpen = False
+		self.s1 = 'Dock;FTTTTT'
+		self.s2 = '-1;-1;0;0'
+		self.bst_siz = '-1;-1'
+		self.min_siz = '-1;-1'
+		self.max_siz = '-1;-1'
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -283,14 +301,17 @@ class MyPanel1 ( wx.Panel ):
 		self.SetSizer( Vsz1 )
 		self.Layout()
 
+		self.myInfo = wx.aui.AuiPaneInfo()
+
 		# Connect Events
-		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctmnu, id = wx.ID_ANY )
+		#self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctmnu, id = wx.ID_ANY )
+		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.actitm)
 		self.btn1.Bind( wx.EVT_BUTTON, self.addit )
 		self.btn2.Bind( wx.EVT_BUTTON, self.edtit )
 		self.btn3.Bind( wx.EVT_BUTTON, self.delit )
-		self.btn4.Bind( wx.EVT_BUTTON, self.updat )
-		self.btn5.Bind( wx.EVT_BUTTON, self.publc )
-		self.btn6.Bind( wx.EVT_BUTTON, self.prviw )
+		self.btn4.Bind( wx.EVT_BUTTON, self.prviw )
+		self.btn5.Bind( wx.EVT_BUTTON, self.updat )
+		self.btn6.Bind( wx.EVT_BUTTON, self.publc )
 		self.btn7.Bind( wx.EVT_BUTTON, self.aplit )
 		self.codgnr.Bind( wx.EVT_BUTTON, self.gnrcod )
 		self.stgbtn.Bind( wx.EVT_BUTTON, self.stngpn )
@@ -306,16 +327,83 @@ class MyPanel1 ( wx.Panel ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def filllist(self):
+		broot = self.DVC1.GetRootItem()
+		mroot = self.DVC1.AppendItem(broot, 'AuiPanes')
+		self.items = self.MyMenu.AllPanes()
+		for itm in self.items:
+			pnitm = self.DVC1.AppendItem(mroot, itm[1])
+			self.DVC1.SetItemText(pnitm, 0, str(itm[0]))
+			self.DVC1.SetItemText(pnitm, 1, itm[1])
+		pass
+	def actitm( self, event ):
+		ps2 = self.DVC1.GetSelection()
+		it2 =  self.DVC1.GetItemText(ps2,0)
+		#print(ps2,it2)
+		for tem in self.items:
+			if int(it2) in tem:
+				#print(tem)
+				self.fillinfo(tem)
+
+	def fillinfo(self, Data):
+		self.fld1.SetValue(str(Data[0]))
+		self.fld2.SetValue(Data[7])
+		self.fld3.SetValue(Data[1])
+		self.fld4.SetValue(Data[9])
+		self.datastng = Data[10]
+		#self.gnrsetting(self.datastng)
+		self.fld6.SetValue(self.datastng)
+		w,h = Data[3].split(';')
+		self.wht.SetValue(w)
+		self.hgt.SetValue(h)
+		self.othrsiz = [Data[12],Data[13],Data[14]]
+
+		self.chs1.SetStringSelection(Data[11])
+
+		dokng,self.dokng = Data[15].split(';')
+		self.chs2.SetStringSelection(dokng)
+
+		self.chs3.SetStringSelection(Data[2])
+		self.lyrspn.SetValue(Data[4])
+		self.opsint = Data[16]
+
+	def fillnull(self):
+		data = (0,'','','-1;-1',0,'',0,'','','','TTFFTTTFFFFT','','','','','Dock;FTTTTT','-1;-1;0;0')
+		self.fillinfo(data)
+		self.fld1.SetValue('')
+
+
 	def slctmnu( self, event ):
 		event.Skip()
 
 	def addit( self, event ):
+		self.fillnull()
+		self.newpen = True
 		event.Skip()
 
 	def edtit( self, event ):
 		event.Skip()
 
 	def delit( self, event ):
+		print(self.getdata())
+		D = self.getdata()
+		for i in self.items:
+			if i[0] == int(D[0]):
+				Delitem = i
+				print(Delitem)
+				self.DoMenu.Table = u'pans'
+				self.DoMenu.Delitem(u' pans.panid = %d '% Delitem[0] )
+				self.DoMenu.Table = u'panifo'
+				self.DoMenu.Delitem(u' panifo.paninfoid = "%s" '% Delitem[8])
+				self.DoMenu.Table = u'access'
+				self.DoMenu.Delitem(u' access.acclvlid = "%s"' % Delitem[7])
+
+				wx.MessageBox(u' Pane delete from application successful')
+
+		self.DVC1.DeleteAllItems()
+		self.filllist()
+		self.Refresh()
+
 		event.Skip()
 
 	def updat( self, event ):
@@ -325,28 +413,111 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def prviw( self, event ):
+		#mw = self.FindWindowByName('main')
+		#mw.m_mgr.
+		print(self.fld3.GetValue())
+		a2 = 'GUI.AuiPanel.'+self.fld3.GetValue()
+
+		try:
+			m = importlib.import_module(a2)
+			self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
+			self.pnl = m.MyPanel1(self.Frm, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+			self.Frm.Show()
+		except ImportError as error:
+			wx.MessageBox(error)
+			print(error)
 		event.Skip()
 
 	def aplit( self, event ):
+		#self.myInfo = wx.aui.AuiPaneInfo()
+		Data1 = self.getdata()
+		print(Data1)
+		print(self.fld6.GetValue())
+		stng = self.fld6.GetValue()
+		print(self.s1, self.s2)
+		#print(self.fild)
+		print(self.bst_siz,self.min_siz,self.max_siz)
+		if self.newpen:
+			strng = 'abcdefghijklmnopqrstuvwxyz'
+			codinfo = Data1[0]+strng[int(Data1[0][0])-1]+strng[int(Data1[0][1])]
+			if self.prgfld.GetValue() == '':
+				hndlid = 50000 + int(Data1[0])
+				import shutil
+				shutil.copyfile(GUI_PATH+'AuiPanel\\tempane.py',GUI_PATH+'AuiPanel\\'+Data1[2]+'.py')
+			else:
+				hndlid = 50000
+
+			D1 = [int(Data1[0]),Data1[2],Data1[7],Data1[4],int(Data1[8]),codinfo,hndlid,Data1[1]]
+			self.DoMenu.Table = u'pans'
+			self.DoMenu.Additem(u' panid, panname, pandok, pansiz, panlyr, paninfoid, handlerid, acclvlid ',D1)
+
+			if self.chs2.GetStringSelection() != 'Dock':
+				self.s1 = self.chs2.GetStringSelection()+';'+self.s1.split(';')[1]
+
+			D2 = [codinfo,Data1[3],stng, Data1[5], self.bst_siz, self.min_siz, self.max_siz, self.s1, self.s2]
+			self.DoMenu.Table = u'panifo'
+			self.DoMenu.Additem(u' paninfoid, caption, setting, resize, bstsiz, minsiz, maxsiz, docking, position',D2)
+
+			D3 = [Data1[1], 1, 'FFFF', 1]
+			self.DoMenu.Table = u'access'
+			self.DoMenu.Additem(u' acclvlid, userid, acclvl, disenable',D3)
+
+			wx.MessageBox(u'A new Pane add to application ')
+
+			self.DVC1.DeleteAllItems()
+			self.filllist()
+			self.Refresh()
+
+			#createpenshow()
+
+		else:
+			wx.MessageBox(u'Please press Add bottom to make new pane')
 		event.Skip()
 
 	def gnrcod( self, event ):
-		event.Skip()
+		strng = 'abcdefghijklmnopqrstuvwxyz'
+		lcod = self.items[-1][0]
+		self.fld1.SetValue(str(int(lcod)+1))
+		self.fld2.SetValue(str(int(lcod)+1)+'pn'+strng[(lcod+1)//10-1]+strng[(lcod+1)%10])
+
 
 	def stngpn( self, event ):
 		iwin = wx.Dialog(self, -1)
-		pnl = MyPanel2(iwin)
+		pnl = MyPanel2(iwin,self.datastng)
 		iwin.SetSize((500, 320))
 		iwin.ShowModal()
-		print(pnl.e)
+		try:
+			#print(pnl.e)
+			self.gnrsetting(pnl.e)
+			self.fild = self.crtsetsrt(pnl.e)
+			self.fld6.SetValue(self.fild)
+		except AttributeError:
+			print('Cancel it')
+			#print(pnl.PGrid1.GetPropertyValues())
+			self.gnrsetting(pnl.PGrid1.GetPropertyValues())
+			self.fild = self.crtsetsrt(pnl.PGrid1.GetPropertyValues())
+			self.fld6.SetValue(self.fild)
 
 		iwin.Destroy()
 
 	def otrsiz( self, event ):
-		event.Skip()
+		iwin = wx.Dialog(self, -1)
+		pnl = MyPanel3(iwin,self.othrsiz)
+		iwin.SetSize((400, 250))
+		iwin.ShowModal()
+		print(pnl.PGrid1.GetPropertyValues())
+		self.gnrsize(pnl.PGrid1.GetPropertyValues())
+		self.crtsizsrt(pnl.PGrid1.GetPropertyValues())
+		iwin.Destroy()
 
 	def rezfix( self, event ):
-		event.Skip()
+		if self.chs1.GetSelection() == 1:
+			self.wht.Disable()
+			self.hgt.Disable()
+		elif self.chs1.GetSelection() == 0:
+			self.wht.Enable()
+			self.hgt.Enable()
+
 
 	def dokflt( self, event ):
 		event.Skip()
@@ -355,10 +526,107 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def dockabl(self, event):
-		event.Skip()
+		iwin = wx.Dialog(self, -1)
+		pnl = MyPanel4(iwin)
+		iwin.SetSize((400, 350))
+		iwin.ShowModal()
+		print(pnl.PGrid1.GetPropertyValues())
+		self.gnrdock(pnl.PGrid1.GetPropertyValues(), self.chs2.GetStringSelection())
+		self.s1, self.s2 = self.credoksrt(pnl.PGrid1.GetPropertyValues())
+		iwin.Destroy()
 
 	def prglst( self, event ):
+		if wx.FindWindowByName(u'List of Program') == None:
+			import DCC1.ProgDev2 as DP
+			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
+			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			ifrm.SetSize((555, 460))
+			ifrm.SetTitle(u'List of Program')
+			ifrm.Show()
+			print(ifrm.TransferDataFromWindow())
+		else:
+			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
+
+
 		event.Skip()
+
+	def getdata(self):
+		D1 = self.fld1.GetValue()
+		D2 = self.fld2.GetValue()
+		D3 = self.fld3.GetValue()
+		D4 = self.fld4.GetValue()
+		#self.datastng = self.getseting()
+		#self.fld6.SetValue('')
+		#w, h = Data[3].split(';')
+		w = self.wht.GetValue()
+		h = self.hgt.GetValue()
+		D5 = w+';'+h
+		#self.othrsiz = self.getothrsiz()
+		D6 = self.chs1.GetStringSelection()
+		#dokng, self.dokng = Data[15].split(';')
+		D7 = self.chs2.GetStringSelection()
+		D8 = self.chs3.GetStringSelection()
+		D9 = self.lyrspn.GetValue()
+		#self.opsint = Data[16]
+		return D1,D2,D3,D4,D5,D6,D7,D8,D9
+
+	def getGnral(self):
+		mydic = {}
+		D = self.getdata()
+		mydic['name'] = D[2]
+		mydic['caption'] = D[3]
+		mydic['fload_size'] = D[4]
+		mydic['resize'] = D[5]
+		mydic['dock'] = D[6]
+		mydic['docking'] = D[7]
+		mydic['layer'] = D[8]
+		self.myInfo = AuiInfoGen1(mydic,self.myInfo)
+		#return self.myInfo
+
+	def gnrsetting(self, Data):
+		self.myInfo = AuiInfoSet1(Data,self.myInfo)
+		#return self.myInfo
+
+	def gnrsize(self, Data):
+		self.myInfo = AuiInfoSiz1(Data,self.myInfo)
+		#return self.myInfo
+
+	def gnrdock(self, Data, Dok):
+		self.myInfo = AuiInfoDok1(Data, Dok,self.myInfo)
+		#return self.myInfo
+
+	def crtsetsrt(self, D):
+		s = ''
+		#print(D.values())
+		for d in D.values():
+			if d :
+				s += 'T'
+			else:
+				s += 'F'
+		#print(s)
+		return s
+
+	def crtsizsrt(self, D):
+		self.bst_siz = str(D['best_size'].x)+';'+str(D['best_size'].y)
+		self.min_siz = str(D['min_size'].x)+';'+str(D['min_size'].y)
+		self.max_siz = str(D['max_size'].x)+';'+str(D['max_size'].y)
+
+	def credoksrt(self, D):
+		s1 = s2 = ''
+		for d in D.values():
+			if type(d) == list:
+				s2 = str(d[0])+';'+str(d[1])
+			elif type(d) == int:
+				s2 += ';'+str(d)
+			else:
+				if d:
+					s1 += 'T'
+				else:
+					s1 += 'F'
+		s1 = self.chs2.GetStringSelection() + ';' + s1
+		#print(s1,s2)
+		return s1,s2
+
 
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 254 )
@@ -375,20 +643,31 @@ import wx.propgrid as pg
 
 class MyPanel2 ( wx.Panel ):
 
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,342 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent,Data='', id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,342 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
 
 		self.Item = []
-		items = [('caption_visible',True),('close_button',True),('maximize_button',False),('minimize_button',False),
-		         ('pine_button',True),('pane_border',True),('show',True),('gripper',False),('center_pane',False),
-		         ('default_pane',False),('toolbar_pane',False),('moveable',True) ]
+
+		if Data != '':
+			for D in Data:
+				if D == 'T':
+					self.Item.append(True)
+				if D == 'F':
+					self.Item.append(False)
+		else:
+			self.Item = [True,True,False,False,True,True,True,False,False,False,False,True]
+
+
+		items = [('caption_visible',self.Item[0]),('close_button',self.Item[1]),('maximize_button',self.Item[2]),('minimize_button',self.Item[3]),
+		         ('pine_button',self.Item[4]),('pane_border',self.Item[5]),('show',self.Item[6]),('gripper',self.Item[7]),('center_pane',self.Item[8]),
+		         ('default_pane',self.Item[9]),('toolbar_pane',self.Item[10]),('moveable',self.Item[11]) ]
 
 
 		self.PGrid1 = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_TOOLTIPS)
 
-		self.PGrid1.Append(pg.PropertyCategory(u"AUI", u"AUI"))
+		self.PGrid1.Append(pg.PropertyCategory(u"AUI Info", u"AUI Info"))
 
 		for itm in items:
 			#self.Item.append( self.PGrid1.Append( pg.BoolProperty( itm[0], itm[0], value=itm[1]) )  )
@@ -433,6 +712,53 @@ class MyPanel2 ( wx.Panel ):
 		q.Close()
 
 
+#################################################################################
+##  Size Property Class
+##
+#################################################################################
+class SizeProperty(pg.PGProperty):
+    """ Demonstrates a property with few children.
+    """
+    def __init__(self, label, name = pg.PG_LABEL, value=wx.Size(0, 0)):
+        pg.PGProperty.__init__(self, label, name)
+
+        value = self._ConvertValue(value)
+
+        self.AddPrivateChild( pg.IntProperty("Width", value=value.x) )
+        self.AddPrivateChild( pg.IntProperty("Height", value=value.y) )
+
+        self.m_value = value
+        #print(self.m_value)
+
+    def GetClassName(self):
+        return self.__class__.__name__
+
+    def DoGetEditorClass(self):
+        return pg.PropertyGridInterface.GetEditorByName("TextCtrl")
+
+    def RefreshChildren(self):
+        size = self.m_value
+        self.Item(0).SetValue( size.x )
+        self.Item(1).SetValue( size.y )
+
+    def _ConvertValue(self, value):
+        """ Utility convert arbitrary value to a real wx.Size.
+        """
+        import collections
+        if isinstance(value, collections.Sequence) or hasattr(value, '__getitem__'):
+            value = wx.Size(*value)
+        return value
+
+    def ChildChanged(self, thisValue, childIndex, childValue):
+        size = self._ConvertValue(self.m_value)
+        if childIndex == 0:
+            size.x = childValue
+        elif childIndex == 1:
+            size.y = childValue
+        else:
+            raise AssertionError
+
+        return size
 
 ###########################################################################
 ## Class MyPanel3
@@ -440,25 +766,31 @@ class MyPanel2 ( wx.Panel ):
 
 class MyPanel3 ( wx.Panel ):
 
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,342 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent, LData, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 400,242 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+		print(LData)
+		if LData == ['','','']:
+			bsz = wx.Size(-1,-1)
+			mnz = wx.Size(-1,-1)
+			mxz = wx.Size(-1,-1)
+		else:
+			a,b = LData[0].split(';')
+			bsz = wx.Size(int(a),int(b))
+			a, b = LData[1].split(';')
+			mnz = wx.Size(int(a),int(b))
+			a, b = LData[2].split(';')
+			mxz = wx.Size(int(a),int(b))
 
 		self.PGrid1 = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_TOOLTIPS)
-		self.Item1 = self.PGrid1.Append( pg.PropertyCategory( u"Name", u"Name" ) )
-		self.Item2 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
-		self.Item3 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem4 = self.PGrid1.Append( pg.BoolProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem5 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem6 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem7 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem8 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem9 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem10 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem11 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem12 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
-		self.m_propertyGridItem13 = self.PGrid1.Append( pg.StringProperty( u"Name", u"Name" ) )
+		self.Item1 = self.PGrid1.Append( pg.PropertyCategory( u"Other Size", u"Other Size" ) )
+
+
+		self.Item2 = self.PGrid1.Append( SizeProperty( u"best_size", u"best_size", value=bsz ) )
+		self.Item3 = self.PGrid1.Append( SizeProperty( u"min_size", u"min_size", value=mnz ) )
+		self.Item4 = self.PGrid1.Append( SizeProperty( u"max_size", u"max_size", value=mxz ) )
+
 		Vsz1.Add( self.PGrid1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
@@ -490,4 +822,122 @@ class MyPanel3 ( wx.Panel ):
 		q.Close()
 
 	def okit( self, event ):
-		event.Skip()
+		self.e = self.PGrid1.GetPropertyValues()
+		q = self.GetParent()
+		q.Close()
+
+#################################################################################
+##  Pos Property Class
+##
+#################################################################################
+class PosProperty(pg.PGProperty):
+    """ Demonstrates a property with few children.
+    """
+    def __init__(self, label, name = pg.PG_LABEL, value=wx.Position(0, 0)):
+        pg.PGProperty.__init__(self, label, name)
+
+
+        value = self._ConvertValue(value)
+
+        self.AddPrivateChild( pg.IntProperty("X", value=value.Col) )
+        self.AddPrivateChild( pg.IntProperty("Y", value=value.Row) )
+
+        self.m_value = value
+        #print(self.m_value)
+
+    def GetClassName(self):
+        return self.__class__.__name__
+
+    def DoGetEditorClass(self):
+        return pg.PropertyGridInterface.GetEditorByName("TextCtrl")
+
+    def RefreshChildren(self):
+        pos = self.m_value
+        self.Item(0).SetValue( pos[0] )
+        self.Item(1).SetValue( pos[1] )
+
+    def _ConvertValue(self, value):
+        """ Utility convert arbitrary value to a real wx.Size.
+        """
+        import collections
+        if isinstance(value, collections.Sequence) or hasattr(value, '__getitem__'):
+            value = wx.Position(*value)
+        return value
+
+    def ChildChanged(self, thisValue, childIndex, childValue):
+        pos = self._ConvertValue(self.m_value)
+        if childIndex == 0:
+            pos.Row = childValue
+        elif childIndex == 1:
+            pos.Col = childValue
+        else:
+            raise AssertionError
+
+        return pos
+
+
+###########################################################################
+## Class MyPanel4
+###########################################################################
+
+class MyPanel4 ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,320 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+
+		self.data = [False,True,True,True,True,True]
+
+		self.Items = [(u'dock_fixed',self.data[0]),(u'floatable',self.data[1]),(u'bottom Dockable',self.data[2]),
+		              (u'Top Dockable',self.data[3]),(u'Left Dockable',self.data[4]),(u'Right Dockable',self.data[5])]
+
+		self.PGrid1 = pg.PropertyGrid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.propgrid.PG_DEFAULT_STYLE|wx.propgrid.PG_SPLITTER_AUTO_CENTER|wx.propgrid.PG_TOOLTIPS)
+		self.Item1 = self.PGrid1.Append( pg.PropertyCategory( u"Docking", u"Docking" ) )
+
+		for itm in self.Items:
+			self.PGrid1.Append( pg.BoolProperty(itm[0], itm[0], value=itm[1] ) )
+			self.PGrid1.SetPropertyAttribute(itm[0], "UseCheckbox", True)
+
+
+		self.Item3 = self.PGrid1.Append( PosProperty( u"pane_position", u"pane_position", value=wx.DefaultPosition ) )
+		self.Item4 = self.PGrid1.Append( pg.IntProperty( u"aui_position", u"aui_position" ) )
+		self.Item5 = self.PGrid1.Append( pg.IntProperty( u"aui_row", u"aui_row" ) )
+
+		Vsz1.Add( self.PGrid1, 1, wx.ALL|wx.EXPAND, 5 )
+
+		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
+
+
+		Vsz1.Add( Hsz1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		self.SetSizer( Vsz1 )
+		self.Layout()
+
+		# Connect Events
+		self.btn1.Bind( wx.EVT_BUTTON, self.cncl )
+		self.btn2.Bind( wx.EVT_BUTTON, self.okit )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, overide them in your derived class
+	def cncl( self, event ):
+		q = self.GetParent()
+		q.Close()
+
+	def okit( self, event ):
+		self.e = self.PGrid1.GetPropertyValues()
+		print(self.e)
+		q = self.GetParent()
+		q.Close()
+
+

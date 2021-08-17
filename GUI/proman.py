@@ -22,7 +22,7 @@ class Mymenu(object):
         return self.handler[0][1]
 
     def menudir(self, itemid):
-        self.directory = self.MySql.MnuDir(itemid)
+        self.directory = self.MySql.MnuDir2(itemid)
         if self.directory != [] :
             return self.directory[0][0]
         #else:
@@ -33,14 +33,14 @@ class Mymenu(object):
         return self.directory[0][0]
 
     def tooldir(self, itolid):
-        self.directory = self.MySql.TolDir(itolid)
+        self.directory = self.MySql.TolDir2(itolid)
         return self.directory[0][0]
 
     def Dohndlr(self):
         return self.MySql.DoHdnl()
 
-    def Revitm(self):
-        return self.MySql.RevItem()
+    #def Revitm(self):
+    #    return self.MySql.RevItem()
 
 
 def DoProgram(item,MT):

@@ -34,7 +34,7 @@ class BGPanel(wx.Panel):
 		# Connect Events
 
 		#self.Bind( wx.EVT_RIGHT_DOWN, self.m_bitmap4OnContextMenu )
-		self.Bind( wx.EVT_CONTEXT_MENU, self.setmenu)
+		#self.Bind( wx.EVT_CONTEXT_MENU, self.setmenu)
 		self.Bind(wxaui.EVT_AUI_RENDER, self.OnEraseBackground)
 
 	def __del__( self ):
@@ -47,7 +47,7 @@ class BGPanel(wx.Panel):
 
 		#print (self.itm3.IsChecked(),self.itm2.IsChecked())
 		#print self.itm3.IsChecked(),self.itm4.IsChecked()
-
+	'''
 	def setmenu(self,event):
 		self.MnuDic = { 1: [_(u'Menu Change'),9999] ,2:[_(u'Toolbar Change'),9998],3:[_(u'Panes Change'),9997],4:[u'',0],
 					    5:[_(u'Databases...'),9996],6:[_(u'Programs...'),9995],7:[_(u'Add Tools...'),9994],8:[u'',0],
@@ -78,7 +78,7 @@ class BGPanel(wx.Panel):
 		win1 = wx.Frame(self, -1)
 		win1.SetSize(s)
 		a.main(win1)
-
+    '''
 	def OnEraseBackground(self, evt):
 		# yanked from ColourDB.py
 		#print(evt)

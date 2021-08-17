@@ -24,6 +24,7 @@ from Config.Init import *
 class mainApp(wx.App):
 
     def OnInit(self):
+
         #self.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
         self.locale = None
         wx.Locale.AddCatalogLookupPathPrefix(LOCALE_PATH)
@@ -72,6 +73,8 @@ class mainApp(wx.App):
 
 
 
+
 if __name__ == '__main__':
     app = mainApp()
+    #app = mainApp(redirect=True)
     app.MainLoop()

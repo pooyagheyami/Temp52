@@ -29,8 +29,8 @@ def main(panel=None):
     parent = panel.GetParent()
 
     frame = telframe(parent)
-    frame.SetTitle(u'List of Program')
-    frame.SetSize((555, 450))
+    frame.SetTitle(u'Program Develop')
+    frame.SetSize((555, 460))
     frame.Show()
 
 

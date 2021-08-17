@@ -12,7 +12,7 @@ class MySplashScreen(wx.adv.SplashScreen):
     def __init__(self, window):
         self.window = window
         #bmp = wx.Image(opj(SPALSH_PATH+"splash3.jpg")).ConvertToBitmap()
-        bmp = wx.Bitmap(os.path.normpath(os.path.join(SPALSH_PATH + "Fount1.png")),wx.BITMAP_TYPE_PNG)
+        bmp = wx.Bitmap(os.path.normpath(os.path.join(SPALSH_PATH + "splash4.jpg")),wx.BITMAP_TYPE_ANY)
         wx.adv.SplashScreen.__init__(self, bmp,
                                  wx.adv.SPLASH_CENTRE_ON_SCREEN | wx.adv.SPLASH_TIMEOUT,
                                  7000, None, style=wx.BORDER_NONE|
@@ -45,17 +45,17 @@ class MySplashScreen(wx.adv.SplashScreen):
 
     def CrtCtrl(self):
         rect = self.GetClientRect()
-        new_size = (rect.width, 20)
-        self.text = wx.StaticText(self,-1,"Loading...",pos=(0, rect.height-20),size=(new_size),style=wx.ALIGN_CENTRE_HORIZONTAL)
+        new_size = (rect.width, 9)
+        self.text = wx.StaticText(self,-1,"Loading...",pos=(0, rect.height-9),size=(new_size),style=wx.ALIGN_CENTRE_HORIZONTAL)
         self.text.SetBackgroundColour(wx.WHITE)
         self.text.SetForegroundColour(wx.BLACK)
         #rect = self.GetClientRect()
-        self.gauge = wx.Gauge(self,-1,range=50,size=(-1, 20),pos=(0, rect.height))
+        self.gauge = wx.Gauge(self,-1,range=50,size=(-1, 9),pos=(0, rect.height))
         #rect = self.GetClientRect()
 
 
         self.gauge.SetSize(new_size)
-        self.SetSize((rect.width, rect.height + 20))
+        self.SetSize((rect.width, rect.height + 9))
         #self.gauge.SetPosition((0, rect.height))
 
 

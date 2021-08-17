@@ -3,7 +3,7 @@
 # !usr/bin/env python
 
 import wx
-import DCC.ToolPro1 as TPV
+import DCC1.ListPro2 as TPV
 from Config.Init import *
 
 

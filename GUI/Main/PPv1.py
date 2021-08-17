@@ -3,7 +3,7 @@
 # !usr/bin/env python
 
 import wx
-import DCC.Proper1 as PPV
+import DCC1.Proper2 as PPV
 from Config.Init import *
 
 

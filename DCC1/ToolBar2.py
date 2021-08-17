@@ -595,6 +595,16 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def prglst( self, event ):
+		if wx.FindWindowByName(u'List of Program') == None:
+			import DCC1.ProgDev2 as DP
+			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
+			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			ifrm.SetSize((555, 460))
+			ifrm.SetTitle(u'List of Program')
+			ifrm.Show()
+			print( ifrm.TransferDataFromWindow() )
+		else:
+			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
 		event.Skip()
 
 	def Splt1OnIdle( self, event ):

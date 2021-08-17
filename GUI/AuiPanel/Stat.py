@@ -11,8 +11,8 @@ import Database.wxsq as sq
 #from khayyam import * 
 
     
-class MyPanel(wx.Panel):
-    def __init__(self,parent,id,pos,siz,style,ndata=[]):
+class MyPanel1(wx.Panel):
+    def __init__(self,parent,id,pos,size,style,ndata=[]):
         wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 142,396 ), style = wx.TAB_TRAVERSAL )
 
         self.parent = parent

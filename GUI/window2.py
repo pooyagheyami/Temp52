@@ -30,7 +30,7 @@ import GUI.proman as pro
 
 class MainWin(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self,None,title=u'main',size=(800,600))
+        wx.Frame.__init__(self,None,title=u'main',size=(1920,1200))
 
         # Parameter ===================
         self.config = wx.GetApp().GetConfig()
@@ -61,7 +61,7 @@ class MainWin(wx.Frame):
         #menu = MM.MainMenu()
         self.menu = MM.AppMenu()
         #imenu = menu.createMenuBar()
-        print(self.menu,self.menu.GetMenus())
+        #print(self.menu,self.menu.GetMenus())
         #self.SetMenuBar(menu)
         if len(self.menu.GetMenus()) != 0:
             #self.SetMenuBar(menu)
@@ -76,7 +76,7 @@ class MainWin(wx.Frame):
             self.ToolPnl()
 
         # All Panel Aui=======================
-        self.APnls()
+        self.APnls2()
 
         #self.BGrnd(BakGrnd)
         self.Bind(wx.EVT_RIGHT_DOWN, self.domouse)
@@ -179,28 +179,18 @@ class MainWin(wx.Frame):
             self.Bind(wx.EVT_TOOL_RANGE, self.OnTool, id=self.tool[i].mytb[0].GetId(), id2=self.tool[i].mytb[-1].GetId())
             i += 1
 
-    def APnls(self):
+
+    def APnls2(self):
         self.Pnls = []
-        ML = PA.MyLstPnl()
-        FL = ML.GetAuiPro()
-        for P in ML.GetAuiPnl():
-            #print(P)
-            if P != '__init__.py':
-                ii = importlib.import_module('GUI.AuiPanel.'+P[:-3])
-                mp = ii.MyPanel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        ML = PA.MyLstPnl2()
+
+        for pnl in ML.lstpnl:
+            if pnl[1]+'.py' in ML.GetAuiPnl():
+                ii = importlib.import_module('GUI.AuiPanel.' + pnl[1])
+                mp = ii.MyPanel1(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
                 self.Pnls.append(mp)
-
-                if P in FL:
-                    PInfo = ML.GetAuiInfo(FL[P])
-
-                    if ' Size' in FL[P]:
-                        #print(FL[P][5])
-                        PInfo.FloatingSize(int(FL[P][5].strip().split(' ')[0]),int(FL[P][5].strip().split(' ')[1]))
-                    if ' Layer' in FL[P]:
-                        #print(FL[P][7])
-                        PInfo.Layer(int(FL[P][7].strip()))
-
-                    self.m_mgr.AddPane(mp,PInfo)
+                PInfo = ML.GetAuiInfo(pnl[1])
+                self.m_mgr.AddPane(mp, PInfo)
 
     def BGrnd(self,BGF):
         self.bmpwin = BG.BGPanel(self,BGF)

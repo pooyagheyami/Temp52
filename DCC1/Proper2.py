@@ -13,6 +13,7 @@ import wx.adv
 import wx.propgrid as pg
 import os
 import sys
+import Database.MenuSet2 as MS
 
 #################################################################################
 ##  Size Property Class
@@ -75,6 +76,10 @@ class MyPanel1 ( wx.Panel ):
 
         #self.panel = panel = wx.Panel(self, wx.ID_ANY)
         #print(panel.GetSize())
+        self.MyMenu = MS.GetData(u'Menu2.db', u'')
+
+        LAuiP = [ l[0] for l in self.MyMenu.ListPanes() ]
+        #print(LAuiP)
 
         Vsz1 = wx.BoxSizer( wx.VERTICAL )
 
@@ -100,12 +105,12 @@ class MyPanel1 ( wx.Panel ):
         self.Item1 = self.P1.Append( pg.PropertyCategory( u"General properties", u"General properties" ) )
         self.Item2 = self.P1.Append( pg.DateProperty( u"Date", value=wx.DateTime.Now() ) )
         self.P1.SetPropertyHelpString( self.Item2, u"Contorl Date of system and program" )
-        self.Item3 = self.P1.Append( pg.EnumProperty( u"Language", u"Language",[u'English',u'Turkish',u'Persian'],[1,2,3],1 ) )
+        self.Item3 = self.P1.Append( pg.EnumProperty( u"Language", u"Language",[u'English',u'Turkish',u'Persian'],[1,2,3],int(self.config.Read("Language")) ) )
         #self.Item4 = self.P1.Append( pg.ImageFileProperty( u"Background",value=os.getcwd()+u'\\Res\\Pics\\V19.jpg' ) )
         self.Item4 = self.P1.Append(pg.ImageFileProperty(u"Background", value=self.config.Read("Background")))
-        self.Item5 = self.P1.Append( pg.EnumProperty( u"Type of Toolbar", u"Toolbar",[u'Normal',u'Aui'],[1,2],1 ) )
-        self.Item6 = self.P1.Append( pg.EnumProperty( u"Type of Menu", u"Menu",[u'Normal',u'Flat'],[1,2],1 ) )
-        self.Item7 = self.P1.Append( pg.MultiChoiceProperty( u"Start Panes",u"Panes",choices=[u'Pane 1',u'Pane 2',u'Pane 3']  ) )
+        self.Item5 = self.P1.Append( pg.EnumProperty( u"Type of Toolbar", u"Toolbar",[u'Normal',u'Aui'],[1,2],int(self.config.Read("Toolbar")) ) )
+        self.Item6 = self.P1.Append( pg.EnumProperty( u"Type of Menu", u"Menu",[u'Normal',u'Flat'],[1,2],int(self.config.Read("Menu")) ) )
+        self.Item7 = self.P1.Append( pg.MultiChoiceProperty( u"Start Panes",u"Panes",choices=LAuiP ) )
 
         self.Item8 = self.P1.Append( pg.PropertyCategory( u"Form Properties", u"Form Properties" ) )
         self.Item9 = self.P1.Append( SizeProperty( u"Default size",u'FSize', value=wx.DefaultSize ) )

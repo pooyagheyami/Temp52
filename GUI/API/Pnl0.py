@@ -21,7 +21,7 @@ except ImportError: # if it's not there locally, try the wxPython lib.
 
 class MyPanel1 ( wx.Panel ):
 
-    def __init__( self, parent , txt='' , btn='Ok' ):
+    def __init__( self, parent , txt='' , btn='Ok',id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         """
 
         :type txt: object
@@ -32,7 +32,11 @@ class MyPanel1 ( wx.Panel ):
 
         bSizer2 = wx.BoxSizer( wx.VERTICAL )
 
-        url = re.search(r'(http?://\S+)', txt)
+        #print(type(txt))
+        if isinstance(txt,str):
+            url = re.search(r'(http?://\S+)', txt)
+        else:
+            url = None
 
         if url != None:
             url = url.group()

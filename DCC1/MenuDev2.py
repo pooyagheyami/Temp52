@@ -337,7 +337,8 @@ class MyPanel1 ( wx.Panel ):
 
 	def fillList(self):
 		broot = self.DVC1.GetRootItem()
-		roots = self.MyMenu.AllBar("where mbarid < 9999")
+		#roots = self.MyMenu.AllBar("where mbarid < 9999")
+		roots = self.MyMenu.AllBar()
 		subrot = self.MyMenu.AllSub(" Where mitem.itemtyp = 'S' ")
 
 		def getSubmenu(itmid, chditm, titl):
@@ -404,10 +405,13 @@ class MyPanel1 ( wx.Panel ):
 			self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY ))
 			self.fld4.SetValue('')
 			self.fld6.SetValue('')
-			self.lbl9.SetLabel('Directory: '+data[2])
+			mydir = self.MyMenu.GetDirCod(data[2])[0][0]
+			#print(mydir)
+			self.lbl9.SetLabel('Directory: '+mydir)
 			if data[7] != 1:
 				self.chk1.SetValue(1)
 		if code > 1000:
+			self.disableall(0)
 			self.itmdata = self.bardata = data = self.MyMenu.getmItem(code)[0]
 			#print(data)
 			if data[3] == 'S':
@@ -426,6 +430,7 @@ class MyPanel1 ( wx.Panel ):
 				self.fld3.SetValue(data[2])
 			if data[2] == None:
 				self.fld3.SetValue('-----')
+				self.disableall(1)
 			if data[8] != '' and data[8] != None:
 				self.iconfile.SetPath(ICON16_PATH+data[8])
 				self.icon1.SetBitmap(wx.Bitmap(ICON16_PATH+data[8],wx.BITMAP_TYPE_ANY))
@@ -445,6 +450,11 @@ class MyPanel1 ( wx.Panel ):
 				pass
 			if data[16] != 1 and data[16] != None:
 				self.chk1.SetValue(1)
+
+			if data[17] != None:
+				mydir = self.MyMenu.GetDirCod(data[19])[0][0]
+				self.prgfld.SetValue(data[18])
+				self.lbl9.SetLabel('Directory: '+mydir)
 
 
 	def addit( self, event ):
@@ -473,6 +483,8 @@ class MyPanel1 ( wx.Panel ):
 		self.rdio4.SetValue(0)
 		self.chk1.SetValue(0)
 		self.chk2.SetValue(0)
+		self.prgfld.SetValue('')
+		self.lbl9.SetLabel('Directory: ')
 		event.Skip()
 
 	def edtit( self, event ):
@@ -494,7 +506,7 @@ class MyPanel1 ( wx.Panel ):
 		                      [U[5], U[3].replace(ICON16_PATH, ''), U[4], U[5]])
 
 		self.DoMenu.Table = u'access'
-		self.DoMenu.Upditem(u'acclvl = ? , disenable = ?  where acclvlid = "%s" ' % self.bardata[11], [D[8], D[7]])
+		self.DoMenu.Upditem(u'acclvl = ? , disenable = ?  where acclvlid = "%s" ' % self.bardata[11], [U[8], U[7]])
 
 		self.ChngMnu(U)
 
@@ -631,6 +643,31 @@ class MyPanel1 ( wx.Panel ):
 			wx.MessageBox(u'Please Use Edit icon or first Add item')
 
 		event.Skip()
+
+	def disableall(self,Do):
+		if Do:
+			self.titr.Disable()
+			self.fld1.Disable()
+			self.fld2.Disable()
+			self.fld3.Disable()
+			self.iconfile.Disable()
+			self.icon1.Disable()
+			self.fld4.Disable()
+			self.fld6.Disable()
+			self.prgfld.Disable()
+			self.lbl9.Disable()
+		else:
+			self.titr.Enable()
+			self.fld1.Enable()
+			self.fld2.Enable()
+			self.fld3.Enable()
+			self.iconfile.Enable()
+			self.icon1.Enable()
+			self.fld4.Enable()
+			self.fld6.Enable()
+			self.prgfld.Enable()
+			self.lbl9.Enable()
+
 
 	def chkshrtcut(self,Data):
 	    if Data[4] != '':
@@ -775,6 +812,19 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def prglst( self, event ):
+		#print(wx.FindWindowByName(u'List of Program'))
+		print(self.GetParent())
+		if wx.FindWindowByName(u'List of Program') == None:
+			import DCC1.ProgDev2 as DP
+			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
+			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			ifrm.SetSize((555, 460))
+			ifrm.SetTitle(u'List of Program')
+			ifrm.Show()
+			#print( 'transfer:',ifrm.TransferDataFromWindow() )
+			#print(ifrm.IsUnlinked())
+		else:
+			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
 		event.Skip()
 
 	def getHandel(self, imodel, pathfile):
@@ -1024,6 +1074,15 @@ class MyPanel3 ( wx.Panel ):
         self.newdir = mydir.replace(GUI_PATH,u"GUI.")
         #print(self.newdir)
 
+    def finddir(self, data):
+	    #print(data)
+	    aldir = self.GetMenu.AllGuiDir()
+	    for dr in aldir:
+		    if data in dr:
+			    #print(dr)
+			    return dr[1]
+	    return ''
+
     def disbar(self, event):
         if event.GetEventObject().GetValue():
             self.box1val = 0
@@ -1058,21 +1117,43 @@ class MyPanel3 ( wx.Panel ):
 		    data3 = self.fld3.GetValue()
 		    mydir = self.dirct.GetPath()
 		    self.newdir = mydir.replace(GUI_PATH, u"GUI.")
+		    self.hdddir = mydir.replace(GUI_PATH, u'..\\GUI\\')
+		    if self.finddir(self.hdddir) != '':
+			    dircod = self.finddir(self.hdddir)
+			    #dircod = self.GetMenu.GetDirCod(self.newdir)
+			    #print(dircod)
+			    pass
+		    else:
+			    dircod = str(data2)+'1'
+			    self.SetMenu.Table = u'Guidir'
+			    self.SetMenu.Additem(u' Dir, prgdir, hdddir', (self.newdir,dircod,self.hdddir))
+			    pass
+		    #print(dircod)
 		    self.SetMenu.Table = u'menubar'
-		    self.SetMenu.Additem(u'mbarid , mbarname , mbardir ,  acclvlid ', (data2,data1,self.newdir,data3))
+		    self.SetMenu.Additem(u'mbarid , mbarname , mbardir ,  acclvlid ', (data2,data1,dircod,data3))
 		    data4 = self.box1val
 		    data5 = self.box2val
 		    self.SetMenu.Table = u'access'
 		    self.SetMenu.Additem(u'acclvlid , userid , acclvl , disenable ',(data3, 1, data5, data4))
 
 		    mb.Append(wx.Menu(),data1)
-		    pass
+
 	    elif event.GetEventObject().GetLabel() == _('Change'):
 		    data1 = self.fld1.GetValue()
 		    mydir = self.dirct.GetPath()
 		    self.newdir = mydir.replace(GUI_PATH,u"GUI.")
+		    self.hdddir = mydir.replace(GUI_PATH, u'..\\')
+		    if self.finddir(self.hdddir) != '':
+			    dircod = self.GetMenu.GetDirCod(self.hdddir)
+			    print(dircod)
+			    pass
+		    else:
+			    dircod = str(data2) + '1'
+			    self.SetMenu.Table = u'Guidir'
+			    self.SetMenu.Additem(u' Dir, prgdir, hdddir', (self.newdir, dircod, self.hdddir))
+
 		    self.SetMenu.Table = u'menubar'
-		    self.SetMenu.Upditem(u'mbarname = ? , mbardir = ?  where mbarid = %s ' % self.Data[1],(data1,self.newdir))
+		    self.SetMenu.Upditem(u'mbarname = ? , mbardir = ?  where mbarid = %s ' % self.Data[1],(data1,dircod))
 		    data4 = self.box1val
 		    data5 = self.box2val
 		    #print(data5,data4)
@@ -1080,7 +1161,7 @@ class MyPanel3 ( wx.Panel ):
 		    self.SetMenu.Upditem(u'acclvl = ? , disenable = ? where acclvlid = "%s" ' % self.Data[2],(data5, int(data4)))
 		    mb.SetMenuLabel(mb.FindMenu(self.oldbar),data1)
 
-		    pass
+
 	    elif event.GetEventObject().GetLabel() == _('Delete'):
 		    self.SetMenu.Table = u'menubar'
 		    self.SetMenu.Delitem(u" menubar.mbarid = %s" % self.Data[1] )
@@ -1094,13 +1175,13 @@ class MyPanel3 ( wx.Panel ):
 				    self.SetMenu.Delitem(u" extended.extid = '%s' " % itm[2])
 				    self.SetMenu.Table = u'access'
 				    self.SetMenu.Delitem(u" access.acclvlid = '%s' "% itm[3])
-				    pass
-			    pass
+
+
 		    mb.Remove(mb.FindMenu(self.Data[0]))
-		    pass
+
 	    else:
 		    event.Skip()
-		    pass
+
 	    self.Action = True
 	    q = self.GetParent()
 	    q.Close()

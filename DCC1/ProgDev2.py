@@ -27,10 +27,11 @@ import importlib
 
 class MyPanel1 ( wx.Panel ):
 
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 544,450 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent,For_This_Frame=[], id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 544,450 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+		self.FTF = For_This_Frame
 
 		self.getMData = MS.GetData(u'Menu2.db', u'')
 		self.setMDate = MS.SetData(u'', u'', u'')
@@ -47,13 +48,13 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.DVC1 = wx.dataview.DataViewCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 
-		#self.filllist()
-
-		self.Col1 = self.DVC1.AppendTextColumn( u"Name Program", 0, wx.dataview.DATAVIEW_CELL_INERT, 178, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendTextColumn( u"ID", 1, wx.dataview.DATAVIEW_CELL_INERT, 45, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col1 = self.DVC1.AppendColumn( u"Program name",  200, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( u"ID",  25, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
+
+		self.filllist()
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -236,21 +237,25 @@ class MyPanel1 ( wx.Panel ):
 		self.Splt1.SplitVertically( self.P1, self.P2, 254 )
 		Vsz1.Add( self.Splt1, 1, wx.EXPAND, 5 )
 
+		self.fromhere()
+
 
 		self.SetSizer( Vsz1 )
 		self.Layout()
 
 		# Connect Events
 		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctmnu, id = wx.ID_ANY )
+		self.DVC1.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.slctitm, id=wx.ID_ANY)
 		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_CONTEXT_MENU, self.conxmnu, id = wx.ID_ANY )
 		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_EDITING_DONE, self.endedit, id = wx.ID_ANY )
 		self.btn1.Bind( wx.EVT_BUTTON, self.addit )
 		self.btn2.Bind( wx.EVT_BUTTON, self.edtit )
 		self.btn3.Bind( wx.EVT_BUTTON, self.delit )
-		self.btn4.Bind( wx.EVT_BUTTON, self.updat )
-		self.btn5.Bind( wx.EVT_BUTTON, self.gnrat )
-		self.btn6.Bind( wx.EVT_BUTTON, self.prviw )
-		self.codgnr.Bind( wx.EVT_BUTTON, self.prviw )
+		self.btn4.Bind( wx.EVT_BUTTON, self.prviw )
+		self.btn5.Bind( wx.EVT_BUTTON, self.updat )
+		self.btn6.Bind( wx.EVT_BUTTON, self.aplly )
+		self.btn7.Bind( wx.EVT_BUTTON, self.gnrat )
+		self.codgnr.Bind( wx.EVT_BUTTON, self.gencod )
 		self.PrgDir1.Bind( wx.EVT_DIRPICKER_CHANGED, self.slctdir )
 		self.chk1.Bind( wx.EVT_CHECKBOX, self.public )
 		self.probtn.Bind( wx.EVT_BUTTON, self.dblst )
@@ -260,19 +265,85 @@ class MyPanel1 ( wx.Panel ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def fromhere(self):
+		if len(self.FTF) > 0:
+			frmname = self.FTF[0].GetTitle()
+			#print(frmname)
+			self.lbl1.SetLabel("List of Programs:"+"    %s" %frmname)
 	def filllist(self):
 		#self.DVC1.AppendTextColumn()
-		self.my_data = self.getMData.AllHndl("join menubar on menubar.mbarid = handler.prgdir where handler.handlerid < 90000 ")
-		print(self.my_data)
-		data = [[m[1], m[0]] for m in self.my_data ]
-		modal = wx.dataview.DataViewModel(self)
-		modal.ItemsAdded(self.DVC1,data)
-		print(model)
-		self.DVC1.AssociateModel(model)
+		self.my_data = self.getMData.AllHndl("""left join Guidir on Guidir.prgdir = handler.prgdir 
+		                                     left join PrgDesc on PrgDesc.handlerid = handler.handlerid 
+		                                     where handler.handlerid < 99000 """)
+		#print(self.my_data)
+		Aroot = self.DVC1.GetRootItem()
+		self.root1 = self.DVC1.AppendItem(Aroot, "One page program without panel")
+		self.root2 = self.DVC1.AppendItem(Aroot, "One page program for aui panes")
+		self.root3 = self.DVC1.AppendItem(Aroot, "Program with one import panel ")
+		self.root4 = self.DVC1.AppendItem(Aroot, "Multi program with some import ")
+		self.root5 = self.DVC1.AppendItem(Aroot, "All python file in your HDD ")
+
+		for pro in self.my_data:
+			#print(pro)
+			if pro[2] == '5555':
+				child1 = self.DVC1.AppendItem(self.root2, pro[1])
+				self.DVC1.SetItemText(child1, 0,pro[1])
+				self.DVC1.SetItemText(child1, 1,str(pro[0]))
+
+			elif pro[2] < '5555' and pro[2] > '100':
+				child = self.DVC1.AppendItem(self.root3, pro[1])
+				self.DVC1.SetItemText(child, 0, pro[1])
+				self.DVC1.SetItemText(child, 1, str(pro[0]))
+			elif pro[2] < '100':
+				child = self.DVC1.AppendItem(self.root1, pro[1])
+				self.DVC1.SetItemText(child, 0, pro[1])
+				self.DVC1.SetItemText(child, 1, str(pro[0]))
+
+			elif pro[2] >= '7000':
+				child = self.DVC1.AppendItem(self.root1, pro[1])
+				self.DVC1.SetItemText(child, 0, pro[1])
+				self.DVC1.SetItemText(child, 1, str(pro[0]))
+			else:
+				print("some code is error")
+
+
 
 
 	def slctmnu( self, event ):
+		#print(self.DVC1.GetSelection())
+		#print(self.DVC1.GetRootItem())
 		event.Skip()
+
+	def slctitm( self, event ):
+		#print('selct', self.DVC1.GetSelection())
+		itm = self.DVC1.GetSelection()
+		#print('selct',self.DVC1.GetItemText(itm))
+		txt = self.DVC1.GetItemText(itm,0)
+		cod = self.DVC1.GetItemText(itm,1)
+		for item in self.my_data:
+			if item[1] == txt and item[0] == int(cod) :
+				#print(item)
+				self.fillfield(item,item[2])
+
+
+	def fillfield(self, data, cods):
+		if data[10] == '' or data[10] == None:
+			self.Desc.SetValue('')
+		else:
+			self.Desc.SetValue(data[10])
+
+		self.fld1.SetValue(str(data[0]))
+		self.fld2.SetValue(str(data[5]))
+		#AI.Analiz.GetImport
+		self.fld3.SetValue('')
+		#Get Path From handler directory data[6]+data[1]
+		self.thsfile = MAP+data[8][2:]+SLASH+data[1]+'.py'
+		self.thspath = MAP+data[8][2:]
+		#print(self.thsfile,self.thspath)
+		self.PrgDir1.SetPath(self.thspath)
+		self.fld4.SetValue(str(data[3]))
+		self.fld6.SetValue(str(data[4]))
+
 
 	def conxmnu( self, event ):
 		event.Skip()
@@ -281,23 +352,63 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def addit( self, event ):
+
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		self.Pnl = PyPanel(self.Frm, GUI_PATH + 'Temp\\untitle.py')
+		self.Frm.SetSize((700, 560))
+		self.Frm.Show()
 		event.Skip()
 
 	def edtit( self, event ):
+
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		self.Pnl = PyPanel(self.Frm, self.thsfile)
+		self.Frm.SetSize((700, 560))
+		self.Frm.Show()
 		event.Skip()
 
 	def delit( self, event ):
 		event.Skip()
 
+	def prviw( self, event ):
+		if self.fld2.GetValue()[0] != '5':
+			af = Anlzfil(self.thsfile)
+			af.parsefil()
+			#print(af.imprts)
+			for im in af.imprts:
+				if 'GUI' in im:
+					#print(im)
+					a2 = im.split(' ')[1]
+
+		elif self.fld2.GetValue()[0] == '5':
+			a2 = 'GUI.AuiPanel.'+self.DVC1.GetItemText(self.DVC1.GetSelection(),0)
+
+		try:
+			m = importlib.import_module(a2)
+			self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
+			self.pnl = m.MyPanel1(self.Frm, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
+			self.Frm.Show()
+		except ImportError as error:
+			wx.MessageBox(error)
+			print(error)
+		event.Skip()
+
 	def updat( self, event ):
+		event.Skip()
+
+	def aplly( self, event ):
+		mw = wx.FindWindowByName('main')
+		print(mw)
+		print(wx.GetActiveWindow())
+		print(wx.GetTopLevelWindows())
 		event.Skip()
 
 	def gnrat( self, event ):
 		event.Skip()
 
-	def prviw( self, event ):
-		event.Skip()
 
+	def gencod( self, event ):
+	    event.Skip()
 
 	def slctdir( self, event ):
 		event.Skip()
@@ -308,136 +419,18 @@ class MyPanel1 ( wx.Panel ):
 	def dblst( self, event ):
 		event.Skip()
 
+	def getData(self):
+		D1 = self.fld1.GetValue()
+		D2 = self.fld2.GetValue()
+		D3 = self.fld3.GetValue()
+		D4 = self.PrgDir1.GetPath()
+		D5 = self.fld4.GetValue()
+		D6 = self.fld6.GetValue()
+		D7 = self.chk1.GetValue()
+		return D1,D2,D3,D4,D5,D6,D7
+
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 254 )
 		self.Splt1.Unbind( wx.EVT_IDLE )
-
-
-class Info(object):
-	def __init__(self, dirct, para, pub, prgno):
-		self.dirct = dirct
-		self.para = para
-		self.pub = pub
-		self.prgno = prgno
-
-	def __repr__(self):
-		return "Program Directory: %s" % self.dirct
-
-
-class Prog(object):
-	def __init__(self, id, name):
-		self.id = id
-		self.name = name
-		self.info = []
-
-	def __repr__(self):
-		return "Application :" + self.name
-
-class ProgrmLsit(wx.dataview.DataViewModel):
-	def __init__(self, Data):
-		wx.dataview.DataViewModel.__init__(self)
-		self.Data = Data
-
-	def ItemsAdded(self, parent, items):
-		pass
-
-class MyProgramList(wx.dataview.PyDataViewModel):
-	def __init__(self, Data):
-		wx.dataview.PyDataViewModel.__init__(self)
-		self.Data = Data
-		self.UseWeakRefs(True)
-
-	def GetColumnCount(self):
-		return 2
-
-	def GetColumnType(self, col):
-		mapper = {
-			0 : 'string',
-			1 : 'string',
-
-		}
-		return mapper[col]
-
-	def GetChildren(self, item, children):
-		if not item:
-			for app in self.Data:
-				children.append(self.ObjectToItem(app))
-			return len(self.Data)
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog):
-			for song in node.songs:
-				children.append(self.ObjectToItem(song))
-			return len(node.songs)
-		return 0
-
-	def IsContainer(self, item):
-		if not item:
-			return True
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog):
-			return True
-		return False
-
-	def GetParent(self, item):
-		if not item:
-			return wx.dataview.NullDataViewItem
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog):
-			return wx.dataview.NullDataViewItem
-		elif isinstance(node, Info):
-			for p in self.Data:
-				if p.name == node.Info:
-					return self.ObjectToItem(p)
-
-	def HasValue(self, item, col):
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog) and col > 0:
-			return False
-		return True
-
-	def GetValue(self, item, col):
-		node = self.ItemToObject(item)
-
-		if isinstance(node, Prog):
-			assert col == 0, "Unexpected column value for Genre objects"
-			return node.name
-
-		elif isinstance(node, Info):
-			mapper = {0: node.id,
-			          1: node.direct,
-			          2: node.para,
-			          3: node.pub,
-			          4: node.prgno,
-			          }
-			return mapper[col]
-
-		else:
-			raise RuntimeError("unknown node type")
-
-	def GetAttr(self, item, col, attr):
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog):
-			attr.SetColour('blue')
-			attr.SetBold(True)
-			return True
-		return False
-
-	def SetValue(self, variant, item, col):
-		node = self.ItemToObject(item)
-		if isinstance(node, Prog):
-			if col == 1:
-				node.dirct = value
-			elif col == 2:
-				node.para = value
-			elif col == 3:
-				node.pub = value
-			elif col == 4:
-				node.prgno = value
-		return True
-
-
-
-
-
 
 

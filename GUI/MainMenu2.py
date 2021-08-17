@@ -203,7 +203,7 @@ class AppMenu(wx.MenuBar):
 
     def AddItem2(self, Mbar, Data, Bar=''):
         lbl = self.ChkShrtCut(Data)
-        print(self.FindMenu(Mbar))
+        #print(self.FindMenu(Mbar))
         if self.FindMenu(Mbar) != -1:
             imnu = self.GetMenu(self.FindMenu(Mbar))
         else:
@@ -228,7 +228,7 @@ class AppMenu(wx.MenuBar):
 
     def AddSubMenu2(self,Mbar,Data,Bar=''):
         lbl = self.ChkShrtCut(Data)
-        print(self.FindMenu(Mbar))
+        #print(self.FindMenu(Mbar))
         if self.FindMenu(Mbar) != -1:
             imnu = self.GetMenu(self.FindMenu(Mbar))
         else:
@@ -276,11 +276,11 @@ class AppMenu(wx.MenuBar):
         if Bar != 'S':
             return mb.GetMenu(mb.FindMenu(Mbar))
         else:
-            print(self.Lstsub)
+            #print(self.Lstsub)
             for m in self.Lstsub:
-                print(m.GetTitle())
+                #print(m.GetTitle())
                 if m.GetTitle() == '' or m.GetTitle() == Mbar:
-                    print(m)
+                    #print(m)
                     return m
 
 
@@ -303,7 +303,7 @@ class AppMenu(wx.MenuBar):
         for bar in self.Lstmnu:
             lst = bar.GetMenuItems()
             for l in lst:
-                print(l.IsSubMenu(), l.GetItemLabel())
+                #print(l.IsSubMenu(), l.GetItemLabel())
                 if l.IsSubMenu() and l.GetItemLabel() == Sub:
                     return l.GetSubMenu()
 
