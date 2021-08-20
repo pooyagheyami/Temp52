@@ -544,8 +544,18 @@ class MyFrame1 ( wx.Frame ):
             self.Layout()
             self.shohid = 0
             
-            
+def size():
+	return(-1,-1)
 
+def main(panel=None):
+	parent = panel.GetParent()
+	frame = MyFrame1(parent)
+	frame.SetTitle(u'Clock')
+	frame.SetSize(size())
+	frame.Show()
+
+if __name__=='__main__':
+	main()
 
 '''        
         

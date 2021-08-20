@@ -570,11 +570,11 @@ class MyPanel1 ( wx.Panel ):
 		mw = self.FindWindowByName('main')
 		mb = mw.GetMenuBar().GetMenus()
 		lmb = mb
-		print(lmb)
+		#print(lmb)
 		for itm in lmb:
-			print(itm[0].GetMenuItems())
+			#print(itm[0].GetMenuItems())
 			for i in itm[0].GetMenuItems():
-				print(i.GetId())
+				#print(i.GetId())
 				print(i.GetItemLabel())
 
 	def aplit( self, event ):

@@ -117,9 +117,9 @@ class MainWin(wx.Frame):
         # print(event,event.GetId())
         pmid = event.GetId()
         a = pro.DoProgram(self.MnuDic[pmid][1], 'A')
-        s = a.size() if 'size' in dir(a) else ()
+        #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
-        win1.SetSize(s)
+        #win1.SetSize(s)
         a.main(win1)
 
     def OnMenu(self, event):

@@ -75,6 +75,6 @@ class mainApp(wx.App):
 
 
 if __name__ == '__main__':
-    app = mainApp()
-    #app = mainApp(redirect=True)
+    #app = mainApp()
+    app = mainApp(redirect=True)
     app.MainLoop()

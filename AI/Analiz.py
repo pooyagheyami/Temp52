@@ -3,6 +3,7 @@
 #!usr/bin/env python
 
 from wx.py import frame,filling,pseudo
+import re
 
 class Anlzfil(object):
     def __init__(self, pyFile):
@@ -37,6 +38,32 @@ class Anlzfil(object):
             if 'GUI' in im:
                 return im[im.find('GUI'):].split(' ')[0]
 
+    def ishasframe(self):
+        with open(self.pyFile, 'r') as f:
+            whris = re.search(r'class\s.+\s+(wx\.Frame).+', f.read())
+            if whris:
+                #print(whris.group().split(' ')[1])
+                return whris.group().split(' ')[1]
+
+    def ishaspanel(self):
+        with open(self.pyFile, 'r' ) as f:
+            whris = re.search(r"class\s+.+\s+(wx\.Panel)", f.read())
+            if whris:
+                #print(whris.group().split(' ')[1])
+                return whris.group().split(' ')[1]
+
+    def ishasimport(self, txt=''):
+        with open(self.pyFile, 'r') as f:
+            whris = re.findall(r'import\s+%s.+\s+'%txt, f.read())
+            if whris :
+                #print(whris)
+                return whris
+    def ishasfromim(self, txt=''):
+        with open(self.pyFile, 'r') as f:
+            whris2 = re.findall(r'from\s+%s.+\s+import\s+.+'%txt, f.read())
+            if whris2:
+                #print(whris2)
+                return whris2
 
 
 def GetPamelImport(filewopy):

@@ -84,7 +84,7 @@ data_files = [('GUI\AuiPanel', ['E:\\Mywork\\tamil\\Temp4\\GUI\\AuiPanel\\__init
                            'E:\\Mywork\\tamil\\Temp4\\Utility\\Tclacal3.pyc',
                            'E:\\Mywork\\tamil\\Temp4\\Utility\\Tmkey1.pyc'])]
 
-includes = ['wx', 'wx.lib', 'wx.dataview']
+includes = ['wx', 'wx.lib', 'wx.dataview','wx.stc','wx.propgrid','wx.lib.agw.hyperlink']
 excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
             'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl',
             'Tkconstants', 'Tkinter']

@@ -15,12 +15,14 @@ from AI.OpnFil import *
 from AI.Analiz import *
 from AI.Generats import *
 
+
 from Config.Init import *
 
 import Database.MenuSet2 as MS
 import Database.PostGet as PG
 import GUI.proman as pro
 import importlib
+import importlib.util
 ###########################################################################
 ## Class MyPanel3
 ###########################################################################
@@ -276,38 +278,62 @@ class MyPanel1 ( wx.Panel ):
 		                                     left join PrgDesc on PrgDesc.handlerid = handler.handlerid 
 		                                     where handler.handlerid < 99000 """)
 		#print(self.my_data)
+		allprgnm = [n[1] for n in self.my_data ]
 		Aroot = self.DVC1.GetRootItem()
-		self.root1 = self.DVC1.AppendItem(Aroot, "One page program without panel")
+		self.root1 = self.DVC1.AppendItem(Aroot, "One page program All-in-One")
 		self.root2 = self.DVC1.AppendItem(Aroot, "One page program for aui panes")
 		self.root3 = self.DVC1.AppendItem(Aroot, "Program with one import panel ")
 		self.root4 = self.DVC1.AppendItem(Aroot, "Multi program with some import ")
 		self.root5 = self.DVC1.AppendItem(Aroot, "All python file in your HDD ")
 
+		subimp = []
 		for pro in self.my_data:
 			#print(pro)
+			thsfil = MAP + pro[8][2:] + SLASH + pro[1] + '.py'
+			af = Anlzfil(thsfil)
 			if pro[2] == '5555':
-				child1 = self.DVC1.AppendItem(self.root2, pro[1])
-				self.DVC1.SetItemText(child1, 0,pro[1])
-				self.DVC1.SetItemText(child1, 1,str(pro[0]))
+				child = self.DVC1.AppendItem(self.root2, pro[1])
 
 			elif pro[2] < '5555' and pro[2] > '100':
 				child = self.DVC1.AppendItem(self.root3, pro[1])
-				self.DVC1.SetItemText(child, 0, pro[1])
-				self.DVC1.SetItemText(child, 1, str(pro[0]))
+
 			elif pro[2] < '100':
 				child = self.DVC1.AppendItem(self.root1, pro[1])
-				self.DVC1.SetItemText(child, 0, pro[1])
-				self.DVC1.SetItemText(child, 1, str(pro[0]))
 
-			elif pro[2] >= '7000':
+			elif pro[2] >= '6000':
 				child = self.DVC1.AppendItem(self.root1, pro[1])
-				self.DVC1.SetItemText(child, 0, pro[1])
-				self.DVC1.SetItemText(child, 1, str(pro[0]))
+
 			else:
 				print("some code is error")
+			#print(af.ishasimport('GUI.API'), af.ishasfromim('GUI.API'))
+			self.DVC1.SetItemText(child, 0, pro[1])
+			self.DVC1.SetItemText(child, 1, str(pro[0]))
+			if af.ishasimport('GUI.API'):
+				atimp = af.ishasimport('GUI.API')[0].split(' ')[1].replace('GUI.API.','')
+				subimp.append(atimp)
+				child2 = self.DVC1.AppendItem(child, atimp)
+				self.DVC1.SetItemText(child2, 0, atimp)
+				self.DVC1.SetItemText(child2, 1, '7777')
 
-
-
+		lstdir = self.getMData.AllGuiDir("  where rtrim(Guidir.prgdir,4) > '0000' and ltrim(Guidir.prgdir,4) < '8888' ")
+		lstdir = [d[2] for d in lstdir ]
+		#print(lstdir)
+		notlsthndlr = []
+		self.lsthddfil = []
+		#print(allprgnm,subimp)
+		for dr in lstdir:
+			idr = dr.replace('..',MAP)
+			#print(idr)
+			for ifil in os.listdir(idr):
+				if '.py' in ifil:
+					if ifil.rstrip('.py') not in allprgnm and ifil != '__init__.py' and ifil != 'PAui.py' and ifil.rstrip('.py') not in subimp:
+						notlsthndlr.append(ifil)
+						self.lsthddfil.append(idr+'\\'+ifil)
+		#print(notlsthndlr,self.lsthddfil)
+		for nm in notlsthndlr:
+			child2 = self.DVC1.AppendItem(self.root5,nm)
+			self.DVC1.SetItemText(child2, 0, nm)
+			self.DVC1.SetItemText(child2, 1, '????')
 
 	def slctmnu( self, event ):
 		#print(self.DVC1.GetSelection())
@@ -315,16 +341,46 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def slctitm( self, event ):
+		self.nullfield()
 		#print('selct', self.DVC1.GetSelection())
 		itm = self.DVC1.GetSelection()
 		#print('selct',self.DVC1.GetItemText(itm))
 		txt = self.DVC1.GetItemText(itm,0)
 		cod = self.DVC1.GetItemText(itm,1)
-		for item in self.my_data:
-			if item[1] == txt and item[0] == int(cod) :
-				#print(item)
-				self.fillfield(item,item[2])
+		#print(txt,cod)
+		if cod != '':
+			if cod == '????':
+				for l in self.lsthddfil:
+					if txt in l.split('\\'):
+						self.PrgDir1.SetPath(l)
+						self.thsfile = l
+						self.thspath = l.replace(txt,'')
+			elif cod[0] == '5' or cod[0] == '1' or cod[0] == '6':
+				for item in self.my_data:
+					if item[1] == txt and item[0] == int(cod) :
+						#print(item)
+					    self.fillfield(item,item[2])
+			elif cod[0] == '7':
+				self.thsfile = GUI_PATH+"API"+SLASH+txt+'.py'
+				data = (cod,txt,'','-1','-1','-','GUI.API','','',None,None)
+				self.fillfield(data,'')
+				self.PrgDir1.SetPath(GUI_PATH+"API"+SLASH)
+		else:
+			if 'All-in-One' in txt:
+				self.Desc.SetValue(u"Here a list of program that only in one file and when you do it all command execute")
+			if 'aui' in txt:
+				self.Desc.SetValue(u"Here a list of files that contains a panel class that you like to select for AuiPane Develop")
+			if 'one import' in txt:
+				self.Desc.SetValue(u"Here a List of files that contains a import module in GUI\API directory and it open that file ")
+			if 'some import' in txt:
+				self.Desc.SetValue(u"Here a List of files with some imports that contain several file and command part")
+			if 'HDD' in txt:
+				self.Desc.SetValue(u"Here a List of files in your GUI path and Utility that NOT listed in handlers data ")
 
+	def nullfield(self):
+		data = ('','','','','','','','','',None,None)
+		cods = ''
+		self.fillfield(data,cods)
 
 	def fillfield(self, data, cods):
 		if data[10] == '' or data[10] == None:
@@ -337,10 +393,11 @@ class MyPanel1 ( wx.Panel ):
 		#AI.Analiz.GetImport
 		self.fld3.SetValue('')
 		#Get Path From handler directory data[6]+data[1]
-		self.thsfile = MAP+data[8][2:]+SLASH+data[1]+'.py'
-		self.thspath = MAP+data[8][2:]
-		#print(self.thsfile,self.thspath)
-		self.PrgDir1.SetPath(self.thspath)
+		if data[8]!= '':
+			self.thsfile = MAP+data[8][2:]+SLASH+data[1]+'.py'
+			self.thspath = MAP+data[8][2:]
+		    #print(self.thsfile,self.thspath)
+			self.PrgDir1.SetPath(self.thspath)
 		self.fld4.SetValue(str(data[3]))
 		self.fld6.SetValue(str(data[4]))
 
@@ -371,39 +428,80 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def prviw( self, event ):
-		if self.fld2.GetValue()[0] != '5':
+		cdfld = self.fld2.GetValue()
+		if len(cdfld) > 0:
+			if cdfld[0] == '1':
+				af = Anlzfil(self.thsfile)
+				af.parsefil()
+				#print(af.imprts)
+				for im in af.imprts:
+					if 'GUI' in im:
+						#print(im)
+					    a2 = im.split(' ')[1]
+			elif cdfld[0] == '5':
+				a2 = 'GUI.AuiPanel.'+self.DVC1.GetItemText(self.DVC1.GetSelection(),0)
+			try:
+				m = importlib.import_module(a2)
+				self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
+				self.pnl = m.MyPanel1(self.Frm, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
+				self.Frm.Show()
+			except ImportError as error:
+				wx.MessageBox(error)
+				print(error)
+
+		elif cdfld == '':
 			af = Anlzfil(self.thsfile)
-			af.parsefil()
-			#print(af.imprts)
-			for im in af.imprts:
-				if 'GUI' in im:
-					#print(im)
-					a2 = im.split(' ')[1]
+			ifil = self.thsfile.replace(MAP + '\\', '')
+			ifil = ifil.replace('\\', '.')
+			ifil = ifil.replace('.py', '')
+			m = importlib.import_module(ifil)
+			if af.ishasframe():
+				try:
 
-		elif self.fld2.GetValue()[0] == '5':
-			a2 = 'GUI.AuiPanel.'+self.DVC1.GetItemText(self.DVC1.GetSelection(),0)
+					fr = af.ishasframe()
+					myclass = getattr(m,fr)
+					iframe = myclass(self)
+					iframe.Show()
+				except AttributeError as e:
+					print('not work',e)
+			elif af.ishaspanel():
+				try:
+					pl = af.ishaspanel()
+					myclass = getattr(m, pl)
+					b = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+					ipnl = myclass(b)
+					b.Show()
+				except AttributeError as e:
+					print('nit work', e)
 
-		try:
-			m = importlib.import_module(a2)
-			self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
-			self.pnl = m.MyPanel1(self.Frm, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
-			self.Frm.Show()
-		except ImportError as error:
-			wx.MessageBox(error)
-			print(error)
 		event.Skip()
 
 	def updat( self, event ):
 		event.Skip()
 
 	def aplly( self, event ):
+		itm = self.DVC1.GetSelection()
+		txt = self.DVC1.GetItemText(itm, 0)
+		cod = self.DVC1.GetItemText(itm, 1)
+		if cod == '????':
+			wx.MessageBox(u'Please first Generate program then select the correct one to use it')
 		mw = wx.FindWindowByName('main')
-		print(mw)
-		print(wx.GetActiveWindow())
-		print(wx.GetTopLevelWindows())
+		#print(mw)
+		print(self.FTF)
+		#print(wx.GetTopLevelWindows())
 		event.Skip()
 
 	def gnrat( self, event ):
+		print(self.thsfile,self.thspath)
+		itm = self.DVC1.GetSelection()
+		txt = self.DVC1.GetItemText(itm, 0)
+		cod = self.DVC1.GetItemText(itm, 1)
+		af = Anlzfil(self.thsfile)
+		if cod == '????':
+			if af.ishasframe():
+				print(af.ishasframe())
+				print(self.getData())
+
 		event.Skip()
 
 
