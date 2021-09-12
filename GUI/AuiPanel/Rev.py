@@ -6,7 +6,7 @@
 import wx
 import Database.wxsq as DB
 #import Database.wxsq as SQ
-from GUI.proman import Mymenu,DoProgram
+from GUI.proman import Mymenu,DoProgram2
 
 class MyPanel1(wx.Panel):
     def __init__(self,parent,id,pos,size,style):

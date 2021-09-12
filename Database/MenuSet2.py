@@ -97,16 +97,30 @@ class GetData:
               ON mitem.handlerid = handler.handlerid
               WHERE mitem.itemid = %s  """ %itemsub)
 
+    def SubDir2(self, itemsub=''):
+        return sq.wxsqltxt(self.DBF,"""SELECT Guidir.Dir
+              FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
+              JOIN Guidir ON Guidir.prgdir = handler.prgdir
+              WHERE mitem.itemid = %s  """ %itemsub)
+
     def AllGuiDir(self, ext=''):
         return sq.wxsqltxt(self.DBF, """ SELECT * FROM Guidir %s""" %ext)
 
     def GetDirCod(self, idir=''):
         return sq.wxsqsnd(self.DBF,"Guidir", "hdddir", "prgdir", idir)
 
+    def GetDirCod2(self, idir=''):
+        return sq.wxsqsnd(self.DBF,"Guidir", "prgdir", "hdddir", idir)
+
     def DoHdnl(self):
         return sq.wxsqltxt(self.DBF,"""select handler.prgname
           from handler join mitem on mitem.handlerid = handler.handlerid
           WHERE  mitem.handlerid  notnull """)
+    def RunHdnl(self, hndid = ''):
+        return sq.wxsqltxt(self.DBF, """ select Guidir.Dir, handler.prgname
+        from Guidir, handler
+        where Guidir.prgdir = handler.prgdir
+        and handler.handlerid = %s """ % hndid )
 
     def AllHndl(self, ext=''):
         return sq.wxsqltxt(self.DBF,""" select distinct * from handler %s """ % ext)
@@ -144,6 +158,10 @@ class GetData:
     def getHndlr(self, prgnam = u''):
         return sq.wxsqltxt(self.DBF, """ select handler.handlerid, handler.prgdir 
                                     from handler     where handler.prgname = '%s'  """ %prgnam)
+
+    def getHndid(self, mid=''):
+        return sq.wxsqltxt(self.DBF, """ select handler.handlerid from handler where handler.prgdir = '%s' 
+         order by handlerid """ % mid )
 
     def gethddir(self, dirct= u''):
         return sq.wxsqsnd(self.DBF,u'menubar',u'mbarid',u'mbardir',dirct)

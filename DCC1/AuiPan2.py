@@ -367,6 +367,11 @@ class MyPanel1 ( wx.Panel ):
 		self.lyrspn.SetValue(Data[4])
 		self.opsint = Data[16]
 
+		mydir,myprgnm = self.MyMenu.RunHdnl(Data[6])[0]
+		#print(mydir,myprgnm)
+		self.prgfld.SetValue(myprgnm+'.py')
+		self.lbl9.SetLabel(u"Directory: "+mydir)
+
 	def fillnull(self):
 		data = (0,'','','-1;-1',0,'',0,'','','','TTFFTTTFFFFT','','','','','Dock;FTTTTT','-1;-1;0;0')
 		self.fillinfo(data)
@@ -382,15 +387,24 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def edtit( self, event ):
+		Up1 = self.getdata()
+		stng = self.fld6.GetValue()
+		if Up1[0] != '':
+			if self.prgfld.GetValue() != '':
+				hndlid = self.findhndlr(self.prgfld.GetValue().replace('.py','')) #find handlerid
+
+			#print(Up1)
+			D1 = [int(Up1[0]), Up1[2], Up1[7], Up1[4], int(Up1[8]), codinfo, hndlid, Up1[1]]
+
 		event.Skip()
 
 	def delit( self, event ):
-		print(self.getdata())
+		#print(self.getdata())
 		D = self.getdata()
 		for i in self.items:
 			if i[0] == int(D[0]):
 				Delitem = i
-				print(Delitem)
+				#print(Delitem)
 				self.DoMenu.Table = u'pans'
 				self.DoMenu.Delitem(u' pans.panid = %d '% Delitem[0] )
 				self.DoMenu.Table = u'panifo'
@@ -407,6 +421,9 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def updat( self, event ):
+		self.DVC1.DeleteAllItems()
+		self.filllist()
+		self.Refresh()
 		event.Skip()
 
 	def publc( self, event ):
@@ -415,7 +432,7 @@ class MyPanel1 ( wx.Panel ):
 	def prviw( self, event ):
 		#mw = self.FindWindowByName('main')
 		#mw.m_mgr.
-		print(self.fld3.GetValue())
+		#print(self.fld3.GetValue())
 		a2 = 'GUI.AuiPanel.'+self.fld3.GetValue()
 
 		try:
@@ -431,12 +448,12 @@ class MyPanel1 ( wx.Panel ):
 	def aplit( self, event ):
 		#self.myInfo = wx.aui.AuiPaneInfo()
 		Data1 = self.getdata()
-		print(Data1)
-		print(self.fld6.GetValue())
+		#print(Data1)
+		#print(self.fld6.GetValue())
 		stng = self.fld6.GetValue()
-		print(self.s1, self.s2)
+		#print(self.s1, self.s2)
 		#print(self.fild)
-		print(self.bst_siz,self.min_siz,self.max_siz)
+		#print(self.bst_siz,self.min_siz,self.max_siz)
 		if self.newpen:
 			strng = 'abcdefghijklmnopqrstuvwxyz'
 			codinfo = Data1[0]+strng[int(Data1[0][0])-1]+strng[int(Data1[0][1])]
@@ -445,7 +462,9 @@ class MyPanel1 ( wx.Panel ):
 				import shutil
 				shutil.copyfile(GUI_PATH+'AuiPanel\\tempane.py',GUI_PATH+'AuiPanel\\'+Data1[2]+'.py')
 			else:
-				hndlid = 50000
+				hndlid, hndldir = self.MyMenu.getHndlr(self.prgfld.GetValue().replace('.py',''))[0]
+				if hndlid == '' or hndlid == None:
+					hndlid == 50000
 
 			D1 = [int(Data1[0]),Data1[2],Data1[7],Data1[4],int(Data1[8]),codinfo,hndlid,Data1[1]]
 			self.DoMenu.Table = u'pans'
@@ -546,9 +565,14 @@ class MyPanel1 ( wx.Panel ):
 			print(ifrm.TransferDataFromWindow())
 		else:
 			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
+			pass
 
-
-		event.Skip()
+	def findhndlr(self, hndlrnm):
+		if hndlrnm == '':
+			return 50000
+		else:
+			codid, self.prgdir = self.MyMenu.getHndlr(hndlrnm)[0]
+			return codid
 
 	def getdata(self):
 		D1 = self.fld1.GetValue()

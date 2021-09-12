@@ -72,3 +72,61 @@ class Genrate(object):
         iffil = u"if __name__ == '__main__':\n"
         iffil += u"\tmain()\n"
         return iffil
+
+
+class Genrate2(object):
+    def __init__(self,pronam):
+        self.pronam = pronam
+        self.addlin = ''
+
+    def appendFile(self):
+        with open(self.pronam,'a+', encoding='utf-8') as Prg:
+            Prg.writelines(self.addlin)
+
+    def gnratLine(self, Frame=True, Size=True, Main=True, Ifit=True, Framname= 'telframe' , Title= 'Form'):
+        if Frame:
+            self.addlin += self.grplin1creat()
+
+        if Size:
+            self.addlin += self.grplin2creat()
+
+        if Main:
+            self.addlin += self.grplin3creat(Framname,Title)
+
+        if Ifit:
+            self.addlin += self.grplin4creat()
+
+    def grplin1creat(self):
+        frmtxt = u"class telframe(wx.Frame):\n"
+        frmtxt += u"\tdef __init__(self,parent):\n"
+        frmtxt += u"\t\twx.Frame.__init__(self,parent,style=wx.FRAME_FLOAT_ON_PARENT|wx.DEFAULT_FRAME_STYLE)\n"
+        frmtxt += u"\t\tself.parent= parent\n\n"
+
+        frmtxt += u"\t\tself.Pnl = pnl.MyPanel1(self)\n\n"
+
+        frmtxt += u"\tdef closeit(self):\n"
+        frmtxt += u"\t\tself.Close(True)\n\n"
+
+        return frmtxt
+
+    def grplin2creat(self):
+        sizdef = u"def size():\n"
+        sizdef += u"\treturn (-1,-1)\n\n"
+        return sizdef
+
+    def grplin3creat(self, Fram_name, Titel):
+        mindef = u"def main(panel=None ):\n"
+        mindef += u"\tparent =  panel.GetParent()\n\n"
+        mindef += u"\tframe = %s(parent )\n"%Fram_name
+        mindef += u"\tframe.SetTitle(u'%s')\n"%Titel
+        mindef += u"\tframe.SetSize(size())\n"
+        mindef += u"\tframe.Show()\n\n"
+        return mindef
+
+    def grplin4creat(self):
+        iffil = u"if __name__ == '__main__':\n"
+        iffil += u"\tmain()\n"
+        return iffil
+
+
+

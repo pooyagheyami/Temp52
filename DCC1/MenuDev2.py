@@ -327,7 +327,7 @@ class MyPanel1 ( wx.Panel ):
 			pass
 		elif int(self.itmcod) > 1000:
 			data = self.MyMenu.getmItem(int(self.itmcod))
-			print(data)
+			#print(data)
 			# print(self.itmnam)
 			#self.edtit(None)
 		else:
@@ -495,8 +495,9 @@ class MyPanel1 ( wx.Panel ):
 		U = self.getfild()
 		#print(U)
 		#print(self.prgfld.GetValue())
-		Hndl = self.prgfld.GetValue()
-		Hndlid = 10001
+		hnd = self.prgfld.GetValue().replace('.py', '')
+		Hndlid = self.findhandler(hnd)
+
 
 		self.DoMenu.Table = u'mitem'
 		self.DoMenu.Upditem(u'itemname = ?, itemtyp = ? , handlerid = ?  where itemid = %d' % self.bardata[1],[U[2], U[6], Hndlid])
@@ -622,7 +623,7 @@ class MyPanel1 ( wx.Panel ):
 			BrM = int(self.itmcod)
 			Dsri1 = [BrM, int(D[0]), D[2], D[6], extid, hndid]
 			Dsri2 = [extid, D[5], D[3], D[4], D[5], D[1], 1]
-			print(D[7],D[8])
+			#print(D[7],D[8])
 
 			self.Add2Menu(D)
 
@@ -679,10 +680,10 @@ class MyPanel1 ( wx.Panel ):
 		mw = self.FindWindowByName('main')
 		#mb = mw.GetMenuBar()
 		#lmb = mb.GetMenus()
-		print(self.bardata,D)
+		#print(self.bardata,D)
 		#mnuitm = [i[0] for i in lmb if self.bardata[1] in i]
 		#print(mnuitm,lmb,mb)
-		print(mw.menu)
+		#print(mw.menu)
 		mb = mw.menu
 		if D[6] == 'N':
 			if type(self.bardata[1]) == str:
@@ -813,7 +814,7 @@ class MyPanel1 ( wx.Panel ):
 
 	def prglst( self, event ):
 		#print(wx.FindWindowByName(u'List of Program'))
-		print(self.GetParent())
+		#print(self.GetParent())
 		if wx.FindWindowByName(u'List of Program') == None:
 			import DCC1.ProgDev2 as DP
 			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
@@ -835,6 +836,13 @@ class MyPanel1 ( wx.Panel ):
 			if imodel in p:
 				return p[0]
 		return 10001
+
+	def findhandler(self, hndlrnm):
+		if hndlrnm == '':
+			return 10001
+		else:
+			codid , self.prgdir = self.MyMenu.getHndlr(hndlrnm)[0]
+			return codid
 
 	def getfild(self):
 		Data1 = self.fld1.GetValue()

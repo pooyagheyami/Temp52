@@ -39,12 +39,15 @@ class Mymenu(object):
     def Dohndlr(self):
         return self.MySql.DoHdnl()
 
+    def Runhdlr(self, handlerid):
+        return self.MySql.RunHdnl(handlerid)[0]
+
     #def Revitm(self):
     #    return self.MySql.RevItem()
 
-
+'''
 def DoProgram(item,MT):
-    #print( item ) # Get item from menu
+    print( item ) # Get item from menu
     M = Mymenu()
 
     if MT == 'M':
@@ -87,3 +90,40 @@ def DoProgram(item,MT):
     #i.main()
 
     return i
+'''
+
+def DoProgram2(itm,hndlr):
+    M = Mymenu()
+    #print(itm,hndlr)
+    if itm > 1000 and itm < 9000:
+        P = M.program(itm)
+        d = M.menudir(itm)
+        #print(P,d)
+        if not d:
+            d = M.submndir(itm)
+
+    elif itm < 1000 and itm > 100:
+        P = M.toogram(itm)
+        d = M.tooldir(itm)
+        #print(P, d)
+    elif itm > 9000:
+        P = M.program(itm)
+        d = 'GUI.Main'
+        #print(P, d)
+    else:
+        P = ''
+        d = ''
+        if hndlr != '':
+            d,P = M.Runhdlr(hndlr)
+
+
+    a = d+'.'+P
+    #print(a)
+    try:
+        i = importlib.import_module(a)
+    except ImportError as error:
+        print(error)
+        i = -1
+    #print(dir(i))
+    return i
+

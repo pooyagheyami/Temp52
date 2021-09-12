@@ -349,8 +349,7 @@ class MyPanel4 ( wx.Panel ):
                 
             self.yercal[i].Bind( wx.EVT_BUTTON, self.Onmonth )
             i = i + 1
-                        
-                        
+
                
         bSizer15.Add( gSizer1, 5, wx.EXPAND, 1 )
         
@@ -403,9 +402,6 @@ class MyPanel4 ( wx.Panel ):
             #print type(yers[0])        
             self.m_staticText18.SetLabel(str(yers[0])+u'-'+str(yers[-1]))
             
-
-        
-
 
     def Onmonth( self, event ):
         n=event.GetId()
@@ -543,29 +539,16 @@ class MyFrame1 ( wx.Frame ):
             
             self.Layout()
             self.shohid = 0
-            
 def size():
-	return(-1,-1)
+	return (-1,-1)
 
-def main(panel=None):
-	parent = panel.GetParent()
-	frame = MyFrame1(parent)
-	frame.SetTitle(u'Clock')
+def main(panel=None ):
+	parent =  panel.GetParent()
+
+	frame = MyFrame1(parent )
+	frame.SetTitle(u'Form')
 	frame.SetSize(size())
 	frame.Show()
 
-if __name__=='__main__':
-	main()
-
-'''        
-        
 if __name__ == '__main__':
-    
-    app = wx.App()
-
-    frame = MyFrame1(None)
-    frame.SetSize((250,250))
-    frame.Show()
-    app.MainLoop()
-
-'''
+	main()

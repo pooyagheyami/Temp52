@@ -116,7 +116,8 @@ class MainWin(wx.Frame):
     def OnPopupOne(self, event):
         # print(event,event.GetId())
         pmid = event.GetId()
-        a = pro.DoProgram(self.MnuDic[pmid][1], 'A')
+        #a = pro.DoProgram(self.MnuDic[pmid][1], 'A')
+        a = pro.DoProgram2(self.MnuDic[pmid][1], '')
         #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
         #win1.SetSize(s)
@@ -125,7 +126,8 @@ class MainWin(wx.Frame):
     def OnMenu(self, event):
         self.mid = event.GetId()
         # print( self.mid )
-        a = pro.DoProgram(self.mid, 'M')
+        #a = pro.DoProgram(self.mid, 'M')
+        a = pro.DoProgram2(self.mid, '')
         # print dir(a)
         #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
@@ -135,7 +137,8 @@ class MainWin(wx.Frame):
     def OnTool(self, event):
         self.tid = event.GetId()
         # print( self.tid )
-        a = pro.DoProgram(self.tid, 'T')
+        #a = pro.DoProgram(self.tid, 'T')
+        a = pro.DoProgram2(self.tid, '')
         # print dir(a)
         #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)

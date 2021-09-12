@@ -355,6 +355,8 @@ class MyPanel1 ( wx.Panel ):
 						self.PrgDir1.SetPath(l)
 						self.thsfile = l
 						self.thspath = l.replace(txt,'')
+						self.thsdcod = self.getMData.AllGuiDir(" where Guidir.hdddir = '%s' "%self.thspath.replace(MAP,'..').rstrip(SLASH) )[0][1]
+
 			elif cod[0] == '5' or cod[0] == '1' or cod[0] == '6':
 				for item in self.my_data:
 					if item[1] == txt and item[0] == int(cod) :
@@ -430,24 +432,24 @@ class MyPanel1 ( wx.Panel ):
 	def prviw( self, event ):
 		cdfld = self.fld2.GetValue()
 		if len(cdfld) > 0:
+			if cdfld[0] == '6':
+				a2 = pro.DoProgram2(0,int(self.fld1.GetValue()))
+				#print(a2)
+				win1 = wx.Frame(self, -1)
+				a2.main(win1)
 			if cdfld[0] == '1':
-				af = Anlzfil(self.thsfile)
-				af.parsefil()
-				#print(af.imprts)
-				for im in af.imprts:
-					if 'GUI' in im:
-						#print(im)
-					    a2 = im.split(' ')[1]
-			elif cdfld[0] == '5':
-				a2 = 'GUI.AuiPanel.'+self.DVC1.GetItemText(self.DVC1.GetSelection(),0)
-			try:
-				m = importlib.import_module(a2)
-				self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
-				self.pnl = m.MyPanel1(self.Frm, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
+				a2 = pro.DoProgram2(0,int(self.fld1.GetValue()))
+				#print(a2)
+				win1 = wx.Frame(self, -1)
+				a2.main(win1)
+
+			if cdfld[0] == '5':
+				a2 = pro.DoProgram2(0, int(self.fld1.GetValue()))
+				#print(a2)
+				self.Frm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT|wx.DEFAULT_FRAME_STYLE)
+				self.pnl = a2.MyPanel1(self.Frm, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
+				                      style=wx.TAB_TRAVERSAL)
 				self.Frm.Show()
-			except ImportError as error:
-				wx.MessageBox(error)
-				print(error)
 
 		elif cdfld == '':
 			af = Anlzfil(self.thsfile)
@@ -477,6 +479,9 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def updat( self, event ):
+		self.DVC1.DeleteAllItems()
+		self.filllist()
+		self.Refresh()
 		event.Skip()
 
 	def aplly( self, event ):
@@ -485,22 +490,79 @@ class MyPanel1 ( wx.Panel ):
 		cod = self.DVC1.GetItemText(itm, 1)
 		if cod == '????':
 			wx.MessageBox(u'Please first Generate program then select the correct one to use it')
-		mw = wx.FindWindowByName('main')
-		#print(mw)
-		print(self.FTF)
+		#print(self.FTF)
+		else:
+			pnl = self.FTF[0].panel
+			pnl.prgfld.SetValue(txt)
+			pnl.lbl9.SetLabel(u"Directory: "+self.thspath)
+			#print(pnl)
+			q = self.GetParent()
+			q.Close()
 		#print(wx.GetTopLevelWindows())
 		event.Skip()
 
 	def gnrat( self, event ):
-		print(self.thsfile,self.thspath)
+		#print(self.thsfile,self.thspath)
 		itm = self.DVC1.GetSelection()
 		txt = self.DVC1.GetItemText(itm, 0)
 		cod = self.DVC1.GetItemText(itm, 1)
 		af = Anlzfil(self.thsfile)
+
+		print(txt,cod,self.thsdcod,self.thsfile,self.thspath)
+
 		if cod == '????':
 			if af.ishasframe():
-				print(af.ishasframe())
-				print(self.getData())
+				mygnrt = Genrate2(self.thsfile)
+				mygnrt.gnratLine(False,True,True,True,af.ishasframe())
+				mygnrt.appendFile()
+				lstcod = self.getMData.getHndid(self.thsdcod)
+				newcod = int(self.thsdcod[0])*10000+len(lstcod)+1
+				newnom = int(self.thsdcod[0])*100+len(lstcod)+1
+				data = [newcod,txt.replace('.py', ''),self.thsdcod,'-1',-1,newnom]
+				self.setMDate.Table = 'handler'
+				self.setMDate.Additem(" handlerid, prgname, prgdir, paramtr, public, prgno", data)
+				self.DVC1.DeleteAllItems()
+				self.filllist()
+				self.Refresh()
+			elif af.ishaspanel():
+				if af.ishaspanel() == 'MyPanel1':
+					dlg = MyDialog1(self)
+					dlg.ShowModal()
+					if dlg.filname:
+						newname = dlg.filname
+						dircode = self.getMData.GetDirCod2(dlg.pathfil)[0][0]
+						lstcod = self.getMData.getHndid(dircode)
+						patfil = dlg.pathfil
+						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1 * 10 + int(dircode[-1])
+						newnom = int(dircode[0]) * 100 + len(lstcod) + 1 * 10 + int(dircode[-1])
+
+					elif dlg.box1:
+						newname = txt
+						dircode = '5555'
+						lstcod = self.getMData.getHndid(dircode)
+						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1
+						newnom = int(dircode[0]) * 10 + len(lstcod) + 1
+
+					else:
+						newname = txt[0].upper()+txt[len(txt)/2].upper()
+						dircode = '8888'
+						lstcod = self.getMData.getHndid(dircode)
+						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1
+						newnom = int(dircode[0]) * 100 + len(lstcod) + 1
+					dlg.Destroy()
+					print(newname,dircode,patfil)
+					mygnrt = Genrate(patfil.replace('..', MAP)+SLASH+newname+'.py')
+					mygnrt.createFrm(self.thsfile)
+
+					data = [newcod, newname, dircode, '-1', -1, newnom]
+					self.setMDate.Table = 'handler'
+					self.setMDate.Additem(" handlerid, prgname, prgdir, paramtr, public, prgno", data)
+					self.DVC1.DeleteAllItems()
+					self.filllist()
+					self.Refresh()
+
+		else:
+			wx.MessageBox(u"You can only generate the unlisted program with this code '????'")
 
 		event.Skip()
 
@@ -530,5 +592,102 @@ class MyPanel1 ( wx.Panel ):
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 254 )
 		self.Splt1.Unbind( wx.EVT_IDLE )
+
+
+class MyDialog1 ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 365,165 ), style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		self.filname = ''
+		self.pathfil = ''
+		self.myMenu = MS.GetData(u'Menu2.db',u'')
+
+		V1 = wx.BoxSizer( wx.VERTICAL )
+
+		H1 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.box1 = wx.CheckBox(self, wx.ID_ANY, u"Create for Aui Pane", wx.DefaultPosition, wx.DefaultSize, 0)
+		H1.Add(self.box1, 0, wx.ALL, 5)
+
+		V1.Add( H1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		H2 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.lbl1 = wx.StaticText( self, wx.ID_ANY, u"name of file to create", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl1.Wrap( -1 )
+
+		H2.Add( self.lbl1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.fld1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		H2.Add( self.fld1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+
+		V1.Add( H2, 1, wx.EXPAND, 5 )
+
+		H3 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.lbl2 = wx.StaticText( self, wx.ID_ANY, u"choise path of file to create", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl2.Wrap( -1 )
+
+		H3.Add( self.lbl2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		chs1Choices = [ d[2] for d in self.myMenu.AllGuiDir(u" where Guidir.prgdir < '5000' ") ]
+		self.chs1 = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, chs1Choices, 0 )
+		self.chs1.SetSelection( 0 )
+		H3.Add( self.chs1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+
+		V1.Add( H3, 1, wx.EXPAND, 5 )
+
+		H4 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		H4.Add( self.btn1, 0, wx.ALL, 5 )
+
+		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		H4.Add( self.btn2, 0, wx.ALL, 5 )
+
+
+		V1.Add( H4, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		self.SetSizer( V1 )
+		self.Layout()
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.box1.Bind( wx.EVT_CHECKBOX, self.foraui )
+		self.btn1.Bind( wx.EVT_BUTTON, self.cncl )
+		self.btn2.Bind( wx.EVT_BUTTON, self.gtit )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, overide them in your derived class
+	def foraui( self, event ):
+		if self.box1.GetValue():
+			self.fld1.Disable()
+			self.chs1.Disable()
+		else:
+			self.fld1.Enable()
+			self.chs1.Enable()
+		event.Skip()
+
+	def cncl( self, event ):
+		self.Destroy()
+		event.Skip()
+
+	def gtit( self, event ):
+		self.filname = self.fld1.GetValue()
+		self.pathfil = self.chs1.GetStringSelection()
+		print(self.filname,self.pathfil)
+		print(self.myMenu.GetDirCod2(self.pathfil))
+		self.Destroy()
+		event.Skip()
 
 

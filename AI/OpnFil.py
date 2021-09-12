@@ -221,11 +221,12 @@ class PyPanel(wx.Panel):
 
                 # save the current contents in the file
                 pathname = fileDialog.GetPath()
-                print(pathname)
+                #print(pathname)
                 self.py_view.SaveFile(pathname)
         else:
             self.py_view.SaveFile(self.pyFile)
             wx.MessageBox(u'You save to file change successful.')
+
         event.Skip()
 
     def clos(self, event):
