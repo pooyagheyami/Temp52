@@ -94,7 +94,7 @@ class MainWin(wx.Frame):
     def setmenu(self, event):
         self.MnuDic = {1: [u'Menu Change', 9999], 2: [u'Toolbar Change', 9998], 3: [u'Panes Change', 9997], 4: [u'', 0],
                        5: [u'Databases...', 9996], 6: [u'Programs...', 9995], 7: [u'Add Tools...', 9994], 8: [u'', 0],
-                       9: [u'ML Design...', 9990], 10: [u'', 0], 11: [u'Settings...', 9992]}
+                       9: [u'ML Design...', 9993], 10: [u'', 0], 11: [u'Settings...', 9992]}
         self.m1 = wx.Menu()
 
         self.itms = []

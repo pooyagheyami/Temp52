@@ -11,6 +11,12 @@ import wx
 import wx.xrc
 import wx.dataview
 
+from Config.Init import *
+
+import Database.PostGet as PG
+
+from AI.Analiz import *
+
 ###########################################################################
 ## Class MyPanel6
 ###########################################################################
@@ -41,35 +47,55 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL, 5 )
 
-		self.DVC1 = wx.dataview.DataViewCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.Col1 = self.DVC1.AppendTextColumn( u"Name", 0, wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendTextColumn( u"Name", 0, wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col3 = self.DVC1.AppendTextColumn( u"Name", 0, wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_HAS_BUTTONS|wx.TR_DEFAULT_STYLE )
+		self.Col1 = self.DVC1.AppendColumn( u"Name", 160,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( u"Type", 70,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		#self.Col3 = self.DVC1.AppendColumn( u"Name", 0,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-
-		self.btn1.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_NEW, wx.ART_OTHER ) )
-		self.btn1.SetToolTip( u"Add" )
+		self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'table_row_insert.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetToolTip( u"Insert" )
 
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+		self.btn2.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_refresh.png', wx.BITMAP_TYPE_ANY))
+		self.btn2.SetToolTip(u"Update")
+
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+		self.btn3.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_row_delete.png', wx.BITMAP_TYPE_ANY))
+		self.btn3.SetToolTip(u"Delete")
+
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+		self.btn4.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_relationship.png', wx.BITMAP_TYPE_ANY))
+		self.btn4.SetToolTip(u"Join")
+
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+		self.btn5.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_import.png', wx.BITMAP_TYPE_ANY))
+		self.btn5.SetToolTip(u"Brows")
+
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+		self.btn6.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn6.SetToolTip(u"Apply")
+
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
+
+		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+
+		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_lightning.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetToolTip(u"Generate")
+		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
 		Vsz2.Add( Hsz1, 0, wx.EXPAND, 5 )
@@ -80,16 +106,6 @@ class MyPanel1 ( wx.Panel ):
 		Vsz2.Fit( self.P1 )
 		self.P2 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz3 = wx.BoxSizer( wx.VERTICAL )
-
-		self.lbl2 = wx.StaticText( self.P2, wx.ID_ANY, u"List of fields", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.lbl2.Wrap( -1 )
-
-		Vsz3.Add( self.lbl2, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.DVC1 = wx.dataview.DataViewCtrl( self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.Col1 = self.DVC1.AppendTextColumn( u"Name", 0, wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendTextColumn( u"Name", 0, wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		Vsz3.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -105,6 +121,10 @@ class MyPanel1 ( wx.Panel ):
 
 
 		Vsz3.Add( Hsz2, 0, wx.EXPAND, 5 )
+
+		self.fldinit = wx.TextCtrl(self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+		                           wx.HSCROLL|wx.TE_MULTILINE|wx.TE_WORDWRAP )
+		Vsz3.Add(self.fldinit, 1, wx.ALL | wx.EXPAND, 5)
 
 		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -165,15 +185,23 @@ class MyPanel1 ( wx.Panel ):
 		self.SetSizer( Vsz1 )
 		self.Layout()
 
+		#Parameter init
+		self.table = u''
+		self.field = u''
+		self.data = u''
+		self.sqfile = u''
+
 		# Connect Events
+		self.dbfile.Bind(wx.EVT_FILEPICKER_CHANGED, self.dbopn)
 		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctitm, id = wx.ID_ANY )
+		self.DVC1.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.slctitm, id=wx.ID_ANY)
 		self.btn1.Bind( wx.EVT_BUTTON, self.Addit )
 		self.btn2.Bind( wx.EVT_BUTTON, self.edtit )
 		self.btn3.Bind( wx.EVT_BUTTON, self.delit )
 		self.btn4.Bind( wx.EVT_BUTTON, self.comit )
 		self.btn5.Bind( wx.EVT_BUTTON, self.recomt )
 		self.btn6.Bind( wx.EVT_BUTTON, self.brows )
-		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctitm, id = wx.ID_ANY )
+
 		self.chs1.Bind( wx.EVT_CHOICE, self.chgmtd )
 		self.btnps.Bind( wx.EVT_BUTTON, self.prgstm )
 		self.btnss.Bind( wx.EVT_BUTTON, self.sqlstm )
@@ -186,11 +214,61 @@ class MyPanel1 ( wx.Panel ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def dbopn(self, event):
+		self.dbfil = self.dbfile.GetPath().split('\\')[-1]
+		#print(dbfil)
+		self.idbfl = PG.Get(self.dbfil, u'', u'DBFields')
+		self.dbdata = self.idbfl.GetFromDbf()
+		#print(self.dbdata)
+		self.DVC1.DeleteAllItems()
+		self.filllist()
+		self.chgmtd(None)
+
+
+	def filllist(self):
+		Droot = self.DVC1.GetRootItem()
+		self.troot = self.DVC1.AppendItem(Droot,"Table")
+		self.iroot = self.DVC1.AppendItem(Droot,"Indices")
+		Tfilds, Indxss = AnalizdbText2(self.dbdata)
+		#print(Tfilds)
+		for tb in Tfilds:
+			tbl = self.DVC1.AppendItem(self.troot, tb)
+			for fld in Tfilds[tb]:
+				ifld = self.DVC1.AppendItem(tbl, fld[0])
+				self.DVC1.SetItemText(ifld, 0, fld[0])
+				self.DVC1.SetItemText(ifld, 1, fld[1])
+
+
+
 	def slctitm( self, event ):
-		event.Skip()
+		self.gtslt = self.DVC1.GetSelections()
+		#print(self.gtslt)
+		#itmtxt = self.DVC1.GetItemText(gtslt[0],0)
+
+		#print(itmtxt)
+		#cunt = len(gtslt)
+		#print(cunt)
+
+		#itmchd = self.DVC1.GetChildren()
+		#print('GetChildern',itmchd)
+		#print(itmchd[0].GetSelectedItemsCount())
+		#frst = self.DVC1.GetFirstChild(gtslt[0])
+		#nxtt = self.DVC1.GetNextItem(frst)
+		#nxtt2 = self.DVC1.GetNextItem(nxtt)
+		#print('1st child',self.DVC1.GetItemText(frst,0),self.DVC1.GetItemText(frst,1))
+		#print('Nxt Child',self.DVC1.GetItemText(nxtt,0),self.DVC1.GetItemText(nxtt,1))
+		#print('Nxt Itm',self.DVC1.GetItemText(nxtt2, 0),self.DVC1.GetItemText(nxtt2, 1))
+		#wx.dataview.DataViewCtrl.GetSelectedItemsCount()
+
 
 	def Addit( self, event ):
-		event.Skip()
+		print(self.gtslt[0])
+		print(self.DVC1.GetItemText(self.gtslt[0],0))
+		ItP = self.DVC1.GetItemParent(self.gtslt[0])
+		ItC = self.DVC1.GetNextSibling(self.gtslt[0])
+		print(ItC)
+		print(self.DVC1.GetItemText(ItP,0))
+
 
 	def edtit( self, event ):
 		event.Skip()
@@ -209,7 +287,36 @@ class MyPanel1 ( wx.Panel ):
 
 
 	def chgmtd( self, event ):
-		event.Skip()
+		inittxt = "#Add this lines to import part of program \nimport Database.PostGet as PG\n"
+		inittxt2 = "#Please Add this line in body of Panel\n"
+		dbf = self.dbfil
+		if self.table != '':
+			table = self.table
+		else:
+			table = u''
+		if self.field != '':
+			field = self.field
+		else:
+			field = u''
+		if self.data != '':
+			data = self.dbdat
+		else:
+			data = u''
+		if self.sqfile != '':
+			file = self.sqfile
+		else:
+			file = u''
+		if self.chs1.GetStringSelection() == 'set':
+			self.fldinit.SetValue(inittxt+inittxt2+f"\tMySet = PG.Post('{dbf}','{table}','{field}','{data}')\n".format(dbf,table,field,data))
+		elif self.chs1.GetStringSelection() == 'get':
+			self.fldinit.SetValue(inittxt+inittxt2+f"\tMyGet = PG.Get('{dbf}','{data}','{file}')\n".format(dbf,data,file))
+		elif self.chs1.GetStringSelection() == 'both':
+			self.fldinit.SetValue(inittxt+inittxt2+f"\tMySet = PG.Post('{dbf}','{table}','{field}','{data}')\n".format(dbf,table,field,data)
+			                      +f"\tMyGet = PG.Get('{dbf}','{data}','{file}')\n".format(dbf,data,file))
+
+		else:
+			print('What method is')
+
 
 	def prgstm( self, event ):
 		event.Skip()

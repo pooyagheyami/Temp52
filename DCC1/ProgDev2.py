@@ -314,6 +314,12 @@ class MyPanel1 ( wx.Panel ):
 				child2 = self.DVC1.AppendItem(child, atimp)
 				self.DVC1.SetItemText(child2, 0, atimp)
 				self.DVC1.SetItemText(child2, 1, '7777')
+			if af.ishasfromim(' . '):
+				atimp = af.ishasfromim(' . ')[0].split(' ')[3]
+				subimp.append(atimp)
+				chil3 = self.DVC1.AppendItem(child, atimp)
+				self.DVC1.SetItemText(chil3, 0, atimp)
+				self.DVC1.SetItemText(chil3, 1, '7777')
 
 		lstdir = self.getMData.AllGuiDir("  where rtrim(Guidir.prgdir,4) > '0000' and ltrim(Guidir.prgdir,4) < '8888' ")
 		lstdir = [d[2] for d in lstdir ]
@@ -427,7 +433,23 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def delit( self, event ):
-		event.Skip()
+		if self.fld1.GetValue() == '':
+			wx.MessageBox("Do you like delete program file from path")
+			hndlid = 0
+		else:
+			hndlid = self.fld1.GetValue()
+
+		# print(hndlid)
+		if len(self.getMData.AllHndl(u' where handler.handlerid = %d' % int(hndlid))) > 0:
+			self.setMDate.Table = u'handler'
+			self.setMDate.Delitem(u' handler.handlerid = %d' % int(hndlid))
+		if len(self.getMData.AllHndl(u' Join PrgDesc on handler.handlerid = PrgDesc.handlerid \
+		                                             where handler.handlerid = %d' % int(hndlid))) > 0:
+			self.setMDate.Table = u'PrgDesc'
+			self.setMDate.Delitem(u' PrgDesc.handlerid = %d' % int(hndlid))
+		wx.MessageBox(u"Program successful delete from your list")
+		self.updat(None)
+		#event.Skip()
 
 	def prviw( self, event ):
 		cdfld = self.fld2.GetValue()
@@ -482,7 +504,7 @@ class MyPanel1 ( wx.Panel ):
 		self.DVC1.DeleteAllItems()
 		self.filllist()
 		self.Refresh()
-		event.Skip()
+		#event.Skip()
 
 	def aplly( self, event ):
 		itm = self.DVC1.GetSelection()
@@ -499,7 +521,7 @@ class MyPanel1 ( wx.Panel ):
 			q = self.GetParent()
 			q.Close()
 		#print(wx.GetTopLevelWindows())
-		event.Skip()
+		#event.Skip()
 
 	def gnrat( self, event ):
 		#print(self.thsfile,self.thspath)
@@ -564,8 +586,7 @@ class MyPanel1 ( wx.Panel ):
 		else:
 			wx.MessageBox(u"You can only generate the unlisted program with this code '????'")
 
-		event.Skip()
-
+		#event.Skip()
 
 	def gencod( self, event ):
 	    event.Skip()

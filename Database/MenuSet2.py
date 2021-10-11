@@ -172,6 +172,9 @@ class GetData:
     def ListPanes(self):
         return sq.wxsqltxt(self.DBF," select pans.panname from pans ")
 
+    def MLPansFils(self, ext=u''):
+        return sq.wxsqltxt(self.DBF, ' select * from MLPane %s ' %ext)
+
 
 
 class SetData:

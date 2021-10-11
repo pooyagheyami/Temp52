@@ -68,3 +68,69 @@ class Anlzfil(object):
 
 def GetPamelImport(filewopy):
     f = filewopy+'.py'
+
+def AnalizdbText(dbdatatxt):
+    Table_feild_dict = {}
+    Index_List = []
+    wtxt1 = re.sub(r'[\(\n\)]','',dbdatatxt)
+    #print(wtxt1)
+    wtxt = re.sub(r'\s+',' ',wtxt1)
+    #print(wtxt)
+    ltxt = wtxt.split(' ')
+    print(ltxt)
+    Table_name = ltxt[ltxt.index('TABLE') + 1]
+
+    t = dbdatatxt
+    fld = t[t.find('(')+1:t.find(')')]
+    t1 = re.sub(r'\s+',' ',fld)
+    print(t1.replace('\n','').split(','))
+    t2 = t1.replace('\n','').split(',')
+    print(t2)
+    ifilds = []
+    for fll in t2:
+        #Table_feild_dict[Table_name]=(fll.split(' ')[0],fll.split(' ')[1])
+        ifilds.append(fll)
+    Table_feild_dict[Table_name] = ifilds
+    return Table_feild_dict
+
+def AnalizdbText2(dbtext):
+    Table_list = {}
+    Index_list = {}
+    for txt in dbtext:
+        if txt[0] == 'table':
+            f = txt[4][txt[4].index('(')+1:txt[4].index(')',-1)]
+            #print(re.sub(r'\s+', ' ', f))
+            sbf = re.sub(r'\s+', ' ', f)
+            fields = []
+            #print(sbf.split(','))
+            for sfld in sbf.split(','):
+                #print(sfld.strip(' ')[:7])
+                if sfld.strip(' ')[:7] == 'PRIMARY' or ')' in sfld.strip(' ').split(' ')[0]:
+                    print(sfld)
+                else:
+                    fields.append(sfld)
+            #fields = re.split(',',re.sub('\s+',' ',f))
+            #print(fields)
+            lstfld = []
+            for fl in fields:
+                ssfl = ''
+                ssfl = fl.strip(' ').split(' ')
+                #print(ssfl)
+                if len(ssfl) > 0:
+                    namfld = ssfl[0]
+                    if len(ssfl) > 1:
+                        typfld = ssfl[1]
+                        if len(ssfl) > 2:
+                            stgfld = ssfl[2:]
+                        else:
+                            stgfld = []
+                    else:
+                        typfld = "TEXT"
+                #print(namfld,typfld,stgfld)
+                lstfld.append((namfld,typfld,stgfld))
+            Table_list[txt[1]] = lstfld
+
+        if txt[0] == 'index':
+            #Index_list[txt[1]]
+            pass
+    return Table_list,Index_list

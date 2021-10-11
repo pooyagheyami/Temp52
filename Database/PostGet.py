@@ -9,8 +9,10 @@ class Get:
     def __init__(self, DBF, Data, file):
         self.DBF = DBF
         self.Data = Data
-        sqlfile = DATABASE_PATH + 'sqls' + SLASH + file
-        self.SQLtxt = self.openSql(sqlfile)
+
+        if file != '':
+            sqlfile = DATABASE_PATH + 'sqls' + SLASH + file
+            self.SQLtxt = self.openSql(sqlfile)
 
     def openSql(self, sqlfile):
         with open(sqlfile) as f:
@@ -23,6 +25,9 @@ class Get:
 
     def GetFromDbfWithData(self):
         return sq.wxsqltxt(self.DBF, self.SQLtxt + self.Data )
+
+    def GetFromString(self, string):
+        return sq.wxsqltxt(self.DBF, string)
 
     def __del__(self):
         pass
