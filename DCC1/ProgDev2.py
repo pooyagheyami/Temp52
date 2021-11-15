@@ -12,6 +12,7 @@ import wx.xrc
 import wx.dataview
 
 from AI.OpnFil import *
+import AI.OpnSrc as OS
 from AI.Analiz import *
 from AI.Generats import *
 
@@ -419,16 +420,22 @@ class MyPanel1 ( wx.Panel ):
 	def addit( self, event ):
 
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
-		self.Pnl = PyPanel(self.Frm, GUI_PATH + 'Temp\\untitle.py')
+		#self.Pnl = PyPanel(self.Frm, GUI_PATH + 'Temp\\untitle.py')
+		self.Pnl = OS.SrcPanel(self.Frm,GUI_PATH + 'Temp\\untitle.py' )
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'Pro'))
 		self.Frm.SetSize((700, 560))
+		self.Frm.SetLabel('untitle.py')
 		self.Frm.Show()
 		event.Skip()
 
 	def edtit( self, event ):
 
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
-		self.Pnl = PyPanel(self.Frm, self.thsfile)
+		#self.Pnl = PyPanel(self.Frm, self.thsfile)
+		self.Pnl = OS.SrcPanel(self.Frm, self.thsfile)
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'Pro'))
 		self.Frm.SetSize((700, 560))
+		self.Frm.SetLabel(self.thsfile)
 		self.Frm.Show()
 		event.Skip()
 

@@ -66,3 +66,37 @@ def thistxt(filename):
             txt = txt + '\n' + lines[t]
     #print txt
     return txt
+
+def fil2txt(filename):
+    with open(filename, mode='r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    txt = ''
+    for t in range(len(lines)):
+        txt = txt + lines[t]
+    return txt
+
+def OpenListML():
+    with open(CONFIG_PATH+u'MLmethod.ini', mode='r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    MLlst = {}
+    MLAlg = {}
+    for t in range(len(lines)):
+        #print(lines[t])
+        if ':' in lines[t]:
+            #print(lines[t].split(':'))
+            L1 = lines[t].split(':')
+            l1 = L1[1].split(';')
+            #print(L1,l1)
+            MLlst[(int(l1[0]),int(l1[1].rstrip('\n')))] = L1[0].strip(' ')
+
+        if ',' in lines[t]  and '    ' == lines[t][:4]:
+            #print(lines[t].split(','))
+            L1 = lines[t].split(',')
+            l0 = L1[0].strip(' ')
+            l1 = L1[1].split(';')
+            MLAlg[(int(l1[0]),int(l1[1].rstrip('\n')))] = l0
+
+    #print(MLlst,MLAlg)
+    return MLlst,MLAlg

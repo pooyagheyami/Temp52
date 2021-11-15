@@ -30,7 +30,7 @@ def main(panel=None):
 
     frame = telframe(parent)
     frame.SetTitle(u'Add Tool Program')
-    frame.SetSize((510, 360))
+    frame.SetSize((555, 460))
     frame.Show()
 
 

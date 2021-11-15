@@ -173,7 +173,19 @@ class GetData:
         return sq.wxsqltxt(self.DBF," select pans.panname from pans ")
 
     def MLPansFils(self, ext=u''):
-        return sq.wxsqltxt(self.DBF, ' select * from MLPane %s ' %ext)
+        return sq.wxsqltxt(self.DBF, ' select * from MLPane %s ' %ext )
+
+    def MLAlgoFils(self, ext=u''):
+        return sq.wxsqltxt(self.DBF, ' select * from MLAlgo %s ' %ext )
+
+    def AllML(self, ext=u''):
+        return sq.wxsqltxt(self.DBF, ' select * from MLinfo %s ' %ext )
+
+    def MLPansgetAl(self, mlcod=u''):
+        return sq.wxsqltxt(self.DBF, " select * from MLAlgo where MLAlgo.MLcod = '%s' " %mlcod )
+
+    def MLPanid(self, Apnm=u''):
+        return sq.wxsqsnd(self.DBF,u'MLinfo',u'MLPid',u'MLname',Apnm )
 
 
 

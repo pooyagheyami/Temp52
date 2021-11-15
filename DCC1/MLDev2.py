@@ -20,20 +20,17 @@ import importlib
 import importlib.util
 
 from AI.Analiz import *
-from AI.ML.SL_Reg import *
-
-
-import numpy as np
-from matplotlib import pyplot as plot
-from mpl_toolkits.mplot3d import Axes3D
+import AI.OpnSrc as OS
+from AI.OpnFil import *
+#from AI.ML.SL_Reg import *
 
 ###########################################################################
-## Class MyPanel7
+## Class MyPanel9
 ###########################################################################
 
 class MyPanel1 ( wx.Panel ):
 
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 555,481 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 555,480 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
@@ -52,39 +49,52 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz2.Add( self.Titr1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
-		chis1Choices = [ u"Supervised Learning", u"Unsupervised Learning" ]
+		Hsz1 = wx.BoxSizer(wx.HORIZONTAL)
+
+		#chis1Choices = [ u"Supervised Learning (11)",u"Semi-Supervised Learning (15)",u"Unsupervised Learning (21)",u"Reinforcement Learning (31)" ]
+		chis1Choices = [l for l in OpenListML()[0].values()]
 		self.chis1 = wx.Choice( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, chis1Choices, 0 )
 		self.chis1.SetSelection( 0 )
-		Vsz2.Add( self.chis1, 0, wx.ALL|wx.EXPAND, 5 )
+		#Vsz2.Add( self.chis1, 0, wx.ALL|wx.EXPAND, 5 )
 
-		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+		Hsz1.Add(self.chis1, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, u"Problem Type", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.lbl1.Wrap( -1 )
+		self.MLset = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,
+		                             wx.BU_AUTODRAW | 0)
 
-		Hsz1.Add( self.lbl1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.MLset.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_BUTTON))
+		Hsz1.Add(self.MLset, 0, wx.ALL, 5)
 
-		chis2Choices = [ u"Regression Problem", u"Classification Problem" ]
-		self.chis2 = wx.Choice( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, chis2Choices, 0 )
-		self.chis2.SetSelection( 0 )
-		Hsz1.Add( self.chis2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-
+		# Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+		#
+		# self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, u"Problem Type", wx.DefaultPosition, wx.DefaultSize, 0 )
+		# self.lbl1.Wrap( -1 )
+		#
+		# Hsz1.Add( self.lbl1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		#
+		# chis2Choices = [ u"Regression Problem", u"Classification Problem" ]
+		# self.chis2 = wx.Choice( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, chis2Choices, 0 )
+		# self.chis2.SetSelection( 0 )
+		# Hsz1.Add( self.chis2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		#
+		#
 		Vsz2.Add( Hsz1, 0, wx.EXPAND, 5 )
 
-		self.TLC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.TL_DEFAULT_STYLE )
-		self.TLC1.AppendColumn( u"Learn Type", 205, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
-		self.TLC1.AppendColumn( u"Method", 45, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.TLC1 = wx.dataview.TreeListCtrl(self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.TL_DEFAULT_STYLE)
+		self.TLC1.AppendColumn(u"Learn Type", 205, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
+		self.TLC1.AppendColumn(u"Method", 45, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
 
-		Vsz2.Add( self.TLC1, 1, wx.EXPAND |wx.ALL, 5 )
+		Vsz2.Add(self.TLC1, 1, wx.EXPAND | wx.ALL, 5)
 
 		self.filllist()
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.SrcShw = wx.Button( self.P1, wx.ID_ANY, u"minimizing :Show Cust Function Source", wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz2.Add( self.SrcShw, 1, wx.ALL, 5 )
+		self.SlcDta = wx.Button(self.P1, wx.ID_ANY, u"Select Data", wx.DefaultPosition, wx.DefaultSize, 0)
+		Hsz2.Add(self.SlcDta, 1, wx.ALL, 5)
 
+		self.ConDta = wx.Button(self.P1, wx.ID_ANY, u"Conect Data", wx.DefaultPosition, wx.DefaultSize, 0)
+		Hsz2.Add(self.ConDta, 1, wx.ALL, 5)
 
 		Vsz2.Add( Hsz2, 0, wx.EXPAND, 5 )
 
@@ -133,117 +143,55 @@ class MyPanel1 ( wx.Panel ):
 		self.P1.Layout()
 		Vsz2.Fit( self.P1 )
 		self.P2 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		self.Vsz3 = wx.BoxSizer( wx.VERTICAL )
+		Vsz3 = wx.BoxSizer( wx.VERTICAL )
 
-		self.Titr2 = wx.StaticText(self.P2, wx.ID_ANY, u"Algorithm", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.Titr2.Wrap(-1)
+		Hsz15 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.Vsz3.Add(self.Titr2, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+		self.lblA = wx.StaticText( self.P2, wx.ID_ANY, u"Algorithm Pane Parameter ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lblA.Wrap( -1 )
 
-		Hsz11 = wx.BoxSizer(wx.HORIZONTAL)
+		Hsz15.Add( self.lblA, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.lblm = wx.StaticText(self.P2, wx.ID_ANY, u"m =  ", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lblm.Wrap(-1)
-
-		Hsz11.Add(self.lblm, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.Sc1 = wx.SpinCtrl(self.P2, wx.ID_ANY, u"m", wx.DefaultPosition, wx.Size(60, -1), wx.SP_ARROW_KEYS, 0, 9999,
-		                       0)
-		Hsz11.Add(self.Sc1, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.lbl2 = wx.StaticText(self.P2, wx.ID_ANY, u"Number of training", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lbl2.Wrap(-1)
-
-		Hsz11.Add(self.lbl2, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.btnm = wx.Button(self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-		Hsz11.Add(self.btnm, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.Vsz3.Add(Hsz11, 0, wx.EXPAND, 5)
-
-		Hsz12 = wx.BoxSizer(wx.HORIZONTAL)
-
-		self.lblx = wx.StaticText(self.P2, wx.ID_ANY, u"x (Input/features)=  ", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lblx.Wrap(-1)
-
-		Hsz12.Add(self.lblx, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.fldx = wx.TextCtrl(self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz12.Add(self.fldx, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.btnx = wx.Button(self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-		Hsz12.Add(self.btnx, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-		self.btnx.SetToolTip(u"Independent variable")
-		self.Vsz3.Add(Hsz12, 0, wx.EXPAND, 5)
-
-		Hsz13 = wx.BoxSizer(wx.HORIZONTAL)
-
-		self.lbly = wx.StaticText(self.P2, wx.ID_ANY, u"y (Output/target)=  ", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lbly.Wrap(-1)
-
-		Hsz13.Add(self.lbly, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.fldy = wx.TextCtrl(self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz13.Add(self.fldy, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.btny = wx.Button(self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-		Hsz13.Add(self.btny, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-		self.btny.SetToolTip(u"Dependent variable")
-		self.Vsz3.Add(Hsz13, 0, wx.EXPAND, 5)
-
-		Hsz14 = wx.BoxSizer(wx.HORIZONTAL)
-
-
-		self.lblt = wx.StaticText(self.P2, wx.ID_ANY, u"Shows plot of Data you enter", wx.DefaultPosition,
-		                          wx.DefaultSize, 0)
-		self.lblt.Wrap(-1)
-
-		Hsz14.Add(self.lblt, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.btntt = wx.Button(self.P2, wx.ID_ANY, u"Show Plot", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
-		Hsz14.Add(self.btntt, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.Vsz3.Add(Hsz14, 0, wx.EXPAND, 5)
-
-		self.lin1 = wx.StaticLine(self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
-		self.Vsz3.Add(self.lin1, 0, wx.EXPAND | wx.ALL, 5)
-
-		#self.lblA = wx.StaticText(self.P2, wx.ID_ANY, u"Use This Algorithm and Show Result", wx.DefaultPosition,
-		#                          wx.DefaultSize, 0)
-		#self.lblA.Wrap(-1)
-
-		#Vsz3.Add(self.lblA, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
-		Hsz15 = wx.BoxSizer(wx.HORIZONTAL)
-
-		self.lblA = wx.StaticText(self.P2, wx.ID_ANY, u"Algorithm Here", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lblA.Wrap(-1)
-
-		Hsz15.Add(self.lblA, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.Adbtn = wx.BitmapButton(self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,wx.BU_AUTODRAW | 0)
+		self.Adbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 		self.Adbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY))
-		Hsz15.Add(self.Adbtn, 0, wx.ALL, 5)
+		Hsz15.Add( self.Adbtn, 0, wx.ALL, 5 )
 
-		self.Edbtn = wx.BitmapButton(self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,wx.BU_AUTODRAW | 0)
+		self.Edbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 		self.Edbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY))
-		Hsz15.Add(self.Edbtn, 0, wx.ALL, 5)
+		Hsz15.Add( self.Edbtn, 0, wx.ALL, 5 )
 
-		self.Dlbtn = wx.BitmapButton(self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,wx.BU_AUTODRAW | 0)
+		self.Dlbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 		self.Dlbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY))
-		Hsz15.Add(self.Dlbtn, 0, wx.ALL, 5)
-
-		self.Vsz3.Add(Hsz15, 0, wx.EXPAND, 5)
+		Hsz15.Add( self.Dlbtn, 0, wx.ALL, 5 )
 
 
-		#self.P19 = Pnl.P19_1(self.P2)
-		#self.P19 = wx.Panel(self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.BORDER_RAISED | wx.TAB_TRAVERSAL)
-		self.Vsp19 = wx.BoxSizer(wx.VERTICAL)
+		Vsz3.Add( Hsz15, 0, wx.EXPAND, 5 )
+
+		self.Lin1 = wx.StaticLine( self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		Vsz3.Add( self.Lin1, 0, wx.EXPAND |wx.ALL, 5 )
+
+		lstpane = self.getMData.MLPansFils(u' Join MLinfo on MLPane.MLPid = MLinfo.MLPid')
+
+		self.ChsBok = wx.Choicebook( self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.CHB_DEFAULT )
+		self.PLP19 = []
+		j = 0
+
+		for lp in lstpane:
+			i = importlib.import_module(u'GUI.MLPane.' + lp[1])
+			self.PLP19.append(i.P19(self.ChsBok))
+			if j == 0:
+				fp = True
+			else:
+				fp = False
+			self.ChsBok.AddPage(self.PLP19[j], lp[3], fp)
+			j += 1
+
+		Vsz3.Add( self.ChsBok, 1, wx.EXPAND |wx.ALL, 5 )
 
 
-
-		self.P2.SetSizer( self.Vsz3 )
+		self.P2.SetSizer( Vsz3 )
 		self.P2.Layout()
-		self.Vsz3.Fit( self.P2 )
+		Vsz3.Fit( self.P2 )
 		self.Splt1.SplitVertically( self.P1, self.P2, 275 )
 		Vsz1.Add( self.Splt1, 1, wx.EXPAND, 5 )
 
@@ -252,100 +200,81 @@ class MyPanel1 ( wx.Panel ):
 		self.Layout()
 
 		# Connect Events
-		self.TLC1.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.slcchng, id=wx.ID_ANY)
-		self.chis1.Bind(wx.EVT_CHOICE, self.typml)
-		self.chis2.Bind(wx.EVT_CHOICE, self.typpl)
-		self.SrcShw.Bind(wx.EVT_BUTTON, self.srcml)
-		self.btn1.Bind(wx.EVT_BUTTON, self.addit)
-		self.btn2.Bind(wx.EVT_BUTTON, self.editit)
-		self.btn3.Bind(wx.EVT_BUTTON, self.delit)
-		self.btn4.Bind(wx.EVT_BUTTON, self.prw)
-		self.btn5.Bind(wx.EVT_BUTTON, self.upd)
-		self.btn6.Bind(wx.EVT_BUTTON, self.aply)
-		self.btn7.Bind(wx.EVT_BUTTON, self.gnrt)
-		self.Sc1.Bind(wx.EVT_SPINCTRL, self.mtri)
-		self.btnm.Bind(wx.EVT_BUTTON, self.inptri)
-		self.btnx.Bind(wx.EVT_BUTTON, self.inpx)
-		self.btny.Bind(wx.EVT_BUTTON, self.inpy)
-		self.btntt.Bind(wx.EVT_BUTTON, self.pltdata)
-		#self.btnup.Bind(wx.EVT_BUTTON, self.tstupdt)
-		#self.btnh.Bind(wx.EVT_BUTTON, self.shwplth)
-		#self.btnj.Bind(wx.EVT_BUTTON, self.shwpltj)
+		self.chis1.Bind( wx.EVT_CHOICE, self.typml )
+		#self.chis2.Bind( wx.EVT_CHOICE, self.typpl )
+		self.MLset.Bind(wx.EVT_BUTTON, self.MLsting)
+		self.TLC1.Bind( wx.dataview.EVT_TREELIST_SELECTION_CHANGED, self.slctit )
+		self.SlcDta.Bind(wx.EVT_BUTTON, self.selctdata)
+		self.ConDta.Bind(wx.EVT_BUTTON, self.conctdata)
+		#self.SrcShw.Bind( wx.EVT_BUTTON, self.srcml )
+		self.btn1.Bind( wx.EVT_BUTTON, self.addit )
+		self.btn2.Bind( wx.EVT_BUTTON, self.editit )
+		self.btn3.Bind( wx.EVT_BUTTON, self.delit )
+		self.btn4.Bind( wx.EVT_BUTTON, self.prw )
+		self.btn5.Bind( wx.EVT_BUTTON, self.upd )
+		self.btn6.Bind( wx.EVT_BUTTON, self.aply )
+		self.btn7.Bind( wx.EVT_BUTTON, self.gnrt )
+		self.Adbtn.Bind( wx.EVT_BUTTON, self.addAl )
+		self.Edbtn.Bind( wx.EVT_BUTTON, self.edtAl )
+		self.Dlbtn.Bind( wx.EVT_BUTTON, self.delAl )
+		self.ChsBok.Bind( wx.EVT_CHOICEBOOK_PAGE_CHANGED, self.chgedpg )
+		self.ChsBok.Bind( wx.EVT_CHOICEBOOK_PAGE_CHANGING, self.chgngpg )
 
 	def __del__( self ):
 		pass
 
 
-
 	# Virtual event handlers, overide them in your derived class
 	def filllist(self):
-		ch1 = self.chis1.GetSelection()
-		ch2 = self.chis2.GetSelection()
-		if ch1 == 0:
-			if ch2 == 0:
+		ch1 = self.chis1.GetStringSelection()
+		#ch2 = self.chis2.GetSelection()
+		coding,algcod = OpenListML()
+		#support-vector machines, linear regression, logistic regression, neural networks, and nearest neighbor methods,
+		#lstml = self.getMData.AllML()
+		#print(lstml)
+		#lstml1 = self.getMData.AllML(u' where MLinfo.MLPid < %d ' %11999)
+		#print(ch1)
+		for mcod in coding:
+			if ch1 == coding[mcod]:
+				#print(mcod)
+				self.codings = mcod
+				myfrng = mcod[0]
+				mylrng = mcod[1]
+		mylst = []
+		for cod in algcod:
+			if cod[0] > myfrng and cod[1] < mylrng:
+				fcod = cod[0]
+				tcod = cod[1]
+				mylst = self.getMData.AllML(u' where MLinfo.MLPid < %d and MLinfo.MLPid >= %d' %(tcod,fcod))
+			if mylst != []:
 				Mroot = self.TLC1.GetRootItem()
-				self.root1 = self.TLC1.AppendItem(Mroot, u'simple linear regression')
-				self.LnrMtd = self.TLC1.AppendItem(self.root1, u'Some Method')
-				self.TLC1.SetItemText(self.LnrMtd, 0, u'Simple Leaner ')
-				self.TLC1.SetItemText(self.LnrMtd, 1, u'SL')
-				self.NlnMtd = self.TLC1.AppendItem(self.root1, u'Some Method')
-				self.TLC1.SetItemText(self.NlnMtd, 0, u'Simple NonLeaner ')
-				self.TLC1.SetItemText(self.NlnMtd, 1, u'SN')
+				self.rootm = self.TLC1.AppendItem(Mroot, algcod[cod])
 
-				self.root2 = self.TLC1.AppendItem(Mroot, u'multiple linear regression')
-				self.GDMtd = self.TLC1.AppendItem(self.root2,u'Some Method')
-				self.TLC1.SetItemText(self.GDMtd, 0, u'Gradient Descents')
-				self.TLC1.SetItemText(self.GDMtd, 1, u'GD')
-				self.NEMtd = self.TLC1.AppendItem(self.root2, u'Some Method')
-				self.TLC1.SetItemText(self.NEMtd, 0, u'Normal Equation')
-				self.TLC1.SetItemText(self.NEMtd, 1, u'NE')
+				for mtd in mylst:
+					self.mlmtd = self.TLC1.AppendItem(self.rootm, u'Some Method')
+					self.TLC1.SetItemText(self.mlmtd, 0, mtd[1])
+					self.TLC1.SetItemText(self.mlmtd, 1, mtd[2])
 
+	def MLsting(self, event):
+		itxt = fil2txt(CONFIG_PATH+"MLmethod.ini")
+		dlg = wx.Dialog(self, -1, "Setting of ML Coding")
+		pnl = MyPanel3(dlg, CONFIG_PATH+"MLmethod.ini", itxt)
+		dlg.SetSize((380,380))
+		dlg.ShowModal()
+		dlg.Destroy()
 
 	def typml( self, event ):
+		self.TLC1.DeleteAllItems()
+		self.filllist()
+		self.TLC1.Refresh()
+
+	#def typpl( self, event ):
+	#	event.Skip()
+
+	def slctit( self, event ):
 		event.Skip()
 
-	def typpl( self, event ):
-		event.Skip()
-
-	def srcml( self, event ):
-		event.Skip()
-
-	def slcchng(self, event):
-		print(self.Vsz3.GetItemCount())
-
-		ps = self.TLC1.GetSelections()
-		self.itmcod = self.TLC1.GetItemText(ps[0], 1)
-		lstpane = self.getMData.MLPansFils()
-
-		print(self.itmcod)
-		print(lstpane)
-		for lp in lstpane:
-			if self.itmcod in lp:
-				myPnl = lp
-		#print(self.idata,self.flds)
-		#print(len(self.idata))
-		i = importlib.import_module(u'DCC1.MLPane.'+myPnl[3])
-		print(len(self.P2.GetChildren()))
-		print(self.P2.HasFlag(self.P2.GetWindowStyleFlag()))
-		if len(self.P2.GetChildren()) == 19:
-			self.P19.Destroy()
-			self.Vsp19 = wx.BoxSizer(wx.VERTICAL)
-		self.P19 = i.P19(self.P2)
-
-		self.P19.SetSizer(self.Vsp19)
-		self.P19.Refresh()
-		self.P19.Layout()
-		self.Vsp19.Fit(self.P19)
-
-		self.Vsz3.Add(self.P19, 1, wx.EXPAND | wx.ALL, 5)
-		self.Splt1.Refresh()
-		self.Splt1.Layout()
-		self.Refresh()
-		self.Layout()
-		#self.Sc1.SetValue(len(self.idata))
-
-
-	def addit( self, event ):
+	def selctdata(self, event):
 		dlg = wx.FileDialog(self, message="Choose Database",
 		                    defaultDir=os.getcwd(),
 		                    defaultFile="",
@@ -354,12 +283,11 @@ class MyPanel1 ( wx.Panel ):
 
 		if dlg.ShowModal() == wx.ID_OK:
 			paths = dlg.GetPaths()
-			#print(paths)
-
+		# print(paths)
 		dlg.Destroy()
 
-		frm = wx.Dialog(self,-1)
-		pnl = MyPanel2(frm,paths[0])
+		frm = wx.Dialog(self, -1)
+		pnl = MyPanel2(frm, paths[0])
 		frm.SetSize((600, 300))
 		frm.SetLabel(u'Select Table')
 		frm.ShowModal()
@@ -367,15 +295,53 @@ class MyPanel1 ( wx.Panel ):
 		self.idata = pnl.mydata
 
 		frm.Destroy()
-		print(self.flds)
-		print(self.idata)
-		if len(self.idata[0]) <= 2:
-			self.TLC1.AppendItem(self.LnrMtd, u'this data select')
-		else:
-			self.TLC1.AppendItem(self.NEMtd, u'Use this data ')
-		#event.Skip()
+		chos = self.ChsBok.GetChoiceCtrl()
+
+		print(chos.GetSelection())
+		print(chos.GetString(chos.GetSelection()))
+		print(self.PLP19[chos.GetSelection()])
+		pnl = self.PLP19[chos.GetSelection()]
+		pnl.Sc1.SetValue(len(self.idata))
+		pnl.idata = self.idata
+		pnl.flds = self.flds
+		# print(self.flds)
+		# print(self.idata)
+		# self.Sc1.SetValue(len(self.idata))
+		# self.P19.Data = self.idata
+
+		event.Skip()
+
+	def conctdata(self, event):
+		event.Skip()
+
+	def srcml( self, event ):
+
+		event.Skip()
+
+	def addit( self, event ):
+		newfile = GUI_PATH + 'Temp\\untitle.py'
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		self.Pnl = OS.SrcPanel(self.Frm, newfile)
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'ML'))
+		self.Frm.SetSize((700, 500))
+		self.Frm.SetLabel(u'untitle.py')
+		self.Frm.Show()
+
+
+		event.Skip()
 
 	def editit( self, event ):
+		myslct = self.TLC1.GetSelection()
+		myalg = self.TLC1.GetItemText(myslct, 1)
+		# print(myalg)
+		thsfile = self.getMData.MLPansgetAl(myalg)[0][1]
+
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		self.Pnl = OS.SrcPanel(self.Frm, AI_PATH + 'ML\\' + thsfile + '.py')
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'ML'))
+		self.Frm.SetSize((700, 500))
+		self.Frm.SetLabel(AI_PATH + 'ML\\' + thsfile+'.py')
+		self.Frm.Show()
 		event.Skip()
 
 	def delit( self, event ):
@@ -393,74 +359,47 @@ class MyPanel1 ( wx.Panel ):
 	def gnrt( self, event ):
 		event.Skip()
 
-	def mtri( self, event ):
-
+	def addAl( self, event ):
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		#self.Pnl = PyPanel(self.Frm, GUI_PATH + 'Temp\\untitle.py')
+		self.Pnl = OS.SrcPanel(self.Frm, GUI_PATH + 'MLPane\\Untitle.py')
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'AL'))
+		self.Frm.SetSize((700, 560))
+		self.Frm.SetLabel(u'untitle.py')
+		self.Frm.Show()
 		event.Skip()
 
-	def inptri( self, event ):
-		frm = wx.Dialog(self, -1)
-		pnl = MyPanel3(frm, self.flds, self.idata)
-		frm.SetSize((500,220))
-		frm.SetLabel(u'Data you use')
-		frm.ShowModal()
-		#frm.EndModal((pnl.xMtrx,pnl.yMtrx))
-		Xm = pnl.xMtrx
-		Ym = pnl.yMtrx
-		frm.Destroy()
-		self.Xdata= np.matrix(Xm)
-		self.Ydata= np.matrix(Ym)
-		#print(ixmatrix.tolist())
-		#vw = ixmatrix.view()
-
-		self.fldx.SetValue( 'np.matrix(xdata)' )
-		self.fldy.SetValue( 'np.matrix(ydata)' )
+	def edtAl( self, event ):
+		chos = self.ChsBok.GetChoiceCtrl()
+		ipg = self.ChsBok.GetSelection()
+		chname = chos.GetString(ipg)
+		#print(chos.GetString(chos.GetSelection()),chname)
+		#print(ipg)
+		Pnlid = self.getMData.MLPanid(chname)[0][0]
+		#print(Pnlid)
+		Pnlfil = self.getMData.MLPansFils(u' where MLPane.MLPid = %d '%Pnlid)[0][1]
+		#print(Pnlfil)
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		#self.Pnl = PyPanel(self.Frm, GUI_PATH + 'MLPane\\'+Pnlfil+u'.py')
+		self.Pnl = OS.SrcPanel(self.Frm, GUI_PATH + 'MLPane\\' + Pnlfil + u'.py')
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'AL'))
+		self.Frm.SetSize((700, 560))
+		self.Frm.SetLabel(GUI_PATH + 'MLPane\\' + Pnlfil + u'.py')
+		self.Frm.Show()
 		event.Skip()
 
-	def inpx( self, event ):
-		frm = wx.Dialog(self, -1)
-		pnl = MyPanel4(frm,self.Xdata)
-		frm.SetSize((300,180))
-		frm.SetLabel(u'X matrix')
-		frm.ShowModal()
-
-		frm.Destroy()
+	def delAl( self, event ):
 		event.Skip()
 
-	def inpy( self, event ):
-		frm = wx.Dialog(self, -1)
-		pnl = MyPanel4(frm, self.Ydata)
-		frm.SetSize((300, 180))
-		frm.SetLabel(u'Y matrix')
-		frm.ShowModal()
-
-		frm.Destroy()
+	def chgedpg( self, event ):
 		event.Skip()
 
-	def pltdata( self, event ):
-		print(self.Xdata[:,1],self.Ydata[:,0])
-		X = self.Xdata[:,1]
-		y = self.Ydata.transpose()
-		plot.plot(X, y , 'rx', markersize=10)
-		plot.ylabel('data y')
-		plot.xlabel('data x')
-		plot.show()
-
+	def chgngpg( self, event ):
 		event.Skip()
-
-	def tstupdt( self, event ):
-		event.Skip()
-
-	def shwplth( self, event ):
-		event.Skip()
-
-	def shwpltj( self, event ):
-		event.Skip()
-
 
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 275 )
 		self.Splt1.Unbind( wx.EVT_IDLE )
-
 
 
 ###########################################################################
@@ -485,7 +424,7 @@ class MyPanel2 ( wx.Panel ):
 		Vsz.Add( self.Tables, 0, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer(wx.HORIZONTAL)
-		print(self.TablesChoices)
+		#print(self.TablesChoices)
 		self.fillist(self.TablesChoices[0])
 
 		self.DLC1 = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -590,125 +529,25 @@ class MyPanel2 ( wx.Panel ):
 ## Class MyPanel3
 ###########################################################################
 
-
 class MyPanel3 ( wx.Panel ):
 
-	def __init__( self, parent,felds, data, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 498,215 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-
-		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.VLC1 = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-
-		for f1 in felds:
-			self.VLC1.AppendTextColumn(f1, width=-1, align=wx.ALIGN_LEFT)
-
-		for dt in data:
-			DD = ()
-			for d in dt:
-				DD = DD + (str(d),)
-			self.VLC1.AppendItem(DD)
-
-
-		Hsz1.Add( self.VLC1, 1, wx.ALL|wx.EXPAND, 5 )
-
-		Vsz1 = wx.BoxSizer( wx.VERTICAL )
-
-		RB1Choices = felds
-		self.RB1 = wx.RadioBox( self, wx.ID_ANY, u"What of this y", wx.DefaultPosition, wx.DefaultSize, RB1Choices, 1, wx.RA_SPECIFY_COLS )
-		self.RB1.SetSelection( 0 )
-		Vsz1.Add( self.RB1, 1, wx.ALL, 5 )
-
-		self.btn = wx.Button( self, wx.ID_ANY, u"ok", wx.DefaultPosition, wx.DefaultSize, 0 )
-		Vsz1.Add( self.btn, 0, wx.ALL, 5 )
-
-
-		Hsz1.Add( Vsz1, 0, wx.EXPAND, 5 )
-
-
-		self.SetSizer( Hsz1 )
-		self.Layout()
-
-		# Connect Events
-		self.RB1.Bind(wx.EVT_RADIOBOX, self.thisy)
-		self.btn.Bind( wx.EVT_BUTTON, self.clos )
-
-	def __del__( self ):
-		pass
-
-
-	# Virtual event handlers, overide them in your derived class
-	def thisy(self, event):
-		yfld = self.RB1.GetSelection()
-		print(yfld)
-		colpos = yfld
-		icol = self.VLC1.GetColumn(yfld)
-		print(colpos)
-		xvalu = []
-		yvalu = []
-		for r in range(self.VLC1.GetItemCount()):
-			yvalu.append( self.VLC1.GetValue(r,colpos) )
-		for r in range(self.VLC1.GetItemCount()):
-			xcol = [1]
-			for c in range(self.VLC1.GetColumnCount()):
-				if c != colpos:
-					xcol.append(self.VLC1.GetValue(r,c))
-			xvalu.append(xcol)
-		self.xMtrx = xvalu
-		self.yMtrx = yvalu
-		print(xvalu)
-		print(yvalu)
-		event.Skip()
-
-	def clos( self, event ):
-		q = self.GetParent()
-		q.Close()
-		event.Skip()
-
-###########################################################################
-## Class MyPanel4
-###########################################################################
-
-class MyPanel4 ( wx.Panel ):
-
-	def __init__( self, parent, Matrx, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 300,180 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent, fileini, txtini, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 382,381 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz = wx.BoxSizer( wx.VERTICAL )
-		iMatrix = '[\n'
-		mlst = Matrx.tolist()
-		#mshp = np.matrix.shape
-		#print(mlst)
-		#print(mshp)
 
-		for r in range(len(mlst)):
-			iMatrix += '['
-			for c in range(len(mlst[r])):
-				#print(mlst[r][c])
-				iMatrix += str(mlst[r][c])+'  '
-			iMatrix += ']\n'
-		iMatrix += ']'
+		self.titr = wx.StaticText( self, wx.ID_ANY, fileini, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.titr.Wrap( -1 )
 
+		Vsz.Add( self.titr, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.Txt = wx.TextCtrl( self, wx.ID_ANY, iMatrix, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
-		Vsz.Add( self.Txt, 1, wx.ALL|wx.EXPAND, 5 )
-
-		self.btn = wx.Button( self, wx.ID_ANY, u"ok", wx.DefaultPosition, wx.DefaultSize, 0 )
-		Vsz.Add( self.btn, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		self.inifil = wx.TextCtrl( self, wx.ID_ANY, txtini, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.TE_MULTILINE|wx.TE_WORDWRAP )
+		Vsz.Add( self.inifil, 1, wx.ALL|wx.EXPAND, 5 )
 
 
 		self.SetSizer( Vsz )
 		self.Layout()
 
-		# Connect Events
-		self.btn.Bind( wx.EVT_BUTTON, self.okit )
-
 	def __del__( self ):
 		pass
 
-
-	# Virtual event handlers, overide them in your derived class
-	def okit( self, event ):
-		q = self.GetParent()
-		q.Close()
-		event.Skip()

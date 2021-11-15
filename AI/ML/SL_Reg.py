@@ -5,44 +5,43 @@
 #!usr/bin/env python
 
 
-from AI.Analiz import *
-
-import numpy as np
-from matplotlib import pyplot as plot
-from mpl_toolkits.mplot3d import Axes3D
-
-class Cust_Func:
+class Simple_Leaner:
 	def __init__(self):
 		pass
 
-	def Comput(self, X, y, Theta):
-		m = y.size
-		costs = (X.dot(Theta) - y) ** 2
-		return costs.sum() / (2.0 * m)
-
-	def Gradient_descent(self, X, y, Theta, Alpha, num_iters):
-		m = y.size
-		J_history = np.zeros(num_iters)
-		for i in range(num_iters):
-			h = X.dot(Theta)
-			errors = h - y
-			delta = X.T.dot(errors)
-			Theta -= (Alpha / m) * delta
-			J_history[i] = self.Comput(X, y, Theta)
-		return (Theta, J_history)
+	def MSE(self, y_seri, y_orgi ):
+		n = len(y_orgi)
+		ysum = 0
+		for i in range(n):
+			ysum += (y_seri[i] - y_orgi[i])**2
+		return ysum / n
 
 
-	def minimize(self):
-		pass
+	def Get_Approach(self, N_seri):
+		if len(N_seri) == 0:
+			return -1
+		N_bar = 0
+		for N in N_seri:
+			try:
+				N_bar += float(N)
+			except FloatingPointError:
+				return -1
 
-	def calcu_theta(self):
-		pass
+		return N_bar / len(N_seri)
 
-	def update_theta(self):
-		pass
+	def Theta1(self, x_seri, y_seri):
+		n = len(x_seri)
+		hsum = 0
+		hsqr = 0
+		x_bar = self.Get_Approach(x_seri)
+		y_bar = self.Get_Approach(y_seri)
+		for i in range(n):
+			hsum += (x_seri[i]-x_bar)*(y_seri[i]-y_bar)
+			hsqr += (x_seri[i]-x_bar)**2
+		return hsum / hsqr
 
-	def __iter__(self):
-		pass
-
-	def __reduce__(self):
-		pass
+	def Theta0(self, x_seri, y_seri):
+		y_bar = self.Get_Approach(y_seri)
+		x_bar = self.Get_Approach(x_seri)
+		theta1 = self.Theta1(x_seri,y_seri)
+		return y_bar - (theta1 * x_bar)
