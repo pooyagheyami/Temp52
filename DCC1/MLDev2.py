@@ -12,6 +12,7 @@ import wx.xrc
 import wx.dataview
 
 from  Config.Init import *
+import Res.Allicons as icon
 
 import Database.PostGet as PG
 import Database.MenuSet2 as MS
@@ -21,8 +22,8 @@ import importlib.util
 
 from AI.Analiz import *
 import AI.OpnSrc as OS
-from AI.OpnFil import *
-#from AI.ML.SL_Reg import *
+
+_ = wx.GetTranslation
 
 ###########################################################################
 ## Class MyPanel9
@@ -44,7 +45,7 @@ class MyPanel1 ( wx.Panel ):
 		self.P1 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz2 = wx.BoxSizer( wx.VERTICAL )
 
-		self.Titr1 = wx.StaticText( self.P1, wx.ID_ANY, u"Type of Machin Learning", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.Titr1 = wx.StaticText( self.P1, wx.ID_ANY, _(u"Type of Machin Learning"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.Titr1.Wrap( -1 )
 
 		Vsz2.Add( self.Titr1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
@@ -81,8 +82,8 @@ class MyPanel1 ( wx.Panel ):
 		Vsz2.Add( Hsz1, 0, wx.EXPAND, 5 )
 
 		self.TLC1 = wx.dataview.TreeListCtrl(self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.TL_DEFAULT_STYLE)
-		self.TLC1.AppendColumn(u"Learn Type", 205, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
-		self.TLC1.AppendColumn(u"Method", 45, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
+		self.TLC1.AppendColumn(_(u"Learn Type"), 205, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
+		self.TLC1.AppendColumn(_(u"Method"), 45, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
 
 		Vsz2.Add(self.TLC1, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -90,10 +91,10 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.SlcDta = wx.Button(self.P1, wx.ID_ANY, u"Select Data", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.SlcDta = wx.Button(self.P1, wx.ID_ANY, _(u"Select Data"), wx.DefaultPosition, wx.DefaultSize, 0)
 		Hsz2.Add(self.SlcDta, 1, wx.ALL, 5)
 
-		self.ConDta = wx.Button(self.P1, wx.ID_ANY, u"Conect Data", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.ConDta = wx.Button(self.P1, wx.ID_ANY, _(u"Conect Data"), wx.DefaultPosition, wx.DefaultSize, 0)
 		Hsz2.Add(self.ConDta, 1, wx.ALL, 5)
 
 		Vsz2.Add( Hsz2, 0, wx.EXPAND, 5 )
@@ -101,38 +102,45 @@ class MyPanel1 ( wx.Panel ):
 		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn1.SetBitmap(wx.Bitmap(ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY))
-		self.btn1.SetToolTip(u"Add")
+		#self.btn1.SetBitmap(wx.Bitmap(ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY))
+		self.btn1.SetBitmap(icon.add.GetBitmap())
+		self.btn1.SetToolTip(_(u"Add"))
 		Hsz3.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn2.SetBitmap(wx.Bitmap(ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY))
-		self.btn2.SetToolTip(u"Edit")
+		#self.btn2.SetBitmap(wx.Bitmap(ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn2.SetBitmap(icon.edit_button.GetBitmap())
+		self.btn2.SetToolTip(_(u"Edit"))
 		Hsz3.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn3.SetBitmap(wx.Bitmap(ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY))
-		self.btn3.SetToolTip(u"Delete")
+		#self.btn3.SetBitmap(wx.Bitmap(ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY))
+		self.btn3.SetBitmap(icon.delete.GetBitmap())
+		self.btn3.SetToolTip(_(u"Delete"))
 		Hsz3.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn4.SetBitmap(wx.Bitmap(ICON16_PATH + u'brain_trainer.png', wx.BITMAP_TYPE_ANY))
-		self.btn4.SetToolTip(u"Preview")
+		#self.btn4.SetBitmap(wx.Bitmap(ICON16_PATH + u'brain_trainer.png', wx.BITMAP_TYPE_ANY))
+		self.btn4.SetBitmap(icon.brain_trainer.GetBitmap())
+		self.btn4.SetToolTip(_(u"Preview"))
 		Hsz3.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn5.SetBitmap(wx.Bitmap(ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY))
-		self.btn5.SetToolTip(u"Update")
+		#self.btn5.SetBitmap(wx.Bitmap(ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY))
+		self.btn5.SetBitmap(icon.update.GetBitmap())
+		self.btn5.SetToolTip(_(u"Update"))
 		Hsz3.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn6.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
-		self.btn6.SetToolTip(u"Apply")
+		#self.btn6.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn6.SetBitmap(icon.accept_button.GetBitmap())
+		self.btn6.SetToolTip(_(u"Apply"))
 		Hsz3.Add( self.btn6, 0, wx.ALL, 5 )
 
 		self.btn7 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'lightning.png', wx.BITMAP_TYPE_ANY))
-		self.btn7.SetToolTip(u"Generate")
+		#self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'lightning.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetBitmap(icon.lightning.GetBitmap())
+		self.btn7.SetToolTip(_(u"Generate"))
 		Hsz3.Add( self.btn7, 0, wx.ALL, 5 )
 
 
@@ -147,21 +155,24 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz15 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lblA = wx.StaticText( self.P2, wx.ID_ANY, u"Algorithm Pane Parameter ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lblA = wx.StaticText( self.P2, wx.ID_ANY, _(u"Algorithm Pane Parameter "), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lblA.Wrap( -1 )
 
 		Hsz15.Add( self.lblA, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.Adbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.Adbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY))
+		#self.Adbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY))
+		self.Adbtn.SetBitmap(icon.add.GetBitmap())
 		Hsz15.Add( self.Adbtn, 0, wx.ALL, 5 )
 
 		self.Edbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.Edbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY))
+		#self.Edbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY))
+		self.Edbtn.SetBitmap(icon.edit_button.GetBitmap())
 		Hsz15.Add( self.Edbtn, 0, wx.ALL, 5 )
 
 		self.Dlbtn = wx.BitmapButton( self.P2, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.Dlbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY))
+		#self.Dlbtn.SetBitmap(wx.Bitmap(ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY))
+		self.Dlbtn.SetBitmap(icon.delete.GetBitmap())
 		Hsz15.Add( self.Dlbtn, 0, wx.ALL, 5 )
 
 
@@ -275,7 +286,7 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def selctdata(self, event):
-		dlg = wx.FileDialog(self, message="Choose Database",
+		dlg = wx.FileDialog(self, message=_("Choose Database"),
 		                    defaultDir=os.getcwd(),
 		                    defaultFile="",
 		                    wildcard="Sqlite db file(*.db,*.sqlite,*,slite3,*.db3)|*.db;*.db3;*.sqlite|All file(*.*)|*.*",
@@ -289,7 +300,7 @@ class MyPanel1 ( wx.Panel ):
 		frm = wx.Dialog(self, -1)
 		pnl = MyPanel2(frm, paths[0])
 		frm.SetSize((600, 300))
-		frm.SetLabel(u'Select Table')
+		frm.SetLabel(_(u'Select Table'))
 		frm.ShowModal()
 		self.flds = pnl.my_chois_fild
 		self.idata = pnl.mydata
@@ -297,9 +308,9 @@ class MyPanel1 ( wx.Panel ):
 		frm.Destroy()
 		chos = self.ChsBok.GetChoiceCtrl()
 
-		print(chos.GetSelection())
-		print(chos.GetString(chos.GetSelection()))
-		print(self.PLP19[chos.GetSelection()])
+		#print(chos.GetSelection())
+		#print(chos.GetString(chos.GetSelection()))
+		#print(self.PLP19[chos.GetSelection()])
 		pnl = self.PLP19[chos.GetSelection()]
 		pnl.Sc1.SetValue(len(self.idata))
 		pnl.idata = self.idata
@@ -420,7 +431,7 @@ class MyPanel2 ( wx.Panel ):
 
 		self.TablesChoices = [Tb for Tb in Tfilds]
 		self.Tables = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, self.TablesChoices, 0 )
-		self.Tables.SetSelection( 2 )
+		self.Tables.SetSelection( 0 )
 		Vsz.Add( self.Tables, 0, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -443,10 +454,10 @@ class MyPanel2 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.btn2 = wx.Button(self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.btn2 = wx.Button(self, wx.ID_ANY, _(u"Cancel"), wx.DefaultPosition, wx.DefaultSize, 0)
 		Hsz2.Add(self.btn2, 0, wx.ALL, 5)
 
-		self.btn1 = wx.Button(self, wx.ID_ANY, u"Apply", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.btn1 = wx.Button(self, wx.ID_ANY, _(u"Apply"), wx.DefaultPosition, wx.DefaultSize, 0)
 		Hsz2.Add(self.btn1, 0, wx.ALL, 5)
 
 		Vsz.Add(Hsz2, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)

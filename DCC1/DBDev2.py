@@ -12,10 +12,14 @@ import wx.xrc
 import wx.dataview
 
 from Config.Init import *
+import Res.Allicons as icon
 
 import Database.PostGet as PG
 
 from AI.Analiz import *
+import AI.DBgen as DBG
+
+_ = wx.GetTranslation
 
 ###########################################################################
 ## Class MyPanel6
@@ -23,10 +27,11 @@ from AI.Analiz import *
 
 class MyPanel1 ( wx.Panel ):
 
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,450 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent,For_This_Frame=[], id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,450 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+		self.FTF = For_This_Frame
 
 		self.Splt1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D|wx.SP_LIVE_UPDATE|wx.SP_NO_XP_THEME|wx.SP_THIN_SASH )
 		self.Splt1.Bind( wx.EVT_IDLE, self.Splt1OnIdle )
@@ -34,67 +39,74 @@ class MyPanel1 ( wx.Panel ):
 		self.P1 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz2 = wx.BoxSizer( wx.VERTICAL )
 
-		self.lbl0 = wx.StaticText( self.P1, wx.ID_ANY, u"Select database", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl0 = wx.StaticText( self.P1, wx.ID_ANY, _(u"Select database"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl0.Wrap( -1 )
 
 		Vsz2.Add( self.lbl0, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
-		self.dbfile = wx.FilePickerCtrl( self.P1, wx.ID_ANY, wx.EmptyString, u"Select Database file", u"*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE|wx.FLP_OPEN|wx.FLP_SMALL )
+		self.dbfile = wx.FilePickerCtrl( self.P1, wx.ID_ANY, wx.EmptyString, _(u"Select Database file"), u"*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE|wx.FLP_OPEN|wx.FLP_SMALL )
 		Vsz2.Add( self.dbfile, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, u"List of Tabel:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, _(u"List of Tabel:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl1.Wrap( -1 )
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL, 5 )
 
 		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_HAS_BUTTONS|wx.TR_DEFAULT_STYLE )
-		self.Col1 = self.DVC1.AppendColumn( u"Name", 160,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendColumn( u"Type", 70,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col1 = self.DVC1.AppendColumn( _(u"Name"), 160,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( _(u"Type"), 70,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		#self.Col3 = self.DVC1.AppendColumn( u"Name", 0,  wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'table_row_insert.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn1.SetToolTip( u"Insert" )
+		#self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'table_row_insert.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetBitmap(icon.table_row_insert.GetBitmap())
+		self.btn1.SetToolTip( _(u"Insert") )
 
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn2.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_refresh.png', wx.BITMAP_TYPE_ANY))
-		self.btn2.SetToolTip(u"Update")
+		#self.btn2.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_refresh.png', wx.BITMAP_TYPE_ANY))
+		self.btn2.SetBitmap(icon.table_refresh.GetBitmap())
+		self.btn2.SetToolTip(_(u"Update"))
 
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn3.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_row_delete.png', wx.BITMAP_TYPE_ANY))
-		self.btn3.SetToolTip(u"Delete")
+		#self.btn3.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_row_delete.png', wx.BITMAP_TYPE_ANY))
+		self.btn3.SetBitmap(icon.table_row_delete.GetBitmap())
+		self.btn3.SetToolTip(_(u"Delete"))
 
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn4.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_relationship.png', wx.BITMAP_TYPE_ANY))
-		self.btn4.SetToolTip(u"Join")
+		#self.btn4.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_relationship.png', wx.BITMAP_TYPE_ANY))
+		self.btn4.SetBitmap(icon.table_relationship.GetBitmap())
+		self.btn4.SetToolTip(_(u"Join"))
 
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn5.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_import.png', wx.BITMAP_TYPE_ANY))
-		self.btn5.SetToolTip(u"Brows")
+		#self.btn5.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_import.png', wx.BITMAP_TYPE_ANY))
+		self.btn5.SetBitmap(icon.table_import.GetBitmap())
+		self.btn5.SetToolTip(_(u"Brows"))
 
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
-		self.btn6.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
-		self.btn6.SetToolTip(u"Apply")
+		#self.btn6.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn6.SetBitmap(icon.accept_button.GetBitmap())
+		self.btn6.SetToolTip(_(u"Apply"))
 
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
 
 		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_lightning.png', wx.BITMAP_TYPE_ANY))
-		self.btn7.SetToolTip(u"Generate")
+		#self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'table_lightning.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetBitmap(icon.table_lightning.GetBitmap())
+		self.btn7.SetToolTip(_(u"Generate"))
 		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
@@ -109,7 +121,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, u"Method in program", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Method in program"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl3.Wrap( -1 )
 
 		Hsz2.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -128,7 +140,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, u"Program Statments", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Program Statments"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl4.Wrap( -1 )
 
 		Hsz3.Add( self.lbl4, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -144,7 +156,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, u"SQL  Statments", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, _(u"SQL  Statments"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl5.Wrap( -1 )
 
 		Hsz4.Add( self.lbl5, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -160,14 +172,14 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz5 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btncv = wx.Button( self.P2, wx.ID_ANY, u"To CVS", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btncv = wx.Button( self.P2, wx.ID_ANY, _(u"To CVS"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz5.Add( self.btncv, 0, wx.ALL, 5 )
 
-		self.btnxl = wx.Button( self.P2, wx.ID_ANY, u"To Excel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btnxl = wx.Button( self.P2, wx.ID_ANY, _(u"To Excel"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz5.Add( self.btnxl, 0, wx.ALL, 5 )
 
 		self.btnex = wx.Button( self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
-		self.btnex.SetToolTip( u"Extended" )
+		self.btnex.SetToolTip( _(u"Extended") )
 
 		Hsz5.Add( self.btnex, 0, wx.ALL, 5 )
 
@@ -181,6 +193,9 @@ class MyPanel1 ( wx.Panel ):
 
 		self.SetSizer( Vsz1 )
 		self.Layout()
+
+		#Init program
+		self.fromHere()
 
 		#Parameter init
 		self.table = u''
@@ -210,6 +225,13 @@ class MyPanel1 ( wx.Panel ):
 		pass
 
 	# Virtual event handlers, overide them in your derived class
+	def fromHere(self):
+		if len(self.FTF) > 0:
+			frmname = self.FTF[0].GetTitle()
+			print(frmname)
+
+
+
 	def dbopn(self, event):
 		self.dbfil = self.dbfile.GetPath().split('\\')[-1]
 		#print(dbfil)
@@ -308,7 +330,7 @@ class MyPanel1 ( wx.Panel ):
 		frm = wx.Dialog(self, -1)
 		pnl = MyPanel3(frm, smfild)
 		frm.SetSize((400, 125))
-		frm.SetLabel(u'Select Key feild')
+		frm.SetLabel(_(u'Select Key feild'))
 		frm.ShowModal()
 		if pnl.acept:
 			choic = pnl.chs2.GetStringSelection()
@@ -346,7 +368,7 @@ class MyPanel1 ( wx.Panel ):
 		frm = wx.Dialog(self, -1)
 		pnl = MyPanel3(frm, smfild)
 		frm.SetSize((400, 125))
-		frm.SetLabel(u'Select Key feild')
+		frm.SetLabel(_(u'Select Key feild'))
 		frm.ShowModal()
 		if pnl.acept:
 			choic = pnl.chs2.GetStringSelection()
@@ -377,7 +399,7 @@ class MyPanel1 ( wx.Panel ):
 			frm = wx.Dialog(self, -1)
 			pnl = MyPanel5(frm, sqlsnts)
 			frm.SetSize((550, 155))
-			frm.SetLabel(u'Select Key feild')
+			frm.SetLabel(_(u'Select Key feild'))
 			if Bchs:
 				pnl.chs1.SetStringSelection(Btbl)
 				pnl.chs1.Disable()
@@ -415,14 +437,29 @@ class MyPanel1 ( wx.Panel ):
 
 	def brwit( self, event ):
 		self.gtslt = self.DVC1.GetSelections()
-		myfild = self.DVC1.GetItemText(self.gtslt[0], 0)
-		for fld in self.Tfilds:
-			if myfild == fld:
-				thsfld = [f[0] for f in self.Tfilds[fld]]
+		if self.fldsql.GetValue() != u'':
+			sqlcomnd = self.fldsql.GetValue()
+			brsdb = PG.Get(self.dbfil, u'', u'')
+			self.idata = brsdb.GetFromString(sqlcomnd)
+			#print(self.ChkTicks())
+			thstbl = [T for T in self.ChkTicks().keys()]
+			#print([F for t in self.ChkTicks() for F in self.ChkTicks()[t]])
+			thsfld = [F for t in self.ChkTicks() for F in self.ChkTicks()[t]]
+
+		else:
+			self.gtslt = self.DVC1.GetSelections()
+			myfild = self.DVC1.GetItemText(self.gtslt[0], 0)
+			#print(myfild)
+			for fld in self.Tfilds:
+				if myfild == fld:
+					thsfld = [f[0] for f in self.Tfilds[fld]]
+					#print(thsfld)
+			self.idbfl = PG.Get(self.dbfil, u'', u'')
+			self.idata = self.idbfl.GetFromString(u' select * from %s' % myfild)
 		frm = wx.Dialog(self, -1)
-		pnl = MyPanel2(frm, self.dbfil,thsfld, myfild)
+		pnl = MyPanel2(frm, thsfld, self.idata)
 		frm.SetSize((600, 300))
-		frm.SetLabel(u'Select Table')
+		frm.SetLabel(_(u'Select Table'))
 		frm.ShowModal()
 
 		frm.Destroy()
@@ -434,8 +471,8 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def chgmtd( self, event ):
-		inittxt = "#Add this lines to import part of program \nimport Database.PostGet as PG\n"
-		inittxt2 = "#Please Add this line in body of Panel\n"
+		inittxt = "## Add this lines to import part of program \nimport Database.PostGet as PG\n"
+		inittxt2 = "\t## Please Add this line in Panel __init__ function\n"
 		dbf = self.dbfil
 		if self.table != '':
 			table = self.table
@@ -465,18 +502,80 @@ class MyPanel1 ( wx.Panel ):
 
 
 	def prgstm( self, event ):
+		txt1 = self.fldinit.GetValue()
+		txt2 = self.fldprg.GetValue()
+		#print(txt1+u'\n'+txt2)
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		if txt1 != u'':
+			self.Pnl = DBG.TxtPanel(self.Frm)
+			self.Pnl.Txt.SetValue(txt1+u'\n'+txt2)
+			self.Frm.SetMenuBar(DBG.MyMenuBar2(u'prg'))
+			self.Frm.Show()
 		event.Skip()
 
 	def sqlstm( self, event ):
+		txt1 = self.fldsql.GetValue()
+		#print(txt1)
+		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+		if txt1 != u'':
+			self.Pnl = DBG.TxtPanel(self.Frm)
+			self.Pnl.Txt.SetValue(txt1)
+			self.Frm.SetMenuBar(DBG.MyMenuBar2(u'sql'))
+			self.Frm.Show()
 		event.Skip()
 
 	def tocvs( self, event ):
+		import csv
+		self.dlg = wx.FileDialog(self,_("Save as CSV file"),
+		                         defaultDir=DATABASE_PATH,
+		                         defaultFile="",
+		                         wildcard="CSV file(*.csv)|*.csv|All file(*.*)|*.*",
+		                         style=wx.FD_SAVE | wx.FD_CHANGE_DIR | wx.FD_OVERWRITE_PROMPT)
+		if self.dlg.ShowModal() == wx.ID_OK:
+			paths = self.dlg.GetPaths()[0]
+
+		self.dlg.Destroy()
+		#print(paths)
+		sqlcomnd = self.fldsql.GetValue()
+		brsdb = PG.Get(self.dbfil, u'', u'')
+		self.idata = brsdb.GetFromString(sqlcomnd)
+		thsfld = [F.strip('`') for t in self.ChkTicks() for F in self.ChkTicks()[t]]
+		with open(paths, 'w',newline='') as csvfile:
+			filwrit = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			filwrit.writerow(thsfld)
+			for row in self.idata:
+				filwrit.writerow(row)
 		event.Skip()
 
 	def toexl( self, event ):
+		from xlsxwriter.workbook import Workbook
+		self.dlg = wx.FileDialog(self, _("Save as Excel file"),
+		                         defaultDir=DATABASE_PATH,
+		                         defaultFile="",
+		                         wildcard="Excel file(*.xlsx)|*.xlsx|All file(*.*)|*.*",
+		                         style=wx.FD_SAVE | wx.FD_CHANGE_DIR | wx.FD_OVERWRITE_PROMPT)
+		if self.dlg.ShowModal() == wx.ID_OK:
+			paths = self.dlg.GetPaths()[0]
+		self.dlg.Destroy()
+		sqlcomnd = self.fldsql.GetValue()
+		brsdb = PG.Get(self.dbfil, u'', u'')
+		self.idata = brsdb.GetFromString(sqlcomnd)
+
+		workbook = Workbook(paths)
+		worksheet = workbook.add_worksheet()
+		r = 0
+
+		for row in self.idata:
+			c = 0
+			for col in row:
+				worksheet.write(r, c, col)
+				c += 1
+			r += 1
+		workbook.close()
 		event.Skip()
 
 	def extnd( self, event ):
+		wx.MessageBox(_("Please connect to our site and send your request"))
 		event.Skip()
 
 	def Splt1OnIdle( self, event ):
@@ -490,14 +589,15 @@ class MyPanel1 ( wx.Panel ):
 
 class MyPanel2 ( wx.Panel ):
 
-	def __init__( self, parent, DBF, fields, Table, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+	def __init__( self, parent, fields, Data, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz = wx.BoxSizer( wx.VERTICAL )
-		self.DBF = DBF.split('\\')[-1]
+		#self.DBF = DBF.split('\\')[-1]
 
-		self.idbfl = PG.Get(self.DBF, u'', u'')
-		self.idata = self.idbfl.GetFromString(u' select * from %s' %Table)
+		#self.idbfl = PG.Get(self.DBF, u'', u'')
+		#self.idata = self.idbfl.GetFromString(u' select * from %s' %Table)
+		self.idata = Data
 
 		self.DVC1 = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_HORIZ_RULES|wx.dataview.DV_VERT_RULES )
 		#self.fld1 = self.DVC1.AppendTextColumn( u"Name", 0, wx.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.DATAVIEW_COL_RESIZABLE )
@@ -516,7 +616,7 @@ class MyPanel2 ( wx.Panel ):
 			self.DVC1.AppendItem(DD)
 
 
-		self.m_button8 = wx.Button( self, wx.ID_ANY, u"ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button8 = wx.Button( self, wx.ID_ANY, _(u"ok"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Vsz.Add( self.m_button8, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
 
@@ -549,7 +649,7 @@ class MyPanel3 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self, wx.ID_ANY, u"Key of Field UpDate", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.lbl2 = wx.StaticText( self, wx.ID_ANY, _(u"Key of Field UpDate"), wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.lbl2.Wrap( -1 )
 
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -564,7 +664,7 @@ class MyPanel3 ( wx.Panel ):
 
 		Hsz2.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.codfld = wx.TextCtrl(self, wx.ID_ANY, u"SomeData", wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY)
+		self.codfld = wx.TextCtrl(self, wx.ID_ANY, _(u"SomeData"), wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY)
 		Hsz2.Add(self.codfld, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
 		Vsz1.Add( Hsz2, 1, wx.EXPAND, 5 )
@@ -574,10 +674,10 @@ class MyPanel3 ( wx.Panel ):
 
 		Hsz3.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancle or Return", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancle or Return"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok or Apply", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok or Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
@@ -619,7 +719,7 @@ class MyPanel4 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl1 = wx.StaticText( self, wx.ID_ANY, u"Base Table For Join", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.lbl1 = wx.StaticText( self, wx.ID_ANY, _(u"Base Table For Join"), wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.lbl1.Wrap( -1 )
 
 		Hsz1.Add( self.lbl1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -634,7 +734,7 @@ class MyPanel4 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self, wx.ID_ANY, u"Key of Field For Join", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.lbl2 = wx.StaticText( self, wx.ID_ANY, _(u"Key of Field For Join"), wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.lbl2.Wrap( -1 )
 
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -665,10 +765,10 @@ class MyPanel4 ( wx.Panel ):
 
 		Hsz3.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancle & Return", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancle & Return"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok & Apply", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok & Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
@@ -720,7 +820,7 @@ class MyPanel5 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl1 = wx.StaticText( self, wx.ID_ANY, u"Base Table For Join", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.lbl1 = wx.StaticText( self, wx.ID_ANY, _(u"Base Table For Join"), wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.lbl1.Wrap( -1 )
 
 		Hsz1.Add( self.lbl1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -735,7 +835,7 @@ class MyPanel5 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self, wx.ID_ANY, u"Key of Field For Join", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
+		self.lbl2 = wx.StaticText( self, wx.ID_ANY, _(u"Key of Field For Join"), wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.lbl2.Wrap( -1 )
 
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -763,10 +863,10 @@ class MyPanel5 ( wx.Panel ):
 
 		Hsz3.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancle & Return", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancle & Return"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok & Apply", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok & Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz3.Add( self.btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 

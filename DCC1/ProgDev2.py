@@ -11,19 +11,21 @@ import wx
 import wx.xrc
 import wx.dataview
 
-from AI.OpnFil import *
 import AI.OpnSrc as OS
 from AI.Analiz import *
 from AI.Generats import *
 
 
 from Config.Init import *
+import Res.Allicons as icon
 
 import Database.MenuSet2 as MS
 import Database.PostGet as PG
 import GUI.proman as pro
 import importlib
 import importlib.util
+
+_ = wx.GetTranslation
 ###########################################################################
 ## Class MyPanel3
 ###########################################################################
@@ -46,15 +48,15 @@ class MyPanel1 ( wx.Panel ):
 		self.P1 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz2 = wx.BoxSizer( wx.VERTICAL )
 
-		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, u"List of Programs:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, _(u"List of Programs:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl1.Wrap( -1 )
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 
-		self.Col1 = self.DVC1.AppendColumn( u"Program name",  200, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendColumn( u"ID",  25, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col1 = self.DVC1.AppendColumn( _(u"Program name"),  200, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( _(u"ID"),  25, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.filllist()
@@ -63,46 +65,53 @@ class MyPanel1 ( wx.Panel ):
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_add.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn1.SetToolTip( u"Add" )
+		#self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_add.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetBitmap(icon.application_add.GetBitmap())
+		self.btn1.SetToolTip( _(u"Add") )
 
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_edit.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn2.SetToolTip(u"Edit")
+		#self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_edit.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn2.SetBitmap(icon.application_edit.GetBitmap())
+		self.btn2.SetToolTip(_(u"Edit"))
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_delete.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn3.SetToolTip(u"Delete")
+		#self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_delete.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn3.SetBitmap(icon.application_delete.GetBitmap())
+		self.btn3.SetToolTip(_(u"Delete"))
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_form.png', wx.BITMAP_TYPE_ANY ))
-		self.btn4.SetToolTip(u"Preview")
+		#self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'application_form.png', wx.BITMAP_TYPE_ANY ))
+		self.btn4.SetBitmap(icon.application_form.GetBitmap())
+		self.btn4.SetToolTip(_(u"Preview"))
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn5.SetToolTip(u"Update")
+		#self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn5.SetBitmap(icon.update.GetBitmap())
+		self.btn5.SetToolTip(_(u"Update"))
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn6.SetToolTip(u"Apply")
+		#self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn6.SetBitmap(icon.accept_button.GetBitmap())
+		self.btn6.SetToolTip(_(u"Apply"))
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
 
 
 		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,wx.BU_AUTODRAW | 0)
 
-		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'application_lightning.png', wx.BITMAP_TYPE_ANY))
-		self.btn7.SetToolTip(u"Generate")
+		#self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'application_lightning.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetBitmap(icon.application_lightning.GetBitmap())
+		self.btn7.SetToolTip(_(u"Generate"))
 		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
@@ -115,7 +124,7 @@ class MyPanel1 ( wx.Panel ):
 		self.P2 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz3 = wx.BoxSizer( wx.VERTICAL )
 
-		self.titr = wx.StaticText( self.P2, wx.ID_ANY, u"Description:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.titr = wx.StaticText( self.P2, wx.ID_ANY, _(u"Description:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.titr.Wrap( -1 )
 
 		Vsz3.Add( self.titr, 0, wx.ALL|wx.EXPAND, 5 )
@@ -125,7 +134,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self.P2, wx.ID_ANY, u"ID No.", wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
+		self.lbl2 = wx.StaticText( self.P2, wx.ID_ANY, _(u"ID No."), wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
 		self.lbl2.Wrap( -1 )
 
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -133,7 +142,7 @@ class MyPanel1 ( wx.Panel ):
 		self.fld1 = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), 0 )
 		Hsz2.Add( self.fld1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, u"Prog. No.", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Prog. No."), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl3.Wrap( -1 )
 
 		Hsz2.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -146,7 +155,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, u"import ", wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
+		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, _(u"import "), wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
 		self.lbl4.Wrap( -1 )
 
 		Hsz3.Add( self.lbl4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -162,12 +171,12 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz5 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl6 = wx.StaticText( self.P2, wx.ID_ANY, u"Directory", wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
+		self.lbl6 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Directory"), wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
 		self.lbl6.Wrap( -1 )
 
 		Hsz5.Add( self.lbl6, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.PrgDir1 = wx.DirPickerCtrl( self.P2, wx.ID_ANY, wx.EmptyString, u"Select a folder", wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE|wx.DIRP_SMALL )
+		self.PrgDir1 = wx.DirPickerCtrl( self.P2, wx.ID_ANY, wx.EmptyString, _(u"Select a folder"), wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE|wx.DIRP_SMALL )
 		Hsz5.Add( self.PrgDir1, 1, wx.ALL, 5 )
 
 
@@ -175,7 +184,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, u"Parameters", wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
+		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Parameters"), wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
 		self.lbl5.Wrap( -1 )
 
 		Hsz4.Add( self.lbl5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -188,7 +197,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz6 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl7 = wx.StaticText( self.P2, wx.ID_ANY, u"Link:", wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
+		self.lbl7 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Link:"), wx.DefaultPosition, wx.Size( 58,-1 ), 0 )
 		self.lbl7.Wrap( -1 )
 
 		Hsz6.Add( self.lbl7, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -196,7 +205,7 @@ class MyPanel1 ( wx.Panel ):
 		self.fld6 = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz6.Add( self.fld6, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.chk1 = wx.CheckBox( self.P2, wx.ID_ANY, u"Public it", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.chk1 = wx.CheckBox( self.P2, wx.ID_ANY, _(u"Public it"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz6.Add( self.chk1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
@@ -207,13 +216,13 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz10 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl8 = wx.StaticText( self.P2, wx.ID_ANY, u"Database:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl8 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Database:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl8.Wrap( -1 )
 
 		Hsz10.Add( self.lbl8, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.probtn = wx.Button( self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
-		self.probtn.SetToolTip( u"Select Database Tabels and Fields for this program" )
+		self.probtn.SetToolTip( _(u"Select Database Tabels and Fields for this program") )
 
 		Hsz10.Add( self.probtn, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -225,7 +234,7 @@ class MyPanel1 ( wx.Panel ):
 		self.prgfld = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Vsz4.Add( self.prgfld, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, u"Directory:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Directory:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl9.Wrap( -1 )
 
 		Vsz4.Add( self.lbl9, 0, wx.ALL, 5 )
@@ -441,7 +450,7 @@ class MyPanel1 ( wx.Panel ):
 
 	def delit( self, event ):
 		if self.fld1.GetValue() == '':
-			wx.MessageBox("Do you like delete program file from path")
+			wx.MessageBox(_("Do you like delete program file from path"))
 			hndlid = 0
 		else:
 			hndlid = self.fld1.GetValue()
@@ -454,7 +463,7 @@ class MyPanel1 ( wx.Panel ):
 		                                             where handler.handlerid = %d' % int(hndlid))) > 0:
 			self.setMDate.Table = u'PrgDesc'
 			self.setMDate.Delitem(u' PrgDesc.handlerid = %d' % int(hndlid))
-		wx.MessageBox(u"Program successful delete from your list")
+		wx.MessageBox(_(u"Program successful delete from your list"))
 		self.updat(None)
 		#event.Skip()
 
@@ -503,7 +512,7 @@ class MyPanel1 ( wx.Panel ):
 					ipnl = myclass(b)
 					b.Show()
 				except AttributeError as e:
-					print('nit work', e)
+					print('not work', e)
 
 		event.Skip()
 
@@ -518,12 +527,12 @@ class MyPanel1 ( wx.Panel ):
 		txt = self.DVC1.GetItemText(itm, 0)
 		cod = self.DVC1.GetItemText(itm, 1)
 		if cod == '????':
-			wx.MessageBox(u'Please first Generate program then select the correct one to use it')
+			wx.MessageBox(_(u'Please first Generate program then select the correct one to use it'))
 		#print(self.FTF)
 		else:
 			pnl = self.FTF[0].panel
 			pnl.prgfld.SetValue(txt)
-			pnl.lbl9.SetLabel(u"Directory: "+self.thspath)
+			pnl.lbl9.SetLabel(_(u"Directory: ")+self.thspath)
 			#print(pnl)
 			q = self.GetParent()
 			q.Close()
@@ -540,6 +549,12 @@ class MyPanel1 ( wx.Panel ):
 		print(txt,cod,self.thsdcod,self.thsfile,self.thspath)
 
 		if cod == '????':
+			if af.ishasmain():
+				print(u'This file main')
+				af.checkSyntx()
+				if af.ishasifin():
+					print(u'If is in file')
+					af.checkSyntx()
 			if af.ishasframe():
 				mygnrt = Genrate2(self.thsfile)
 				mygnrt.gnratLine(False,True,True,True,af.ishasframe())
@@ -591,7 +606,7 @@ class MyPanel1 ( wx.Panel ):
 					self.Refresh()
 
 		else:
-			wx.MessageBox(u"You can only generate the unlisted program with this code '????'")
+			wx.MessageBox(_(u"You can only generate the unlisted program with this code '????'"))
 
 		#event.Skip()
 
@@ -605,6 +620,16 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def dblst( self, event ):
+		if wx.FindWindowByName(u'Database Develop') == None:
+			import DCC1.DBDev2 as DB
+			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
+			pnl = DB.MyPanel1(ifrm, [self.GetParent()])
+			ifrm.SetSize((555, 460))
+			ifrm.SetTitle(u'Database use Program')
+			ifrm.Show()
+		else:
+			wx.MessageBox(_("Double Program: Please Close Program Develop then Do this item"))
+
 		event.Skip()
 
 	def getData(self):
@@ -637,14 +662,14 @@ class MyDialog1 ( wx.Dialog ):
 
 		H1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.box1 = wx.CheckBox(self, wx.ID_ANY, u"Create for Aui Pane", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.box1 = wx.CheckBox(self, wx.ID_ANY, _(u"Create for Aui Pane"), wx.DefaultPosition, wx.DefaultSize, 0)
 		H1.Add(self.box1, 0, wx.ALL, 5)
 
 		V1.Add( H1, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
 		H2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl1 = wx.StaticText( self, wx.ID_ANY, u"name of file to create", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl1 = wx.StaticText( self, wx.ID_ANY, _(u"name of file to create"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl1.Wrap( -1 )
 
 		H2.Add( self.lbl1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -657,7 +682,7 @@ class MyDialog1 ( wx.Dialog ):
 
 		H3 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self, wx.ID_ANY, u"choise path of file to create", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl2 = wx.StaticText( self, wx.ID_ANY, _(u"choise path of file to create"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl2.Wrap( -1 )
 
 		H3.Add( self.lbl2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -672,10 +697,10 @@ class MyDialog1 ( wx.Dialog ):
 
 		H4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancel"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		H4.Add( self.btn1, 0, wx.ALL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		H4.Add( self.btn2, 0, wx.ALL, 5 )
 
 
@@ -713,8 +738,8 @@ class MyDialog1 ( wx.Dialog ):
 	def gtit( self, event ):
 		self.filname = self.fld1.GetValue()
 		self.pathfil = self.chs1.GetStringSelection()
-		print(self.filname,self.pathfil)
-		print(self.myMenu.GetDirCod2(self.pathfil))
+		#print(self.filname,self.pathfil)
+		#print(self.myMenu.GetDirCod2(self.pathfil))
 		self.Destroy()
 		event.Skip()
 

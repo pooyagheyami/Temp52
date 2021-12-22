@@ -14,6 +14,9 @@ import wx.propgrid as pg
 import os
 import sys
 import Database.MenuSet2 as MS
+from Config.Init import *
+
+_ = wx.GetTranslation
 
 #################################################################################
 ##  Size Property Class
@@ -63,6 +66,12 @@ class SizeProperty(pg.PGProperty):
 
         return size
 
+###########################################################################
+# Check Property class
+#
+###########################################################################
+#class checkProperty(pg.PGCheckBoxEditor)
+
 
 ###########################################################################
 ## Class MyPanel1
@@ -79,7 +88,11 @@ class MyPanel1 ( wx.Panel ):
         self.MyMenu = MS.GetData(u'Menu2.db', u'')
 
         LAuiP = [ l[0] for l in self.MyMenu.ListPanes() ]
+        Statu = [u'name',u'date',u'time']
         #print(LAuiP)
+
+        language = [LANGUAGE_LIST[lan] for lan in LANGUAGE_LIST]
+        lan = [lan for lan in LANGUAGE_LIST ]
 
         Vsz1 = wx.BoxSizer( wx.VERTICAL )
 
@@ -94,46 +107,81 @@ class MyPanel1 ( wx.Panel ):
 
         self.config = wx.GetApp().GetConfig()
 
-        conflst = {u"General properties":[('Date',u"Date",u"Date",u"Contorl Date of system and program",wx.DateTime.Now()),
-                                          (u'Enum',u"Language", u"Language",u"",[u'English',u'Turkish',u'Persian'],[1,2,3],1 ),
-                                          (u"Image",u"Background",u"Background",u"",self.config.Read('Background'))],
 
+        PansLst = eval(self.config.Read("Panes"))
+        StatLst = eval(self.config.Read("Status"))
+        self.ifont = self.config.Read(u'Font')
+        TBGname,self.TBGCol = self.config.Read(u'TBGColor').split(',')
+        SBGname,self.SBGCol = self.config.Read(u'SBGColor').split(',')
+
+        mw = wx.GetTopLevelWindows()
+
+        fntis = self.config.Read(u'Font').split(',')
+        #print(fntis)
+        if fntis[4] == 'True':
+            undr = True
+        else:
+            undr = False
+
+        ifont = wx.Font(int(fntis[0]),int(fntis[1]),int(fntis[2]),int(fntis[3]),undr,faceName=fntis[5])
+
+
+        conflst = {u"General properties":[(u'Enum',u"Language", u"Language",u"",language,lan,int(self.config.Read("Language")) ),
+                                          (u"Image",u"Splash",u"Splash",u"Use this file for Splash",self.config.Read('Splash'))],
+                   u"Main Window properties":[(u'String',u'Label of Window',u'Winname',u'Show label of Main window',self.config.Read(u'Winname')),
+                                              (u'Bool',u"Back Ground Active",u"BGActive",u"UseCheckbox",eval(self.config.Read('BGActive'))),
+                                              (u"Image",u"Background",u"Background",u"If Active BackGround Use this file",self.config.Read('Background')),
+                                              #(u"Enum",u"Type of Menu",u"Menu",u"",[u'Normal',u'Flat'],[1,2],int(self.config.Read("Menu"))),
+                                              (u"Enum",u"Type of Toolbar",u"Toolbar",u"",[u'Normal',u'Aui'],[1,2],int(self.config.Read("Toolbar"))),
+                                              (u"SysColor",u"Toolbar Background",u"TBGColor",u"Toolbar Background colour set",self.TBGCol),
+                                              (u"MChoice",u"Start Panes",u"Panes",u"Start this panes in Main Window",LAuiP,PansLst),
+                                              (u"Font",u"Main Window Font",u"Font",u"",ifont),
+                                              (u"MChoice",u"Show in Status ",u"Status",u"",Statu,StatLst),
+                                              (u"SysColor",u"Status Background Color",u"SBGColor",u"Status background colour set",self.SBGCol)]
         }
 
         self.P1 = self.pgm.AddPage( u"General Properties Page", wx.ArtProvider.GetBitmap( wx.ART_LIST_VIEW, wx.ART_MESSAGE_BOX ) );
 
-        self.Item1 = self.P1.Append( pg.PropertyCategory( u"General properties", u"General properties" ) )
-        self.Item2 = self.P1.Append( pg.DateProperty( u"Date", value=wx.DateTime.Now() ) )
-        self.P1.SetPropertyHelpString( self.Item2, u"Contorl Date of system and program" )
-        self.Item3 = self.P1.Append( pg.EnumProperty( u"Language", u"Language",[u'English',u'Turkish',u'Persian'],[1,2,3],int(self.config.Read("Language")) ) )
-        #self.Item4 = self.P1.Append( pg.ImageFileProperty( u"Background",value=os.getcwd()+u'\\Res\\Pics\\V19.jpg' ) )
-        self.Item4 = self.P1.Append(pg.ImageFileProperty(u"Background", value=self.config.Read("Background")))
-        self.Item5 = self.P1.Append( pg.EnumProperty( u"Type of Toolbar", u"Toolbar",[u'Normal',u'Aui'],[1,2],int(self.config.Read("Toolbar")) ) )
-        self.Item6 = self.P1.Append( pg.EnumProperty( u"Type of Menu", u"Menu",[u'Normal',u'Flat'],[1,2],int(self.config.Read("Menu")) ) )
-        self.Item7 = self.P1.Append( pg.MultiChoiceProperty( u"Start Panes",u"Panes",choices=LAuiP ) )
+        Items1 = []
+        for con in conflst:
+            Items1.append(self.P1.Append( pg.PropertyCategory(con, con)))
+            for itm in conflst[con]:
+                if itm[0] == u"Enum":
+                    Items1.append(self.P1.Append( pg.EnumProperty(itm[1],itm[2],itm[4],itm[5],itm[6]) ))
+                    Items1[-1].SetHelpString(itm[3])
+                elif itm[0] == u"Image":
+                    Items1.append(self.P1.Append( pg.ImageFileProperty(itm[1],itm[2],value=itm[4]) ))
+                    Items1[-1].SetHelpString(itm[3])
+                elif itm[0] == u"Bool":
+                    Items1.append(self.P1.Append( pg.BoolProperty(itm[1],itm[2],value=itm[4]) ))
+                    #Items1[-1].SetHelpString(itm[3])
+                    self.pgm.SetPropertyAttribute(itm[2],itm[3],True )
+                elif itm[0] == u"MChoice":
+                    Items1.append(self.P1.Append( pg.MultiChoiceProperty(itm[1],itm[2],choices=itm[4],value=itm[5]) ) )
+                    Items1[-1].SetHelpString(itm[3])
+                elif itm[0] == u"Font":
+                    Items1.append(self.P1.Append( pg.FontProperty(itm[1],itm[2],ifont) ) )
+                    Items1[-1].SetHelpString(itm[3])
+                elif itm[0] == u'SysColor':
+                    Items1.append(self.P1.Append( pg.SystemColourProperty(itm[1],itm[2])))
+                    Items1[-1].SetHelpString(itm[3])
+                    Items1[-1].SetValue(wx.SystemSettings.GetColour(int(itm[4])))
+                    #print(Items1[-1])
+                elif itm[0] == u'String':
+                    Items1.append(self.P1.Append( pg.StringProperty(itm[1],itm[2],itm[4])))
+                    Items1[-1].SetHelpString(itm[3])
+                else:
+                    print("something error")
 
-        self.Item8 = self.P1.Append( pg.PropertyCategory( u"Form Properties", u"Form Properties" ) )
-        self.Item9 = self.P1.Append( SizeProperty( u"Default size",u'FSize', value=wx.DefaultSize ) )
 
-        self.Item10 = self.P1.Append(pg.EnumProperty(u"Form Type", u"FType", [u'',u'']))
-        self.Item11 = self.P1.Append(pg.ImageFileProperty(u"Form Background", u"FormBackground"))
-        self.Item12 = self.P1.Append(pg.PropertyCategory(u"Toolbar Properties", u"Toolbar Properties"))
-        self.Item13 = self.P1.Append( SizeProperty(u"Icon Size", u"IconSize",value=wx.DefaultSize))
-        self.Item14 = self.P1.Append(pg.EnumProperty(u"Text position", u"TextPos"))
-        self.Item15 = self.P1.Append(pg.EnumProperty(u"Toolbar Type", u"TBType"))
-        self.Item16 = self.P1.Append( pg.PropertyCategory( u"Panes Properties", u"Panes Properties" ) )
-        self.Item17 = self.P1.Append( pg.IntProperty( u"Nomber of Leyer", u"NLeyer" ) )
-        self.Item18 = self.P1.Append( pg.PropertyCategory( u"Status Properties", u"Status Properties" ) )
-        self.Item19 = self.P1.Append( pg.MultiChoiceProperty( u"Choice parameter", u"Choice parameter" ) )
 
-        self.pgm.SetPropertyAttribute("Date", pg.PG_DATE_PICKER_STYLE,wx.adv.DP_DROPDOWN | wx.adv.DP_SHOWCENTURY)
         MAP = os.getcwd()
         dirlst = {u'Main Directory and Path':[(u"Application Path",'AppPath',u"The Path of application and work program",MAP),
                                               (u"Database Path",u'DBPath',u'',MAP+u'\\Database'),
                                               (u"GUI API path",u'APIPath',u"The path of application program interface that each menu point to execute it",MAP+u'\\GUI'),
                                               (u"Menu Programs Path",u'MnuPath',u'',MAP+u'\\GUI\\Program')],
-                  u"Resouce and images":[(u"Icon 32X32 Path",u'Icn32Path',u'',MAP+u'\\Res\\Icons\\32x32'),
-                                         (u"Icon 16X16 Path",u'Icn16Path',u'',MAP+u'\\Res\\Icons\\16x16'),
+                  u"Resouce and images":[(u"Icon Menu Path",u'Icn32Path',u'',MAP+u'\\Res\\Icons\\Menu'),
+                                         (u"Icon Toolbar Path",u'Icn16Path',u'',MAP+u'\\Res\\Icons\\Tool'),
                                          (u"Image and Pic Path",u'ImgPath',u'',MAP+u'\\Res\\Pics'),
                                          (u"Splash Path",u'SplshPath',u'',MAP+u'\\Res\\Splash')],
 
@@ -187,12 +235,22 @@ class MyPanel1 ( wx.Panel ):
 
     def aply( self, event ):
         d = self.pgm.GetPropertyValues(inc_attributes=True)
+        v = self.pgm.GetPropertyValues(as_strings=True)
         #print(d)
         e = self.pgm.GetPropertyValues()
         #print(e)
         self.config = wx.GetApp().GetConfig()
         for itm in e:
-            self.config.Write(itm,str(e[itm]))
+            if itm == 'TBGColor':
+                #print(e[itm])
+                self.config.Write(itm,v[u'TBGColor']+','+str(self.TBGCol))
+            elif itm == 'SBGColor':
+                self.config.Write(itm,v[u'SBGColor']+','+str(self.SBGCol))
+            elif itm == 'Font':
+                self.config.Write('Font', self.ifont)
+            else:
+                self.config.Write(itm,str(e[itm]))
+
         self.config.Flush()
         wx.MessageBox("Config file changed. You must Start application again to see the change")
         q = self.GetParent()
@@ -201,11 +259,56 @@ class MyPanel1 ( wx.Panel ):
 
     def OnPropGridChange(self, event):
         p = event.GetProperty()
+        v = self.pgm.GetPropertyValues(as_strings=True)
         #print('change',p.GetValue(),p.GetName(),p.GetLabel(),p.GetDisplayedString())
         if p.GetName() == 'Background':
             bmpwin = wx.GetTopLevelWindows()
             bmpwin[0].bmpwin.BGfile = p.GetValue()
             bmpwin[0].bmpwin.ChangeBackGround()
+        if p.GetName() == u'Font':
+            #print(v[u'Font'])
+            wfont = p.GetValue()
+            minwin = wx.GetTopLevelWindows()
+
+            f1 = wfont.GetPointSize()
+            f2 = wfont.GetFamily()
+            f3 = wfont.GetStyle()
+            f4 = wfont.GetWeight()
+            f5 = wfont.GetUnderlined()
+            f6 = wfont.GetFaceName()
+            #print(f1,f2,f3,f4,f5,f6)
+            self.ifont = str(f1)+','+str(f2)+','+str(f3)+','+str(f4)+','+str(f5)+','+f6
+            #print(minwin[0],wfont)
+            minwin[0].SetFont(wfont)
+            minwin[0].SetOwnFont(wfont)
+            minwin[0].Refresh()
+            minwin[0].m_mgr.Update()
+
+        if p.GetName() == u'TBGColor':
+            #print(v[u'TBGColor'])
+            wcolor = p.GetValue()
+            self.TBGCol = wcolor.m_type
+            minwin = wx.GetTopLevelWindows()
+            #print(minwin[0].GetToolBar())
+            minwin[0].GetToolBar().SetBackgroundColour(wx.SystemSettings.GetColour(wcolor.m_type))
+            minwin[0].Refresh()
+
+
+
+        if p.GetName() == u'SBGColor':
+            #print(v[u'SBGColor'])
+            wcolor = p.GetValue()
+            #print(wcolor.m_type)
+            self.SBGCol = wcolor.m_type
+            minwin = wx.GetTopLevelWindows()
+            #print(minwin[0].GetStatusBar().GetFieldsCount())
+            minwin[0].GetStatusBar().SetBackgroundColour(wx.SystemSettings.GetColour(wcolor.m_type))
+            minwin[0].Refresh()
+
+
+
+
+
 
     def OnPropGridSelect(self, event):
         p = event.GetProperty()

@@ -16,6 +16,7 @@ import importlib
 from Config.Init import *
 import Database.MenuSet2 as MS
 from GUI.AuiPanel.PAui import *
+import Res.Allicons as icon
 
 _ = wx.GetTranslation
 
@@ -37,14 +38,14 @@ class MyPanel1 ( wx.Panel ):
 		self.P1 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz2 = wx.BoxSizer( wx.VERTICAL )
 
-		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, u"List of Panes:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl1 = wx.StaticText( self.P1, wx.ID_ANY, _(u"List of Panes:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl1.Wrap( -1 )
 
 		Vsz2.Add( self.lbl1, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.DVC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.Col1 = self.DVC1.AppendColumn( u"ID", 75, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
-		self.Col2 = self.DVC1.AppendColumn( u"Name Pane", 158, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.Col1 = self.DVC1.AppendColumn( _(u"ID"), 75, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.Col2 = self.DVC1.AppendColumn( _(u"Name Pane"), 158, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.MyMenu = MS.GetData(u'Menu2.db', u'')
@@ -63,44 +64,51 @@ class MyPanel1 ( wx.Panel ):
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn1.SetBitmap(wx.Bitmap( ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn1.SetToolTip(u"Add")
+		#self.btn1.SetBitmap(wx.Bitmap( ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetBitmap(icon.add.GetBitmap())
+		self.btn1.SetToolTip(_(u"Add"))
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn2.SetToolTip(u"Edit")
+		#self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn2.SetBitmap(icon.edit_button.GetBitmap())
+		self.btn2.SetToolTip(_(u"Edit"))
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn3.SetToolTip(u"Delete")
+		#self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn3.SetBitmap(icon.delete.GetBitmap())
+		self.btn3.SetToolTip(_(u"Delete"))
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'watch_window.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn4.SetToolTip(u"Show")
+		#self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'watch_window.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn4.SetBitmap(icon.watch_window.GetBitmap())
+		self.btn4.SetToolTip(_(u"Show"))
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn5.SetToolTip(u"Update")
+		#self.btn5.SetBitmap( wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn5.SetBitmap(icon.update.GetBitmap())
+		self.btn5.SetToolTip(_(u"Update"))
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'information.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn6.SetToolTip(u"Info")
+		#self.btn6.SetBitmap( wx.Bitmap( ICON16_PATH + u'information.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn6.SetBitmap(icon.information.GetBitmap())
+		self.btn6.SetToolTip(_(u"Info"))
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
 
 		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW | 0)
 
-		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
-		self.btn7.SetToolTip(u"Apply")
+		#self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetBitmap(icon.accept_button.GetBitmap())
+		self.btn7.SetToolTip(_(u"Apply"))
 		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
@@ -113,14 +121,14 @@ class MyPanel1 ( wx.Panel ):
 		self.P2 = wx.Panel( self.Splt1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		Vsz3 = wx.BoxSizer( wx.VERTICAL )
 
-		self.titr = wx.StaticText( self.P2, wx.ID_ANY, u"Pane Info:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.titr = wx.StaticText( self.P2, wx.ID_ANY, _(u"Pane Info:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.titr.Wrap( -1 )
 
 		Vsz3.Add( self.titr, 0, wx.ALL|wx.EXPAND, 5 )
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl2 = wx.StaticText( self.P2, wx.ID_ANY, u"ID", wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
+		self.lbl2 = wx.StaticText( self.P2, wx.ID_ANY, _(u"ID"), wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
 		self.lbl2.Wrap( -1 )
 
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -128,7 +136,7 @@ class MyPanel1 ( wx.Panel ):
 		self.fld1 = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), 0 )
 		Hsz2.Add( self.fld1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, u"Access", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl3 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Access"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl3.Wrap( -1 )
 
 		Hsz2.Add( self.lbl3, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -144,7 +152,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, u"Name", wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
+		self.lbl4 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Name"), wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
 		self.lbl4.Wrap( -1 )
 
 		Hsz3.Add( self.lbl4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -157,7 +165,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, u"Caption", wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
+		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Caption"), wx.DefaultPosition, wx.Size( 45,-1 ), 0 )
 		self.lbl5.Wrap( -1 )
 
 		Hsz4.Add( self.lbl5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -170,7 +178,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz6 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl7 = wx.StaticText( self.P2, wx.ID_ANY, u"Setting", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl7 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Setting"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl7.Wrap( -1 )
 
 		Hsz6.Add( self.lbl7, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -189,7 +197,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz7 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl12 = wx.StaticText( self.P2, wx.ID_ANY, u"Size", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl12 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Size"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl12.Wrap( -1 )
 
 		Hsz7.Add( self.lbl12, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -200,7 +208,7 @@ class MyPanel1 ( wx.Panel ):
 		self.hgt = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), 0 )
 		Hsz7.Add( self.hgt, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.sizbtn = wx.Button( self.P2, wx.ID_ANY, u"Other Size", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.sizbtn = wx.Button( self.P2, wx.ID_ANY, _(u"Other Size"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz7.Add( self.sizbtn, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
@@ -208,7 +216,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz8 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl10 = wx.StaticText( self.P2, wx.ID_ANY, u"resize", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl10 = wx.StaticText( self.P2, wx.ID_ANY, _(u"resize"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl10.Wrap( -1 )
 
 		Hsz8.Add( self.lbl10, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -218,7 +226,7 @@ class MyPanel1 ( wx.Panel ):
 		self.chs1.SetSelection( 0 )
 		Hsz8.Add( self.chs1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.lbl6 = wx.StaticText( self.P2, wx.ID_ANY, u"dock", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl6 = wx.StaticText( self.P2, wx.ID_ANY, _(u"dock"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl6.Wrap( -1 )
 
 		Hsz8.Add( self.lbl6, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -233,7 +241,7 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz9 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl11 = wx.StaticText( self.P2, wx.ID_ANY, u"Docking", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl11 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Docking"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl11.Wrap( -1 )
 
 		Hsz9.Add( self.lbl11, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -246,7 +254,7 @@ class MyPanel1 ( wx.Panel ):
 		self.dokbtn = wx.Button(self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT)
 		Hsz9.Add(self.dokbtn, 0, wx.ALL, 5)
 
-		self.lbl13 = wx.StaticText(self.P2, wx.ID_ANY, u"Layer", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.lbl13 = wx.StaticText(self.P2, wx.ID_ANY, _(u"Layer"), wx.DefaultPosition, wx.DefaultSize, 0)
 		self.lbl13.Wrap(-1)
 
 		Hsz9.Add(self.lbl13, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
@@ -264,13 +272,13 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz10 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl8 = wx.StaticText( self.P2, wx.ID_ANY, u"Program:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl8 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Program:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl8.Wrap( -1 )
 
 		Hsz10.Add( self.lbl8, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.probtn = wx.Button( self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
-		self.probtn.SetToolTip( u"list of program can changed" )
+		self.probtn.SetToolTip( _(u"list of program can changed") )
 
 		Hsz10.Add( self.probtn, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -282,7 +290,7 @@ class MyPanel1 ( wx.Panel ):
 		self.prgfld = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Vsz4.Add( self.prgfld, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, u"Directory:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Directory:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl9.Wrap( -1 )
 
 		Vsz4.Add( self.lbl9, 0, wx.ALL, 5 )
@@ -370,7 +378,7 @@ class MyPanel1 ( wx.Panel ):
 		mydir,myprgnm = self.MyMenu.RunHdnl(Data[6])[0]
 		#print(mydir,myprgnm)
 		self.prgfld.SetValue(myprgnm+'.py')
-		self.lbl9.SetLabel(u"Directory: "+mydir)
+		self.lbl9.SetLabel(_(u"Directory: ")+mydir)
 
 	def fillnull(self):
 		data = (0,'','','-1;-1',0,'',0,'','','','TTFFTTTFFFFT','','','','','Dock;FTTTTT','-1;-1;0;0')
@@ -412,7 +420,7 @@ class MyPanel1 ( wx.Panel ):
 				self.DoMenu.Table = u'access'
 				self.DoMenu.Delitem(u' access.acclvlid = "%s"' % Delitem[7])
 
-				wx.MessageBox(u' Pane delete from application successful')
+				wx.MessageBox(_(u' Pane delete from application successful'))
 
 		self.DVC1.DeleteAllItems()
 		self.filllist()
@@ -442,7 +450,7 @@ class MyPanel1 ( wx.Panel ):
 			self.Frm.Show()
 		except ImportError as error:
 			wx.MessageBox(error)
-			print(error)
+			#print(error)
 		event.Skip()
 
 	def aplit( self, event ):
@@ -481,7 +489,7 @@ class MyPanel1 ( wx.Panel ):
 			self.DoMenu.Table = u'access'
 			self.DoMenu.Additem(u' acclvlid, userid, acclvl, disenable',D3)
 
-			wx.MessageBox(u'A new Pane add to application ')
+			wx.MessageBox(_(u'A new Pane add to application '))
 
 			self.DVC1.DeleteAllItems()
 			self.filllist()
@@ -490,7 +498,7 @@ class MyPanel1 ( wx.Panel ):
 			#createpenshow()
 
 		else:
-			wx.MessageBox(u'Please press Add bottom to make new pane')
+			wx.MessageBox(_(u'Please press Add bottom to make new pane'))
 		event.Skip()
 
 	def gnrcod( self, event ):
@@ -511,7 +519,7 @@ class MyPanel1 ( wx.Panel ):
 			self.fild = self.crtsetsrt(pnl.e)
 			self.fld6.SetValue(self.fild)
 		except AttributeError:
-			print('Cancel it')
+			#print('Cancel it')
 			#print(pnl.PGrid1.GetPropertyValues())
 			self.gnrsetting(pnl.PGrid1.GetPropertyValues())
 			self.fild = self.crtsetsrt(pnl.PGrid1.GetPropertyValues())
@@ -524,7 +532,7 @@ class MyPanel1 ( wx.Panel ):
 		pnl = MyPanel3(iwin,self.othrsiz)
 		iwin.SetSize((400, 250))
 		iwin.ShowModal()
-		print(pnl.PGrid1.GetPropertyValues())
+		#print(pnl.PGrid1.GetPropertyValues())
 		self.gnrsize(pnl.PGrid1.GetPropertyValues())
 		self.crtsizsrt(pnl.PGrid1.GetPropertyValues())
 		iwin.Destroy()
@@ -549,7 +557,7 @@ class MyPanel1 ( wx.Panel ):
 		pnl = MyPanel4(iwin)
 		iwin.SetSize((400, 350))
 		iwin.ShowModal()
-		print(pnl.PGrid1.GetPropertyValues())
+		#print(pnl.PGrid1.GetPropertyValues())
 		self.gnrdock(pnl.PGrid1.GetPropertyValues(), self.chs2.GetStringSelection())
 		self.s1, self.s2 = self.credoksrt(pnl.PGrid1.GetPropertyValues())
 		iwin.Destroy()
@@ -562,9 +570,9 @@ class MyPanel1 ( wx.Panel ):
 			ifrm.SetSize((555, 460))
 			ifrm.SetTitle(u'List of Program')
 			ifrm.Show()
-			print(ifrm.TransferDataFromWindow())
+			#print(ifrm.TransferDataFromWindow())
 		else:
-			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
+			wx.MessageBox(_("Double Program: Please Close Program Develop then Do this item"))
 			pass
 
 	def findhndlr(self, hndlrnm):
@@ -703,10 +711,10 @@ class MyPanel2 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancel"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 
@@ -731,7 +739,7 @@ class MyPanel2 ( wx.Panel ):
 
 	def okit( self, event ):
 		self.e = self.PGrid1.GetPropertyValues()
-		print(self.e)
+		#print(self.e)
 		q = self.GetParent()
 		q.Close()
 
@@ -819,10 +827,10 @@ class MyPanel3 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancel"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 
@@ -932,10 +940,10 @@ class MyPanel4 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancel"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Ok"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 
@@ -960,7 +968,7 @@ class MyPanel4 ( wx.Panel ):
 
 	def okit( self, event ):
 		self.e = self.PGrid1.GetPropertyValues()
-		print(self.e)
+		#print(self.e)
 		q = self.GetParent()
 		q.Close()
 

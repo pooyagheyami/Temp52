@@ -38,6 +38,33 @@ class Anlzfil(object):
             if 'GUI' in im:
                 return im[im.find('GUI'):].split(' ')[0]
 
+    def checkSyntx(self):
+        with open(self.pyFile, 'r') as f:
+            whris = re.search(r"if\s__name__\s==\s\'__main__\':", f.read())
+            whmis = re.search(r'def\smain\(panel=None\):',f.read())
+            #print(whris.span()[0])
+            #print(whris.span()[1])
+            if whris:
+
+                mainis = re.search(r'main',f.read())
+                print(u'main found:',mainis)
+            print(whmis)
+
+
+    def ishasmain(self):
+        with open(self.pyFile, 'r') as f:
+            whris = re.search(r'def\smain', f.read())
+            if whris:
+                print(whris.group().split(' '))
+                return whris.group().split(' ')[1]
+
+    def ishasifin(self):
+        with open(self.pyFile, 'r') as f:
+            whris = re.search(r"if\s__name__", f.read())
+            if whris:
+                print(whris.group().split(' '))
+                return whris.group().split(' ')[1]
+
     def ishasframe(self):
         with open(self.pyFile, 'r') as f:
             whris = re.search(r'class\s.+\s+(wx\.Frame).+', f.read())
@@ -77,15 +104,15 @@ def AnalizdbText(dbdatatxt):
     wtxt = re.sub(r'\s+',' ',wtxt1)
     #print(wtxt)
     ltxt = wtxt.split(' ')
-    print(ltxt)
+    #print(ltxt)
     Table_name = ltxt[ltxt.index('TABLE') + 1]
 
     t = dbdatatxt
     fld = t[t.find('(')+1:t.find(')')]
     t1 = re.sub(r'\s+',' ',fld)
-    print(t1.replace('\n','').split(','))
+    #print(t1.replace('\n','').split(','))
     t2 = t1.replace('\n','').split(',')
-    print(t2)
+    #print(t2)
     ifilds = []
     for fll in t2:
         #Table_feild_dict[Table_name]=(fll.split(' ')[0],fll.split(' ')[1])

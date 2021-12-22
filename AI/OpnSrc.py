@@ -17,6 +17,8 @@ from Config.Init import *
 
 import keyword
 
+_ = wx.GetTranslation
+
 if wx.Platform == '__WXMSW__':
     faces = {'times': 'Times New Roman',
              'mono': 'Courier New',
@@ -198,25 +200,25 @@ class MyMenuBar1 ( wx.MenuBar ):
 	def __init__( self , extmnu=u''):
 		wx.MenuBar.__init__ ( self, style = 0 )
 
-		mymnu = {u"File": [(61,u'New',u'',self.newsrc),(62,u'Open...',u'',self.opnsrc),(63,u'',u'',u''),(64,u'Save',u'',self.savsrc),
-		                   (65,u'Save As...',u'',self.savasit),(66,u'',u'',u''),(67,u'Close',u'',self.closit)],
-		         u"Edit": [(71,u'Cut',u'',self.cutit),(72,u'Copy',u'',self.copyit),(73,u'Paste',u'',self.pastit),
-		                   (74,u'',u'',u''),(75,u'Select All',u'',self.slctal)] }
+		mymnu = {_(u"File"): [(61,_(u'New'),u'',self.newsrc),(62,_(u'Open...'),u'',self.opnsrc),(63,u'',u'',u''),(64,_(u'Save'),u'',self.savsrc),
+		                   (65,_(u'Save As...'),u'',self.savasit),(66,u'',u'',u''),(67,_(u'Close'),u'',self.closit)],
+		         _(u"Edit"): [(71,_(u'Cut'),u'',self.cutit),(72,_(u'Copy'),u'',self.copyit),(73,_(u'Paste'),u'',self.pastit),
+		                   (74,u'',u'',u''),(75,_(u'Select All'),u'',self.slctal)] }
 		if extmnu == u'Pro':
-			mymnu[u'Add'] = [(81,u'line-close',u'add close code to button function',self.clos_lin),
-			                 (82,u'line-getdata',u'get data from fields textctrl ',self.get_lin),
-			                 (83,u'line-putdata',u'put data to fields textctrl',self.put_lin),
-			                 (84,u'line-fillnull',u'fill empty record in all data',self.null_lin)]
+			mymnu[_(u'Add')] = [(81,_(u'line-close'),_(u'add close code to button function'),self.clos_lin),
+			                 (82,_(u'line-getdata'),_(u'get data from fields textctrl '),self.get_lin),
+			                 (83,_(u'line-putdata'),_(u'put data to fields textctrl'),self.put_lin),
+			                 (84,_(u'line-fillnull'),_(u'fill empty record in all data'),self.null_lin)]
 
 		elif extmnu == u'ML':
-			mymnu[u'Add'] = [(91,u'Import Numpy',u'',self.impnum),(92,u'Import matplotlib',u'',self.impmat),
-			                 (93,u'Import Axes 3D',u'',self.impa3d)]
-			mymnu[u'ML Dev'] = [(50,u'Add this file',u'',self.toML)]
+			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
+			                 (93,_(u'Import Axes 3D'),u'',self.impa3d)]
+			mymnu[_(u'ML Dev')] = [(50,_(u'Add this file'),u'',self.toML)]
 		elif extmnu == u'AL':
-			mymnu[u'Add'] = [(91,u'Import Numpy',u'',self.impnum),(92,u'Import matplotlib',u'',self.impmat),
-			                 (93,u'Import Axes 3D',u'',self.impa3d),(94,u'',u'',u''),
-			                 (95,u'ML Utility(Y select)',u'',self.impmlu),(96,u'ML Utility(Show Matrix)',u'',self.impmlu)]
-			mymnu[u'ML Dev'] = [(50, u'Add this file', u'', self.toML)]
+			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
+			                 (93,_(u'Import Axes 3D'),u'',self.impa3d),(94,u'',u'',u''),
+			                 (95,_(u'ML Utility(Y select)'),u'',self.impmlu),(96,_(u'ML Utility(Show Matrix)'),u'',self.impmlu)]
+			mymnu[_(u'ML Dev')] = [(50, _(u'Add this file'), u'', self.toML)]
 
 		self.Itms = []
 		m = 0
@@ -263,7 +265,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 		#print(self.pyfile)
 		#print(self.pnl.ischanged)
 		if self.pnl.ischanged:
-			iyesno = wx.MessageBox(u'Do you like to save change',style=wx.YES_NO)
+			iyesno = wx.MessageBox(_(u'Do you like to save change'),style=wx.YES_NO)
 			#print(iyesno)
 			if iyesno == 8:
 				return
@@ -275,7 +277,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 				self.newsrc(event)
 		else:
 			if u'untitle' in self.pyfile.lower():
-				wx.MessageBox(u'Please work in this file or close it then use new file')
+				wx.MessageBox(_(u'Please work in this file or close it then use new file'))
 			else:
 				#print(u'untitle file')
 				if self.DfDir == GUI_PATH+"MLPane\\":
@@ -286,7 +288,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 		event.Skip()
 
 	def opnsrc(self, event):
-		with wx.FileDialog(self, "Open a file", defaultDir=self.DfDir,wildcard="Python files (*.py)|*.py",
+		with wx.FileDialog(self, _("Open a file"), defaultDir=self.DfDir,wildcard="Python files (*.py)|*.py",
 		                   style=wx.FD_OPEN) as fileDialog:
 			if fileDialog.ShowModal() == wx.ID_CANCEL:
 				return
@@ -299,7 +301,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 
 	def savsrc(self, event):
 		if u'untitle.py' in self.pyfile:
-			with wx.FileDialog(self, "Save new file", defaultDir=self.DfDir,wildcard="Python files (*.py)|*.py",
+			with wx.FileDialog(self, _("Save new file"), defaultDir=self.DfDir,wildcard="Python files (*.py)|*.py",
 			                   style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 				if fileDialog.ShowModal() == wx.ID_CANCEL:
 					return  # the user changed their mind
@@ -309,11 +311,11 @@ class MyMenuBar1 ( wx.MenuBar ):
 				self.SrcTxt.SaveFile(pathname)
 		else:
 			self.SrcTxt.SaveFile(self.pyfile)
-			wx.MessageBox(u'You save to file change successful.')
+			wx.MessageBox(_(u'You save to file change successful.'))
 		event.Skip()
 
 	def savasit(self, event):
-		with wx.FileDialog(self, "Save As new file", defaultDir=self.DfDir, wildcard="Python files (*.py)|*.py",
+		with wx.FileDialog(self, _("Save As new file"), defaultDir=self.DfDir, wildcard="Python files (*.py)|*.py",
 		                   style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 			if fileDialog.ShowModal() == wx.ID_CANCEL:
 				return  # the user changed their mind
@@ -344,26 +346,93 @@ class MyMenuBar1 ( wx.MenuBar ):
 		event.Skip()
 
 	def clos_lin(self, event):
-		self.py_view.AddText("\t\tq = self.GetParent()\n\t\tq.Close()\n")
+		self.SrcTxt.AddText("\t\tq = self.GetParent()\n\t\tq.Close()\n")
 		event.Skip()
 
 	def get_lin(self, event):
+		self.AnalizFile()
+		if self.ctltxt == [] and self.chosls == [] and self.chkbox == [] and self.rdobox == []:
+			wx.MessageBox(_(u'No any part of Panel for get data! Please use one of this object: \
+		                  wx.TextCtrl wx.Choice wx.CheckBox wx.RadioBox'))
+		else:
+			i = 1
+			for obj in self.ctltxt:
+				self.SrcTxt.AddText("\t\tD%s = " % str(i) + obj + ".GetValue()\n")
+				i += 1
+			for obj in self.chosls:
+				self.SrcTxt.AddText("\t\tD%s = " % str(i) + obj + ".GetSelection()\n")
+				i += 1
+			for obj in self.chkbox:
+				self.SrcTxt.AddText("\t\tD%s = " % str(i) + obj + ".GetValue()\n")
+				i += 1
+			for obj in self.rdobox:
+				self.SrcTxt.AddText("\t\tD%s = " % str(i) + obj + ".GetSelection()\n")
+				i += 1
+
+		self.SrcTxt.AddText("\t\t#### you can return data in your own format here ###\n")
 		event.Skip()
 
 	def put_lin(self, event):
+		self.AnalizFile()
+		if self.ctltxt == [] and self.chosls == [] and self.chkbox == [] and self.rdobox == []:
+			wx.MessageBox(_(u'No any part of Panel for Put data! Please use one of this object: \
+				                  wx.TextCtrl wx.Choice wx.CheckBox wx.RadioBox'))
+		else:
+
+			self.SrcTxt.AddText("\t\t#Data = [] #Put your data in list or use at argumant in function\n")
+			i = 1
+			for obj in self.ctltxt:
+				self.SrcTxt.AddText("\t\t"  + obj + ".SetValue( Data[%s] )\n" % str(i) )
+				i += 1
+			for obj in self.chosls:
+				self.SrcTxt.AddText("\t\t"  + obj + ".SetSelection( Data[%s] )\n" % str(i) )
+				i += 1
+			for obj in self.chkbox:
+				self.SrcTxt.AddText("\t\t"  + obj + ".SetValue( Data[%s] )\n" % str(i) )
+				i += 1
+			for obj in self.rdobox:
+				self.SrcTxt.AddText("\t\t"  + obj + ".SetSelection( Data[%s] )\n" % str(i) )
+				i += 1
+
 		event.Skip()
 
 	def null_lin(self, event):
+		self.AnalizFile()
+		if self.ctltxt == [] and self.chosls == [] and self.chkbox == [] and self.rdobox == []:
+			wx.MessageBox(_(u'No any part of Panel for Put data! Please use one of this object: \
+						                  wx.TextCtrl wx.Choice wx.CheckBox wx.RadioBox'))
+		else:
+			self.SrcTxt.AddText("\t\t#Data = [u'',u'',...] #Put empty data in list\n")
+			self.SrcTxt.AddText("\t\t#self.PutData( Data ) #Send empty data to Put Data Function\n")
+
 		event.Skip()
 
+	def AnalizFile(self):
+		self.ctltxt = []
+		self.chkbox = []
+		self.rdobox = []
+		self.chosls = []
+		lins = self.SrcTxt.GetLineCount()
+		for l in range(lins):
+			if u'wx.TextCtrl' in self.SrcTxt.GetLine(l):
+				self.ctltxt.append(self.SrcTxt.GetLineText(l).split('=')[0].lstrip('\t').rstrip(' '))
+			if u'wx.Choice' in self.SrcTxt.GetLine(l):
+				self.chosls.append(self.SrcTxt.GetLineText(l).split('=')[0].lstrip('\t').rstrip(' '))
+			if u'wx.CheckBox' in self.SrcTxt.GetLine(l):
+				self.chkbox.append(self.SrcTxt.GetLineText(l).split('=')[0].lstrip('\t').rstrip(' '))
+			if u'wx.RadioBox' in self.SrcTxt.GetLine(l):
+				self.rdobox.append(self.SrcTxt.GetLineText(l).split('=')[0].lstrip('\t').rstrip(' '))
+		#wx.MessageBox(u"We Successful Analyzing file for field and data")
+
 	def impnum(self, event):
-		pass
+		self.SrcTxt.AddText(u"import numpy as np \n")
 
 	def impmat(self, event):
-		pass
+		self.SrcTxt.AddText(u"from matplotlib import pyplot as plot \n")
 
 	def impa3d(self, event):
-		pass
+		self.SrcTxt.AddText(u"from mpl_toolkits.mplot3d import Axes3D \n")
+
 
 	def impmlu(self, event):
 		pass
@@ -373,10 +442,10 @@ class MyMenuBar1 ( wx.MenuBar ):
 		ifil = self.pnl.pyFile.split('\\')[-1].replace(u'.py',u'')
 		print(ifil)
 		if self.pnl.pyFile == GUI_PATH+u'Temp\\untitle.py':
-			wx.MessageBox(u'Please save your work then Do this perosse.')
+			wx.MessageBox(_(u'Please save your work then Do this perosse.'))
 			self.savasit(event)
 		elif self.pnl.pyFile == GUI_PATH+u'MLPane\\Untitle.py':
-			wx.MessageBox(u'Please save your work then Do this perosse.')
+			wx.MessageBox(_(u'Please save your work then Do this perosse.'))
 			self.savasit(event)
 		else:
 			print(self.DfDir)
@@ -386,34 +455,34 @@ class MyMenuBar1 ( wx.MenuBar ):
 				print(mylstml)
 				tclslct = MLpnl.TLC1.GetSelection()
 				if MLpnl.getMData.MLPansFils(u" where MLPane.MLPfile = '%s' " %ifil ) != []:
-					wx.MessageBox(u'File is exist please change it')
+					wx.MessageBox(_(u'File is exist please change it'))
 				else:
 					lebls = [u'Par. Pane Name', u'Par. Pane code', u'Par. Pane file']
 					data = [ifil]
 					dlg = wx.Dialog(self.GetFrame(), -1)
 					pnl = MyPanel4(dlg, lebls, data)
 					dlg.SetSize((480, 190))
-					dlg.SetLabel(u'Add ML to List')
+					dlg.SetLabel(_(u'Add ML to List'))
 					dlg.ShowModal()
 					if pnl.acpt:
 						algnm = pnl.fld1.GetValue()
 						algcd = pnl.fld2.GetValue()
 						algid = pnl.fld4.GetValue()
 					dlg.Destroy()
-					print(algid, algnm, algcd)
-					print(MLpnl.codings)
+					#print(algid, algnm, algcd)
+					#print(MLpnl.codings)
 					if algnm != u'' or algcd != u'' or algid != u'':
 						if int(algid) > MLpnl.codings[0] and int(algid) < MLpnl.codings[1]:
-							print(u'to database')
+							#print(u'to database')
 							#MLpnl.setMDate.Table = u'MLinfo'
 							#MLpnl.setMDate.Additem(u' MLPid, MLname, MLcod', [int(algid), algnm, algcd])
 							MLpnl.setMDate.Table = u'MLPane'
 							MLpnl.setMDate.Additem(u' MLPid, MLPfile', [algid, ifil])
-							wx.MessageBox(u'Your source Add to list Successfully.')
+							wx.MessageBox(_(u'Your source Add to list Successfully.'))
 						else:
-							wx.MessageBox(u'Please attend to coding range!')
+							wx.MessageBox(_(u'Please attend to coding range!'))
 					else:
-						wx.MessageBox(u'Some fields is empty or wrong ! try again!')
+						wx.MessageBox(_(u'Some fields is empty or wrong ! try again!'))
 
 
 			if self.DfDir == AI_PATH+u'ML\\':
@@ -423,14 +492,14 @@ class MyMenuBar1 ( wx.MenuBar ):
 				#algnm = MLpnl.TLC1.GetItemText(tclslct, 0)
 				#algcd = MLpnl.TLC1.GetItemText(tclslct, 1)
 				if MLpnl.getMData.MLAlgoFils(u" where MLAlgo.MLAsrc = '%s' " %ifil ) != []:
-					wx.MessageBox(u'File is exist please change it')
+					wx.MessageBox(_(u'File is exist please change it'))
 				else:
 					lebls = [u'Algorithm Name', u'Algorithm Code', u'Algorithm file']
 					data = [ifil]
 					dlg = wx.Dialog(self.GetFrame(), -1)
 					pnl = MyPanel4(dlg, lebls, data)
 					dlg.SetSize((480, 190))
-					dlg.SetLabel(u'Add ML to List')
+					dlg.SetLabel(_(u'Add ML to List'))
 					dlg.ShowModal()
 					if pnl.acpt:
 						algnm = pnl.fld1.GetValue()
@@ -441,16 +510,16 @@ class MyMenuBar1 ( wx.MenuBar ):
 					#print(MLpnl.codings)
 					if algnm != u'' or algcd != u'' or algid != u'':
 						if int(algid) > MLpnl.codings[0] and int(algid) < MLpnl.codings[1]:
-							print(u'to database')
+							#print(u'to database')
 							MLpnl.setMDate.Table = u'MLinfo'
 							MLpnl.setMDate.Additem(u' MLPid, MLname, MLcod',[int(algid), algnm, algcd])
 							MLpnl.setMDate.Table = u'MLAlgo'
 							MLpnl.setMDate.Additem(u' MLcod, MLAsrc',[algcd, ifil])
-							wx.MessageBox(u'Your source Add to list Successfully.')
+							wx.MessageBox(_(u'Your source Add to list Successfully.'))
 						else:
-							wx.MessageBox(u'Please attend to coding range!')
+							wx.MessageBox(_(u'Please attend to coding range!'))
 					else:
-						wx.MessageBox(u'Some fields is empty or wrong ! try again!')
+						wx.MessageBox(_(u'Some fields is empty or wrong ! try again!'))
 
 
 
@@ -459,7 +528,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 			#tclslct = MLpnl.TLC1.GetSelection()
 			#print(MLpnl.TLC1.GetItemText(tclslct,0))
 			#print(MLpnl.TLC1.GetItemText(tclslct, 1))
-			print(MLpnl.ChsBok.GetChoiceCtrl())
+			#print(MLpnl.ChsBok.GetChoiceCtrl())
 
 			#lebls = [u'Par. Pane Name',u'Par. Pane code',u'Par. Pane file']
 			#lebls = [u'Algorithm Name',u'Algorithm Code',u'Algorithm file']
@@ -496,7 +565,7 @@ class MyPanel4 ( wx.Panel ):
 		self.fld1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz1.Add( self.fld1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.lbl4 = wx.StaticText(self, wx.ID_ANY, u"Alg. id", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.lbl4 = wx.StaticText(self, wx.ID_ANY, _(u"Alg. id"), wx.DefaultPosition, wx.DefaultSize, 0)
 		self.lbl4.Wrap(-1)
 		Hsz1.Add(self.lbl4, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
@@ -513,7 +582,7 @@ class MyPanel4 ( wx.Panel ):
 		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.fld2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
-		self.fld2.SetToolTip(u"Example: GD  EN  GLM  MLE")
+		self.fld2.SetToolTip(_(u"Example: GD  EN  GLM  MLE"))
 		Hsz2.Add( self.fld2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.lbl3 = wx.StaticText( self, wx.ID_ANY, lebls[2], wx.DefaultPosition, wx.Size( 95,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
@@ -550,10 +619,10 @@ class MyPanel4 ( wx.Panel ):
 
 		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Cancle", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancle"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz4.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Apply", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz4.Add( self.btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 

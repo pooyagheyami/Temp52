@@ -45,52 +45,6 @@ class Mymenu(object):
     #def Revitm(self):
     #    return self.MySql.RevItem()
 
-'''
-def DoProgram(item,MT):
-    print( item ) # Get item from menu
-    M = Mymenu()
-
-    if MT == 'M':
-        p = M.program(item)
-        if M.menudir(item) != '':
-            d = M.menudir(item)
-        else:
-
-            if M.submndir(item) == '100':
-                d = 'GUI.Temp'
-            else:
-                d = M.menudir(int(M.submndir(item)))
-                #print(d)
-
-    elif MT == 'T':
-        p = M.toogram(item)
-        d = M.tooldir(item)
-
-    elif MT == 'A':
-        p = M.program(item)
-        d = 'GUI.Main'
-    else:
-        d = ''
-        p = ''
-    #print(d,p)
-    I = M.Dohndlr()
-    #print I
-    Ii = []
-    for it in I:
-        Ii.append(it[0])
-    #print(Ii)
-    a = d+'.'+p
-    #i = __import__(a,globals(),locals(),Ii,0)
-    try:
-        i = importlib.import_module(a)
-    except ImportError as error:
-        print(error)
-        i = -1
-    #print dir(i)
-    #i.main()
-
-    return i
-'''
 
 def DoProgram2(itm,hndlr):
     M = Mymenu()

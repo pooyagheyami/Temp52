@@ -8,7 +8,7 @@ import wx
 import wx.aui
 #import wx.html
 #import wx.dataview
-
+import time
 
 from AI.WinDev import MWC
 
@@ -25,55 +25,69 @@ from Config.Init import *
 
 import GUI.proman as pro
 
-
+_ = wx.GetTranslation
 
 
 class MainWin(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self,None,title=u'main',size=(1920,1200))
+        wx.Frame.__init__(self,None,title=u'main',size=(1920,1200),name=u'main')
 
-        # Parameter ===================
+        # Get Program Config ===================
+
+
         self.config = wx.GetApp().GetConfig()
 
-        TBP = self.config.Read('Toolbar')
-        BakGrnd= self.config.Read('Background')
-        #print(self.config.Read('Language'))
+        wx.SystemOptions.SetOption("msw.remap", "0")
 
-        #print(TBP,BGP,wx.Layout_RightToLeft)
-        STBT = 'B'
-        #BakGrnd = BGP #"V19.jpg"
-        AuiCenter = ''
+        label = self.config.Read(u'Winname')
+        self.SetLabel(label)
+        #self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
 
+        #STBT = 'B'
+        #AuiCenter = 'A'
+        fntis = self.config.Read(u'Font').split(',')
+        #print(fntis)
+        if fntis[4] == 'True':
+            undr = True
+        else:
+            undr = False
 
+        #info = wx.NativeFontInfo()
+        #info.FromUserString(self.config.Read(u'Font'))
+        #ifont = wx.Font(info)
+        #print(ifont.FaceName)
+        ifont = wx.Font(int(fntis[0]), int(fntis[1]), int(fntis[2]), int(fntis[3]), undr, faceName=fntis[5])
+        self.SetFont(ifont)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.m_mgr = wx.aui.AuiManager()
         self.m_mgr.SetManagedWindow(self)
-        #self.m_mgr.SetFlags(wx.aui.AUI_MGR_DEFAULT)
+        self.m_mgr.SetFlags(wx.aui.AUI_MGR_DEFAULT)
 
         # If like Back Gorund or Aui Center =============================
-        if AuiCenter == '':
-            self.BGrnd(BakGrnd)
+        if eval(self.config.Read('BGActive')):
+            self.BGrnd(self.config.Read('Background'))
 
 
         # Menu of Program==============
+        if self.config.Read("Menu") == '1':
+            self.menu = MM.AppMenu()
+            if len(self.menu.GetMenus()) != 0:
+                #self.SetMenuBar(menu)
+                self.UpdateMenu(self.menu, self.menu.GetMenus())
 
-        #menu = MM.MainMenu()
-        self.menu = MM.AppMenu()
-        #imenu = menu.createMenuBar()
-        #print(self.menu,self.menu.GetMenus())
-        #self.SetMenuBar(menu)
-        if len(self.menu.GetMenus()) != 0:
-            #self.SetMenuBar(menu)
-            self.UpdateMenu(self.menu, self.menu.GetMenus())
+            if self.config.Read('Toolbar') == '1':
+                self.Toolbar()
+                TBBG = self.config.Read("TBGColor").split(',')[1]
+                self.tb.SetBackgroundColour(wx.SystemSettings.GetColour(int(TBBG)))
+            elif self.config.Read('Toolbar') == '2':
+                self.ToolPnl()
 
-        statusBar = self.CreateStatusBar(2,wx.STB_ELLIPSIZE_END|wx.STB_ELLIPSIZE_MIDDLE|wx.STB_SHOW_TIPS|wx.STB_SIZEGRIP, wx.ID_ANY)
-        statusBar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+            self.MakeStatus()
 
-        if TBP == '1':
-            self.Toolbar()
-        elif TBP == '2':
-            self.ToolPnl()
+
+        STBG = self.config.Read("SBGColor").split(',')[1]
+        self.GetStatusBar().SetBackgroundColour(wx.SystemSettings.GetColour(int(STBG)))
 
         # All Panel Aui=======================
         self.APnls2()
@@ -86,15 +100,53 @@ class MainWin(wx.Frame):
         self.Centre(wx.BOTH)
 
     def __del__(self):
+        self.timer.Stop()
         self.m_mgr.UnInit()
+
+    def Notify(self):
+        t = time.localtime(time.time())
+        st = time.strftime("%I:%M:%S", t)
+        self.SetStatusText(st, self.stnbr)
+
+    def MakeStatus(self):
+        lststat = eval(self.config.Read('Status'))
+        i = 1
+        Wthlst = [-1]
+
+        statusBar = self.CreateStatusBar(len(lststat) + 1,
+                                         wx.STB_ELLIPSIZE_END | wx.STB_ELLIPSIZE_MIDDLE | wx.STB_SHOW_TIPS | wx.STB_SIZEGRIP,
+                                         wx.ID_ANY)
+        # statusBar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+        for st in lststat:
+            if st == 'time':
+                # Timer in status ============================================
+                self.timer = wx.PyTimer(self.Notify)
+                self.timer.Start(1000)
+                Wthlst.append(90)
+            elif st == 'date':
+                t = time.localtime(time.time())
+                self.SetStatusText(time.strftime("%d-%b-%Y", t), i)
+                Wthlst.append(90)
+            else:
+                self.SetStatusText(st, i)
+                Wthlst.append(-1)
+            i += 1
+        self.SetStatusBar(statusBar)
+        #print(Wthlst)
+        self.stnbr = len(Wthlst) - 1
+        self.SetStatusWidths(Wthlst)
+        self.SetStatusBarPane(0)
+        if 'time' in lststat:
+            self.Notify()
+
 
     def domouse(self, event):
         self.setmenu(event)
 
     def setmenu(self, event):
-        self.MnuDic = {1: [u'Menu Change', 9999], 2: [u'Toolbar Change', 9998], 3: [u'Panes Change', 9997], 4: [u'', 0],
-                       5: [u'Databases...', 9996], 6: [u'Programs...', 9995], 7: [u'Add Tools...', 9994], 8: [u'', 0],
-                       9: [u'ML Design...', 9993], 10: [u'', 0], 11: [u'Settings...', 9992]}
+        self.MnuDic = {1: [_(u'Menu Change'), 9999], 2: [_(u'Toolbar Change'), 9998], 3: [_(u'Panes Change'), 9997], 4: [u'', 0],
+                       5: [_(u'Databases...'), 9996], 6: [_(u'Programs...'), 9995], 7: [_(u'Add Tools...'), 9994], 8: [u'', 0],
+                       9: [_(u'ML Design...'), 9993], 10: [u'', 0], 11: [_(u'Settings...'), 9992]}
         self.m1 = wx.Menu()
 
         self.itms = []
@@ -146,7 +198,7 @@ class MainWin(wx.Frame):
         a.main(win1)
 
     def Toolbar(self):
-        self.tb = self.CreateToolBar(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
+        self.tb = self.CreateToolBar(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT|wx.TB_TEXT)
         Tbd = MT.ToolData()
         Tbl = Tbd.ToolBarList()
         #print(Tbl)
@@ -159,7 +211,7 @@ class MainWin(wx.Frame):
                 else:
                     #print(t)
 
-                    self.tb.AddTool(t[0], t[1], wx.Bitmap(ICON32_PATH+t[2],wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, t[1], t[3], None)
+                    self.tb.AddTool(t[0], t[1], wx.Bitmap(ICONS_TOOL+t[2],wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, t[1], t[3], None)
                     self.Bind(wx.EVT_TOOL, self.OnTool, id=t[0])
             self.tb.AddSeparator()
         self.tb.Realize()

@@ -10,31 +10,7 @@ import wx.aui
 import os
 from  Config.Init import *
 
-'''
-class MainToolAui():
-    def __init__(self,parent):
-        #self.myTool = wx.aui.AuiToolBar( parent, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT )
-        self.myTool = wx.ToolBar(parent, -1, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT | wx.TB_NODIVIDER)
-        self.mytb = []
-        self.mytp = {}
-        self.CreatToolBar()
 
-    def CreatToolBar(self):
-
-        for tb in ToolData().ToolBarData():
-            if str(tb[1]) == '' or tb[1] == None:
-                self.myTool.AddSeparator()
-            else:
-                self.mytb.append( self.myTool.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICON32_PATH+tb[2], wx.BITMAP_TYPE_ANY),
-                                                  wx.NullBitmap, wx.ITEM_NORMAL, str(tb[3]), wx.EmptyString, None) )
-                self.mytp[int(tb[0])] = str(tb[4])
-
-        #print(self.mytp)
-        self.myTool.Realize()
-
-    def GetToolid(self):
-        return 101
-'''
 
 class ToolData(object):
     def __init__(self):
@@ -75,7 +51,7 @@ class MyToolbar(wx.ToolBar):
             if str(tb[1]) == '' or tb[1] == None:
                 self.AddSeparator()
             else:
-                self.mytb.append( self.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICON32_PATH+tb[2], wx.BITMAP_TYPE_ANY),
+                self.mytb.append( self.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICONS_TOOL+tb[2], wx.BITMAP_TYPE_ANY),
                                                wx.NullBitmap, wx.ITEM_NORMAL, str(tb[3]), wx.EmptyString, None) )
                 #self.mytp[int(tb[0])] = str(tb[4])
 
@@ -87,7 +63,7 @@ class MyToolbar(wx.ToolBar):
 
 class MyAuiToolbar(wx.aui.AuiToolBar):
     data = []
-    def __init__(self, parent , style = wx.aui.AUI_TB_DEFAULT_STYLE|wx.aui.AUI_TB_GRIPPER|wx.aui.AUI_TB_PLAIN_BACKGROUND):
+    def __init__(self, parent , style = wx.aui.AUI_TB_DEFAULT_STYLE|wx.aui.AUI_TB_GRIPPER|wx.aui.AUI_TB_PLAIN_BACKGROUND|wx.aui.AUI_TB_TEXT):
         wx.aui.AuiToolBar.__init__(self,parent,style = style )
         self.mytb = []
         self.mytp = {}
@@ -98,7 +74,7 @@ class MyAuiToolbar(wx.aui.AuiToolBar):
             if str(tb[1]) == '' or tb[1] == None:
                 self.AddSeparator()
             else:
-                self.mytb.append( self.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICON32_PATH+tb[2], wx.BITMAP_TYPE_ANY),
+                self.mytb.append( self.AddTool(int(tb[0]), str(tb[1]),wx.Bitmap(ICONS_TOOL+tb[2], wx.BITMAP_TYPE_ANY),
                                                wx.NullBitmap, wx.ITEM_NORMAL, str(tb[3]), wx.EmptyString, None) )
         self.Realize()
         return self

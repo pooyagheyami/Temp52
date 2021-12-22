@@ -8,6 +8,8 @@ import wx
 import os
 from Config.Init import *
 
+_ = wx.GetTranslation
+
 
 class MainMenu():
     def __init__(self):
@@ -57,7 +59,7 @@ class MainMenu():
                 else:
                     print('mtype has a error')
                 if echicon != None and echicon != '':
-                    self.menuItem.SetBitmap(wx.Bitmap(ICON16_PATH + echicon, wx.BITMAP_TYPE_ANY))
+                    self.menuItem.SetBitmap(wx.Bitmap(ICONS_MENU + echicon, wx.BITMAP_TYPE_ANY))
 
             else:
                 for ech in echitem:
@@ -180,9 +182,9 @@ class AppMenu(wx.MenuBar):
                 #    self.menu.AppendSubMenu(self.createMenuItem2(eachitem), eachlabel, eachstatus)
                     #return self.menu
                 else:
-                    wx.MessageBox('Error In Menu Database. Please connect to Programmer')
+                    wx.MessageBox(_('Error In Menu Database. Please connect to Programmer'))
                 if eachicon != None and eachicon != '':
-                    menuitem.SetBitmap(wx.Bitmap(ICON16_PATH + eachicon, wx.BITMAP_TYPE_ANY))
+                    menuitem.SetBitmap(wx.Bitmap(ICONS_MENU + eachicon, wx.BITMAP_TYPE_ANY))
 
             elif type(eachitem) == list:
                 #print('This list send:', eachitem[1])
@@ -192,7 +194,7 @@ class AppMenu(wx.MenuBar):
                 #self.createMenuItem2(eachitem)
                 pass
             else:
-                wx.MessageBox('Error In Menu Database. Please connect to Programmer')
+                wx.MessageBox(_('Error In Menu Database. Please connect to Programmer'))
         return menu
 
     def Onmenu(self, event):
@@ -212,7 +214,7 @@ class AppMenu(wx.MenuBar):
 
         iitm = imnu.Append(int(Data[0]), lbl, Data[5])
         if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
+            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
 
     def AddItem(self,Mbar,Data,Bar='B'):
         if Bar == 'B':
@@ -223,7 +225,7 @@ class AppMenu(wx.MenuBar):
         lbl = self.ChkShrtCut(Data)
         iitm = imnu.Append(int(Data[0]),lbl,Data[5])
         if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
+            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
         #print(iitm)
 
     def AddSubMenu2(self,Mbar,Data,Bar=''):
@@ -235,7 +237,7 @@ class AppMenu(wx.MenuBar):
             imnu = self._findmenu2(Mbar, Bar)
         iitm = imnu.AppendSubMenu(self.createSubmenu(Data[0],lbl),lbl)
         if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
+            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
 
 
     def AddSubMenu(self,Mbar,Data,Bar='B'):
@@ -246,7 +248,7 @@ class AppMenu(wx.MenuBar):
         lbl = self.ChkShrtCut(Data)
         iitm = imnu.AppendSubMenu(self.createSubmenu(Data[0]),lbl)
         if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICON16_PATH + Data[3], wx.BITMAP_TYPE_ANY))
+            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
 
     def createSubmenu(self, mroot, title = '' ):
         mroot = wx.Menu()

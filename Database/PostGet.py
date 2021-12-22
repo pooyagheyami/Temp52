@@ -41,27 +41,26 @@ class Post:
     def __init__(self, DBF, Tabel, Field, Data):
         self.DBF = DBF
         self.Tabel = Tabel
-        self.Field = Field
-        self.Data = Data
+        #self.Field = Field
+        #self.Data = Data
 
+    def Addrecord(self,Field,Data):
+        return sq.wxsqins(self.DBF, self.Tabel, Field, Data)
 
-    def Addrecord(self):
-        return sq.wxsqins(self.DBF, self.Tabel, self.Field, self.Data)
+    def Addrecord2(self,Field,Data):
+        return sq.wxsqins2(self.DBF, self.Tabel, Field, Data)
 
-    def Addrecord2(self):
-        return sq.wxsqins2(self.DBF, self.Tabel, self.Field, self.Data)
+    def Updaterecord(self,Field,Data):
+        return sq.wxsqlup(self.DBF, self.Tabel, Field, Data)
 
-    def Updaterecord(self):
-        return sq.wxsqlup(self.DBF, self.Tabel, self.Field, self.Data)
+    def Updaterecord2(self,Field,Data):
+        return sq.wxsqlup2(self.DBF, self.Tabel, Field, Data)
 
-    def Updaterecord2(self):
-        return sq.wxsqlup2(self.DBF, self.Tabel, self.Field, self.Data)
+    def Deleterecord(self,Data):
+        return sq.wxsqdel(self.DBF, self.Tabel, Data)
 
-    def Deleterecord(self):
-        return sq.wxsqdel(self.DBF, self.Field, self.Data)
-
-    def DeleteAllrecord(self):
-        return sq.wxsqdall(self.DBF, self.Field)
+    def DeleteAllrecord(self,Field):
+        return sq.wxsqdall(self.DBF, Field)
 
 
     def __del__(self):

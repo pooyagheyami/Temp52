@@ -6,6 +6,7 @@
 ##
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
+import os
 
 import wx
 #import wx.xrc
@@ -16,6 +17,7 @@ import Database.MenuSet2 as MS
 #from . import MitemFrm2 as MF
 
 from Config.Init import *
+import Res.Allicons as icon
 
 _ = wx.GetTranslation
 
@@ -60,45 +62,52 @@ class MyPanel1 ( wx.Panel ):
 
 		self.btn1 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn1.SetToolTip(u"Add")
+		#self.btn1.SetBitmap( wx.Bitmap( ICON16_PATH + u'add.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn1.SetBitmap(icon.add.GetBitmap())
+		self.btn1.SetToolTip(_(u"Add"))
 		Hsz1.Add( self.btn1, 0, wx.ALL, 5 )
 
 		self.btn2 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn2.SetToolTip(u"Edit")
+		#self.btn2.SetBitmap( wx.Bitmap( ICON16_PATH + u'edit_button.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn2.SetBitmap(icon.edit_button.GetBitmap())
+		self.btn2.SetToolTip(_(u"Edit"))
 		Hsz1.Add( self.btn2, 0, wx.ALL, 5 )
 
 		self.btn3 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn3.SetToolTip(u"Delete")
+		#self.btn3.SetBitmap( wx.Bitmap( ICON16_PATH + u'delete.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn3.SetBitmap(icon.delete.GetBitmap())
+		self.btn3.SetToolTip(_(u"Delete"))
 		Hsz1.Add( self.btn3, 0, wx.ALL, 5 )
 
 		self.btn4 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'separator.png', wx.BITMAP_TYPE_ANY ))
-		self.btn4.SetToolTip(u"Seperator")
+		#self.btn4.SetBitmap( wx.Bitmap( ICON16_PATH + u'separator.png', wx.BITMAP_TYPE_ANY ))
+		self.btn4.SetBitmap(icon.separator.GetBitmap())
+		self.btn4.SetToolTip(_(u"Seperator"))
 		Hsz1.Add( self.btn4, 0, wx.ALL, 5 )
 
 		self.btn5 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn5.SetBitmap(wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn5.SetToolTip(u"Update")
+		#self.btn5.SetBitmap(wx.Bitmap( ICON16_PATH + u'update.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn5.SetBitmap(icon.update.GetBitmap())
+		self.btn5.SetToolTip(_(u"Update"))
 		Hsz1.Add( self.btn5, 0, wx.ALL, 5 )
 
 		self.btn6 = wx.BitmapButton( self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
 
-		self.btn6.SetBitmap(wx.Bitmap( ICON16_PATH + u'information.png', wx.BITMAP_TYPE_ANY ) )
-		self.btn6.SetToolTip(u"Info")
+		#self.btn6.SetBitmap(wx.Bitmap( ICON16_PATH + u'information.png', wx.BITMAP_TYPE_ANY ) )
+		self.btn6.SetBitmap(icon.information.GetBitmap())
+		self.btn6.SetToolTip(_(u"Info"))
 		Hsz1.Add( self.btn6, 0, wx.ALL, 5 )
 
 		self.btn7 = wx.BitmapButton(self.P1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize,
 									wx.BU_AUTODRAW | 0)
 
-		self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
-		self.btn7.SetToolTip(u"Apply")
+		#self.btn7.SetBitmap(wx.Bitmap(ICON16_PATH + u'accept_button.png', wx.BITMAP_TYPE_ANY))
+		self.btn7.SetBitmap(icon.accept_button.GetBitmap())
+		self.btn7.SetToolTip(_(u"Apply"))
 		Hsz1.Add(self.btn7, 0, wx.ALL, 5)
 
 
@@ -168,12 +177,13 @@ class MyPanel1 ( wx.Panel ):
 
 		Vsz3.Add( Hsz5, 1, wx.EXPAND, 5 )
 
-		self.icon1 = wx.StaticBitmap( self.P2, wx.ID_ANY, wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		#self.icon1 = wx.StaticBitmap( self.P2, wx.ID_ANY, wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.icon1 = wx.StaticBitmap(self.P2, wx.ID_ANY, icon.image.GetBitmap(),wx.DefaultPosition, wx.DefaultSize, 0)
 		Vsz3.Add( self.icon1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
 		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, u"ShortCut", wx.DefaultPosition, wx.Size( 47,-1 ), 0 )
+		self.lbl5 = wx.StaticText( self.P2, wx.ID_ANY, _(u"ShortCut"), wx.DefaultPosition, wx.Size( 47,-1 ), 0 )
 		self.lbl5.Wrap( -1 )
 
 		Hsz4.Add( self.lbl5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -256,7 +266,7 @@ class MyPanel1 ( wx.Panel ):
 		self.prgfld = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Vsz4.Add( self.prgfld, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, u"Directory:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl9 = wx.StaticText( self.P2, wx.ID_ANY, _(u"Directory:"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl9.Wrap( -1 )
 
 		Vsz4.Add( self.lbl9, 0, wx.ALL, 5 )
@@ -301,16 +311,17 @@ class MyPanel1 ( wx.Panel ):
 		pass
 
 	def fillnull(self):
-	    self.titr.SetLabel(u'MenuBar: ')
+	    self.titr.SetLabel(_(u'MenuBar: '))
 	    self.fld1.SetValue('')
 	    self.fld2.SetValue('')
 	    self.fld3.SetValue('')
 	    self.iconfile.SetPath('')
-	    self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY))
+	    #self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY))
+	    self.icon1.SetBitmap(icon.image.GetBitmap())
 	    self.fld4.SetValue('')
 	    self.fld6.SetValue('')
 	    self.prgfld.SetValue('')
-	    self.lbl9.SetLabel('Directory: ')
+	    self.lbl9.SetLabel(_('Directory: '))
 
 
 	# Virtual event handlers, overide them in your derived class
@@ -370,11 +381,11 @@ class MyPanel1 ( wx.Panel ):
 	def conmenu( self, event ):
 		#print('Context Menu')
 		self.barmnu = wx.Menu()
-		self.barmnu.Append(10,'New Menu Bar')
+		self.barmnu.Append(10,_('New Menu Bar'))
 		self.Bind(wx.EVT_MENU,self.Nbar,id=10)
-		self.barmnu.Append(20,'Edit Menu Bar')
+		self.barmnu.Append(20,_('Edit Menu Bar'))
 		self.Bind(wx.EVT_MENU, self.Cbar, id=20)
-		self.barmnu.Append(30,'Delete Menu bar')
+		self.barmnu.Append(30,_('Delete Menu bar'))
 		self.Bind(wx.EVT_MENU, self.Dbar, id=30)
 
 		self.PopupMenu(self.barmnu)
@@ -397,17 +408,18 @@ class MyPanel1 ( wx.Panel ):
 		if code < 1000 and code % 10 == 1:
 			self.bardata = data = self.MyMenu.AmenuBar(ext=u'and mbarid = %d' %code)[0]
 			#print(data)
-			self.titr.SetLabel(u'MenuBar: '+data[1])
+			self.titr.SetLabel(_(u'MenuBar: ')+data[1])
 			self.fld1.SetValue(str(data[0]))
 			self.fld2.SetValue(data[3])
 			self.fld3.SetValue(data[1])
 			self.iconfile.SetPath('')
-			self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY ))
+			#self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY ))
+			self.icon1.SetBitmap(icon.image.GetBitmap())
 			self.fld4.SetValue('')
 			self.fld6.SetValue('')
 			mydir = self.MyMenu.GetDirCod(data[2])[0][0]
 			#print(mydir)
-			self.lbl9.SetLabel('Directory: '+mydir)
+			self.lbl9.SetLabel(_('Directory: ')+mydir)
 			if data[7] != 1:
 				self.chk1.SetValue(1)
 		if code > 1000:
@@ -422,7 +434,7 @@ class MyPanel1 ( wx.Panel ):
 				else:
 					bn = (self.MyMenu.getmItem(self.bardata[0])[0][2],)
 			#print(bn)
-			self.titr.SetLabel(u'MenuBar: '+bn[0])
+			self.titr.SetLabel(_(u'MenuBar: ')+bn[0])
 			self.fld1.SetValue(str(data[1]))
 			if data[11] != '' and data[11] != None:
 				self.fld2.SetValue(data[11])
@@ -432,8 +444,8 @@ class MyPanel1 ( wx.Panel ):
 				self.fld3.SetValue('-----')
 				self.disableall(1)
 			if data[8] != '' and data[8] != None:
-				self.iconfile.SetPath(ICON16_PATH+data[8])
-				self.icon1.SetBitmap(wx.Bitmap(ICON16_PATH+data[8],wx.BITMAP_TYPE_ANY))
+				self.iconfile.SetPath(ICONS_MENU+data[8])
+				self.icon1.SetBitmap(wx.Bitmap(ICONS_MENU+data[8],wx.BITMAP_TYPE_ANY))
 			if data[9] != '' and data[9] != None:
 				self.fld4.SetValue(data[9])
 			if data[7] != '' and data[7] != None:
@@ -454,7 +466,7 @@ class MyPanel1 ( wx.Panel ):
 			if data[17] != None:
 				mydir = self.MyMenu.GetDirCod(data[19])[0][0]
 				self.prgfld.SetValue(data[18])
-				self.lbl9.SetLabel('Directory: '+mydir)
+				self.lbl9.SetLabel(_('Directory: ')+mydir)
 
 
 	def addit( self, event ):
@@ -468,13 +480,14 @@ class MyPanel1 ( wx.Panel ):
 				self.newsub = True
 				#print('newsub')
 		else:
-			wx.MessageBox('Some things wrong!')
+			wx.MessageBox(_('Some things wrong!'))
 
 		self.fld1.SetValue('')
 		self.fld2.SetValue('')
 		self.fld3.SetValue('')
-		self.iconfile.SetPath(ICON16_PATH )
-		self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY))
+		self.iconfile.SetPath(ICONS_MENU )
+		#self.icon1.SetBitmap(wx.Bitmap(ICONS_PATH + u"image.png", wx.BITMAP_TYPE_ANY))
+		self.icon1.SetBitmap(icon.image.GetBitmap())
 		self.fld4.SetValue('')
 		self.fld6.SetValue('')
 		self.rdio1.SetValue(1)
@@ -484,13 +497,13 @@ class MyPanel1 ( wx.Panel ):
 		self.chk1.SetValue(0)
 		self.chk2.SetValue(0)
 		self.prgfld.SetValue('')
-		self.lbl9.SetLabel('Directory: ')
+		self.lbl9.SetLabel(_('Directory: '))
 		event.Skip()
 
 	def edtit( self, event ):
 		#print(self.bardata)
 		if self.bardata[2] == None:
-			wx.MessageBox('You can NOT edit Separator line')
+			wx.MessageBox(_('You can NOT edit Separator line'))
 			return 1
 		U = self.getfild()
 		#print(U)
@@ -504,14 +517,14 @@ class MyPanel1 ( wx.Panel ):
 
 		self.DoMenu.Table = u'extended'
 		self.DoMenu.Upditem(u'status = ?, icon = ?, shortcut = ? , help = ?  where extid = "%s" ' % self.bardata[4],
-		                      [U[5], U[3].replace(ICON16_PATH, ''), U[4], U[5]])
+		                      [U[5], U[3].replace(ICONS_MENU, ''), U[4], U[5]])
 
 		self.DoMenu.Table = u'access'
 		self.DoMenu.Upditem(u'acclvl = ? , disenable = ?  where acclvlid = "%s" ' % self.bardata[11], [U[8], U[7]])
 
 		self.ChngMnu(U)
 
-		wx.MessageBox('Menu Edited Successfully')
+		wx.MessageBox(_('Menu Edited Successfully'))
 
 		self.DVC1.DeleteAllItems()
 		self.fillList()
@@ -524,7 +537,7 @@ class MyPanel1 ( wx.Panel ):
 		myitmdel = self.MyMenu.getmItem(int(self.itmcod))[0]
 		#print(myitmdel)
 		if myitmdel[3] == 'S' and self.MyMenu.gBarItm(int(myitmdel[1])) != []:
-			wx.MessageBox('Please remove the sub menu item first!')
+			wx.MessageBox(_('Please remove the sub menu item first!'))
 		else:
 			self.DoMenu.Table = u'mitem'
 			self.DoMenu.Delitem(u'mitem.itemid = %d' % myitmdel[1])
@@ -587,7 +600,7 @@ class MyPanel1 ( wx.Panel ):
 			if self.prgfld.GetValue() == '':
 				hndid = 10001
 			else:
-				hndid = self.getHandel(self.prgfld.GetValue(), self.lbl9.GetLabel().split('Directory: ')[1])
+				hndid = self.getHandel(self.prgfld.GetValue(), self.lbl9.GetLabel().split(_('Directory: '))[1])
 			if self.newsub:
 				BrM = int(self.itmcod)
 			else:
@@ -606,7 +619,7 @@ class MyPanel1 ( wx.Panel ):
 			self.DoMenu.Table = u'access'
 			self.DoMenu.Additem(u'acclvlid, userid, acclvl, disenable', Dsri3)
 			#self.Add2Menu(D)
-			wx.MessageBox(u'you successful add menu ')
+			wx.MessageBox(_(u'you successful add menu '))
 
 			self.DVC1.DeleteAllItems()
 			self.fillList()
@@ -619,7 +632,7 @@ class MyPanel1 ( wx.Panel ):
 			if self.prgfld.GetValue() == '':
 				hndid = 10001
 			else:
-				hndid = self.getHandel(self.prgfld.GetValue(), self.lbl9.GetLabel().split('Directory: ')[1])
+				hndid = self.getHandel(self.prgfld.GetValue(), self.lbl9.GetLabel().split(_('Directory: '))[1])
 			BrM = int(self.itmcod)
 			Dsri1 = [BrM, int(D[0]), D[2], D[6], extid, hndid]
 			Dsri2 = [extid, D[5], D[3], D[4], D[5], D[1], 1]
@@ -635,13 +648,13 @@ class MyPanel1 ( wx.Panel ):
 			self.DoMenu.Table = u'access'
 			self.DoMenu.Additem(u'acclvlid, userid, acclvl, disenable', Dsri3)
 			#self.Add2Menu(D)
-			wx.MessageBox(u'you successful add menu ')
+			wx.MessageBox(_(u'you successful add menu '))
 
 			self.DVC1.DeleteAllItems()
 			self.fillList()
 			self.Refresh()
 		else:
-			wx.MessageBox(u'Please Use Edit icon or first Add item')
+			wx.MessageBox(_(u'Please Use Edit icon or first Add item'))
 
 		event.Skip()
 
@@ -725,7 +738,7 @@ class MyPanel1 ( wx.Panel ):
 		if D[6] == 'S':
 			#mb.CngSubMenu(mitm,D,1)
 			mitm.SetSubMenu(mnu)
-			wx.MessageBox('Please Close Application Now!')
+			wx.MessageBox(_('Please Close Application Now!'))
 		#print(mitm.IsSubMenu())
 		if D[4] != '':
 			lbl = D[2] + '\t' + D[4]
@@ -733,7 +746,7 @@ class MyPanel1 ( wx.Panel ):
 			lbl = D[2]
 		mitm.SetItemLabel(lbl)
 		if D[3] != '':
-			mitm.SetBitmap(wx.Bitmap(ICON16_PATH+D[3], wx.BITMAP_TYPE_ANY))
+			mitm.SetBitmap(wx.Bitmap(ICONS_MENU+D[3], wx.BITMAP_TYPE_ANY))
 		if D[5] != '':
 			mitm.SetHelp(D[5])
 		mitm.Enable(not D[7])
@@ -783,6 +796,9 @@ class MyPanel1 ( wx.Panel ):
 		event.Skip()
 
 	def icnslct( self, event ):
+		if RES_PATH not in self.iconfile.GetPath():
+			#print(self.iconfile.GetPath())
+			CopyIcon(self.iconfile.GetPath())
 		self.icon1.SetBitmap(wx.Bitmap(self.iconfile.GetPath(), wx.BITMAP_TYPE_ANY))
 		event.Skip()
 
@@ -825,7 +841,7 @@ class MyPanel1 ( wx.Panel ):
 			#print( 'transfer:',ifrm.TransferDataFromWindow() )
 			#print(ifrm.IsUnlinked())
 		else:
-			wx.MessageBox("Double Program: Please Close Program Develop then Do this item")
+			wx.MessageBox(_("Double Program: Please Close Program Develop then Do this item"))
 		event.Skip()
 
 	def getHandel(self, imodel, pathfile):
@@ -835,11 +851,11 @@ class MyPanel1 ( wx.Panel ):
 		for p in pr:
 			if imodel in p:
 				return p[0]
-		return 10001
+		return 99000
 
 	def findhandler(self, hndlrnm):
 		if hndlrnm == '':
-			return 10001
+			return 99000
 		else:
 			codid , self.prgdir = self.MyMenu.getHndlr(hndlrnm)[0]
 			return codid
@@ -848,7 +864,7 @@ class MyPanel1 ( wx.Panel ):
 		Data1 = self.fld1.GetValue()
 		Data2 = self.fld2.GetValue()
 		Data3 = self.fld3.GetValue()
-		Data4 = self.iconfile.GetPath().replace(ICON16_PATH, '')
+		Data4 = self.iconfile.GetPath().split(SLASH)[-1]
 		Data5 = self.fld4.GetValue()
 		Data6 = self.fld6.GetValue()
 		if self.rdio1.GetValue():
@@ -1009,7 +1025,7 @@ class MyPanel3 ( wx.Panel ):
 
         Hsz2.Add(self.txt4, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        self.dirct = wx.DirPickerCtrl(self, wx.ID_ANY, GUI_PATH+self.Data[3][4:], _(u"Select a folder"), wx.DefaultPosition,
+        self.dirct = wx.DirPickerCtrl(self, wx.ID_ANY, SRC_PATH+u'prg'+SLASH+self.Data[3][4:], _(u"Select a folder"), wx.DefaultPosition,
                                       wx.DefaultSize, wx.DIRP_DEFAULT_STYLE | wx.DIRP_SMALL)
         Hsz2.Add(self.dirct, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
@@ -1076,10 +1092,10 @@ class MyPanel3 ( wx.Panel ):
 
     def bardir(self, event):
         mydir = event.GetEventObject().GetPath()
-        mydir.replace(GUI_PATH,u"GUI.")
+        mydir.replace(Src_prg,u"Src.prg.")
         #print(mydir)
 
-        self.newdir = mydir.replace(GUI_PATH,u"GUI.")
+        self.newdir = mydir.replace(Src_prg,u"Src.prg.")
         #print(self.newdir)
 
     def finddir(self, data):
@@ -1124,8 +1140,8 @@ class MyPanel3 ( wx.Panel ):
 		    data2 = self.fld2.GetValue()
 		    data3 = self.fld3.GetValue()
 		    mydir = self.dirct.GetPath()
-		    self.newdir = mydir.replace(GUI_PATH, u"GUI.")
-		    self.hdddir = mydir.replace(GUI_PATH, u'..\\GUI\\')
+		    self.newdir = mydir.replace(Src_prg, u"Src.prg.")
+		    self.hdddir = mydir.replace(Src_prg, u'..\\Src\\prg\\')
 		    if self.finddir(self.hdddir) != '':
 			    dircod = self.finddir(self.hdddir)
 			    #dircod = self.GetMenu.GetDirCod(self.newdir)
@@ -1135,6 +1151,11 @@ class MyPanel3 ( wx.Panel ):
 			    dircod = str(data2)+'1'
 			    self.SetMenu.Table = u'Guidir'
 			    self.SetMenu.Additem(u' Dir, prgdir, hdddir', (self.newdir,dircod,self.hdddir))
+			    os.mkdir(mydir)
+			    os.chdir(mydir)
+			    with open(u'__init__.py',u'w+') as f:
+				    f.write('')
+
 			    pass
 		    #print(dircod)
 		    self.SetMenu.Table = u'menubar'
@@ -1149,16 +1170,20 @@ class MyPanel3 ( wx.Panel ):
 	    elif event.GetEventObject().GetLabel() == _('Change'):
 		    data1 = self.fld1.GetValue()
 		    mydir = self.dirct.GetPath()
-		    self.newdir = mydir.replace(GUI_PATH,u"GUI.")
-		    self.hdddir = mydir.replace(GUI_PATH, u'..\\')
+		    self.newdir = mydir.replace(Src_prg,u"Src.prg.")
+		    self.hdddir = mydir.replace(Src_prg, u'..\\Src\\')
 		    if self.finddir(self.hdddir) != '':
 			    dircod = self.GetMenu.GetDirCod(self.hdddir)
-			    print(dircod)
+			    #print(dircod)
 			    pass
 		    else:
 			    dircod = str(data2) + '1'
 			    self.SetMenu.Table = u'Guidir'
 			    self.SetMenu.Additem(u' Dir, prgdir, hdddir', (self.newdir, dircod, self.hdddir))
+			    os.mkdir(mydir)
+			    os.chdir(mydir)
+			    with open(u'__init__.py', u'w+') as f:
+				    f.write('')
 
 		    self.SetMenu.Table = u'menubar'
 		    self.SetMenu.Upditem(u'mbarname = ? , mbardir = ?  where mbarid = %s ' % self.Data[1],(data1,dircod))
