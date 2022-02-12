@@ -182,13 +182,16 @@ class MyPanel1 ( wx.Panel ):
 		Vsz3.Add( self.Lin1, 0, wx.EXPAND |wx.ALL, 5 )
 
 		lstpane = self.getMData.MLPansFils(u' Join MLinfo on MLPane.MLPid = MLinfo.MLPid')
+		Src_dir = self.getMData.GetImpCod('4444')[0][0]
 
 		self.ChsBok = wx.Choicebook( self.P2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.CHB_DEFAULT )
 		self.PLP19 = []
 		j = 0
 
 		for lp in lstpane:
-			i = importlib.import_module(u'GUI.MLPane.' + lp[1])
+			print(lp)
+			#i = importlib.import_module(u'GUI.MLPane.' + lp[1])
+			i = importlib.import_module(Src_dir+'.' + lp[1])
 			self.PLP19.append(i.P19(self.ChsBok))
 			if j == 0:
 				fp = True
@@ -348,10 +351,10 @@ class MyPanel1 ( wx.Panel ):
 		thsfile = self.getMData.MLPansgetAl(myalg)[0][1]
 
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
-		self.Pnl = OS.SrcPanel(self.Frm, AI_PATH + 'ML\\' + thsfile + '.py')
+		self.Pnl = OS.SrcPanel(self.Frm, SRC_PATH + 'mla\\' + thsfile + '.py')
 		self.Frm.SetMenuBar(OS.MyMenuBar1(u'ML'))
 		self.Frm.SetSize((700, 500))
-		self.Frm.SetLabel(AI_PATH + 'ML\\' + thsfile+'.py')
+		self.Frm.SetLabel(SRC_PATH + 'mla\\' + thsfile+'.py')
 		self.Frm.Show()
 		event.Skip()
 
@@ -392,10 +395,10 @@ class MyPanel1 ( wx.Panel ):
 		#print(Pnlfil)
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
 		#self.Pnl = PyPanel(self.Frm, GUI_PATH + 'MLPane\\'+Pnlfil+u'.py')
-		self.Pnl = OS.SrcPanel(self.Frm, GUI_PATH + 'MLPane\\' + Pnlfil + u'.py')
+		self.Pnl = OS.SrcPanel(self.Frm, SRC_PATH + 'mlp\\' + Pnlfil + u'.py')
 		self.Frm.SetMenuBar(OS.MyMenuBar1(u'AL'))
 		self.Frm.SetSize((700, 560))
-		self.Frm.SetLabel(GUI_PATH + 'MLPane\\' + Pnlfil + u'.py')
+		self.Frm.SetLabel(SRC_PATH + 'mlp\\' + Pnlfil + u'.py')
 		self.Frm.Show()
 		event.Skip()
 

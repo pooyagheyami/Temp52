@@ -15,6 +15,7 @@ from Config.Init import *
 import Res.Allicons as icon
 
 import Database.PostGet as PG
+import Database.PostGet2 as PG2
 
 from AI.Analiz import *
 import AI.DBgen as DBG
@@ -29,6 +30,8 @@ class MyPanel1 ( wx.Panel ):
 
 	def __init__( self, parent,For_This_Frame=[], id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,450 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		self.config = wx.GetApp().GetConfig()
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
 		self.FTF = For_This_Frame
@@ -233,10 +236,23 @@ class MyPanel1 ( wx.Panel ):
 
 
 	def dbopn(self, event):
-		self.dbfil = self.dbfile.GetPath().split('\\')[-1]
-		#print(dbfil)
-		self.idbfl = PG.Get(self.dbfil, u'', u'DBFields')
-		self.dbdata = self.idbfl.GetFromDbf()
+		dbftype = Database_type[int(self.config.Read('DBtype'))]
+		#self.dbfil = self.dbfile.GetPath().split('\\')[-1]
+		self.dbfil = self.dbfile.GetPath()
+		#print(self.dbfil,self.dbfile.GetPath())
+		#self.idbfl = PG.Get(self.dbfil, u'', u'DBFields')
+
+		self.idbfl2 = PG2.Get(self.dbfil,dbftype)
+		conn = self.idbfl2.myengin.connect()
+		Rprox = conn.execute('select * from sqlite_master')
+		#print(Rprox.fetchall())
+		self.dbdata = Rprox.fetchall()
+		#print(self.dbdata2)
+
+		#self.dbdata = self.idbfl.GetFromDbf()
+		#mytxt = self.idbfl.openSQL(Src_dbf+'sqls'+SLASH+'DBFields')
+
+		#self.dbdata = self.idbfl.GetFromSql()
 		#print(self.dbdata)
 		self.DVC1.DeleteAllItems()
 		self.filllist()
@@ -436,10 +452,12 @@ class MyPanel1 ( wx.Panel ):
 		#self.fldsql.SetValue(sqltxt)
 
 	def brwit( self, event ):
+		dbtype = Database_type[int(self.config.Read('DBtype'))]
 		self.gtslt = self.DVC1.GetSelections()
 		if self.fldsql.GetValue() != u'':
 			sqlcomnd = self.fldsql.GetValue()
-			brsdb = PG.Get(self.dbfil, u'', u'')
+			brsdb = PG2.Get(self.dbfil, dbtype)
+			#brsdb = PG.Get(self.dbfil, u'', u'')
 			self.idata = brsdb.GetFromString(sqlcomnd)
 			#print(self.ChkTicks())
 			thstbl = [T for T in self.ChkTicks().keys()]
@@ -454,7 +472,8 @@ class MyPanel1 ( wx.Panel ):
 				if myfild == fld:
 					thsfld = [f[0] for f in self.Tfilds[fld]]
 					#print(thsfld)
-			self.idbfl = PG.Get(self.dbfil, u'', u'')
+			#self.idbfl = PG.Get(self.dbfil, u'', u'')
+			self.idbfl = PG2.Get(self.dbfil, dbtype)
 			self.idata = self.idbfl.GetFromString(u' select * from %s' % myfild)
 		frm = wx.Dialog(self, -1)
 		pnl = MyPanel2(frm, thsfld, self.idata)

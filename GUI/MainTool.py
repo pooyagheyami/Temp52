@@ -1,13 +1,10 @@
 # In the name of God
-# Cearte Menu main Frame File
+# Cearte Toolbar in Frame window
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import Database.MenuSet2 as MS
-import wx
-import wx.aui
-
-import os
+from Allimp import os,sys,wx
 from  Config.Init import *
 
 

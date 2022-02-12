@@ -59,31 +59,19 @@ class GetData:
     def AllSub(self, ext=''):
         return sq.wxsqltxt(self.DBF,"""SELECT * FROM mitem %s"""%ext)
 
-    '''
-    def RevItem(self):
-        return sq.wxsqltxt(self.DBF,"""select mitem.itemname,mitem.itemid 
-                                       from mitem
-                                       where mitem.mbarid = (select menubar.mbarid
-                                            from menubar
-                                            where menubar.mbardir = 'GUI.Input')
-        """)
-    '''
 
     def MyProg(self,itemid=''):
         return sq.wxsqltxt(self.DBF,"""SELECT distinct mitem.handlerid, handler.prgname
             FROM mitem join handler on mitem.handlerid = handler.handlerid
             WHERE mitem.itemid = %s  """ %itemid)
 
-    #def MnuDir(self,itemid=''):
-    #    return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
-    #          FROM mitem  JOIN menubar
-    #          ON mitem.mbarid = menubar.mbarid
-    #          WHERE mitem.itemid =  %s  """ %itemid)
+
     def MnuDir(self,itemid=''):
         return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
               FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
 			  JOIN menubar ON handler.prgdir = menubar.mbarid
               WHERE mitem.itemid =  %s  """ %itemid)
+
     def MnuDir2(self,itemid=''):
         return sq.wxsqltxt(self.DBF, """SELECT Guidir.Dir
               FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
@@ -108,6 +96,9 @@ class GetData:
 
     def GetDirCod(self, idir=''):
         return sq.wxsqsnd(self.DBF,"Guidir", "hdddir", "prgdir", idir)
+
+    def GetImpCod(self, icod=''):
+        return sq.wxsqsnd(self.DBF,"Guidir", "Dir", "prgdir", icod)
 
     def GetDirCod2(self, idir=''):
         return sq.wxsqsnd(self.DBF,"Guidir", "prgdir", "hdddir", idir)
@@ -151,10 +142,15 @@ class GetData:
             and toolbar.toolid = %s   """ % itolid)
     def Acclvl(self,accid=''):
         return sq.wxsqltxt(self.DBF, """ select * from access where access.acclvlid = '%s' """ % accid)
+
     def gBarItm(self,mbar=''):
         return  sq.wxsqltxt(self.DBF,""" select distinct mitem.mbarid , mitem.itemid , mitem.extid , extended.acclvlid
                                      from mitem,extended 
                                      where mitem.mbarid = %s""" % mbar)
+    def gSubItm(self,mitm=''):
+        return sq.wxsqltxt(self.DBF,""" select distinct mitem.mbarid , mitem.itemid , mitem.extid , extended.acclvlid 
+                                    from mitem left Join extended on mitem.extid = extended.extid 
+                                    where mitem.mbarid/10 = %d or mitem.mbarid / 100 = %d """ %(mitm,mitm))
     def getHndlr(self, prgnam = u''):
         return sq.wxsqltxt(self.DBF, """ select handler.handlerid, handler.prgdir 
                                     from handler     where handler.prgname = '%s'  """ %prgnam)

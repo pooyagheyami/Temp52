@@ -35,7 +35,7 @@ class Anlzfil(object):
 
     def getGUIfil(self):
         for im in self.imprts:
-            if 'GUI' in im:
+            if 'Src' in im:
                 return im[im.find('GUI'):].split(' ')[0]
 
     def checkSyntx(self):

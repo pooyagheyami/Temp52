@@ -239,11 +239,11 @@ class MyMenuBar1 ( wx.MenuBar ):
 			s += 1
 
 		if extmnu == u"Pro":
-			self.DfDir = GUI_PATH
+			self.DfDir = SRC_PATH
 		elif extmnu == u'ML':
-			self.DfDir = AI_PATH+'ML\\'
+			self.DfDir = SRC_PATH+'mla\\'
 		elif extmnu == u'AL':
-			self.DfDir = GUI_PATH+"MLPane\\"
+			self.DfDir = SRC_PATH+"mlp\\"
 		else:
 			self.DfDir = MAP
 
@@ -450,7 +450,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 		else:
 			print(self.DfDir)
 			MLpnl = self.GetGrandParent()
-			if self.DfDir == GUI_PATH+u'MLPane\\':
+			if self.DfDir == SRC_PATH+u'mlp\\':
 				mylstml = MLpnl.getMData.AllML(u'join MLPane on MLinfo.MLPid = MLPane.MLPid')
 				print(mylstml)
 				tclslct = MLpnl.TLC1.GetSelection()
@@ -485,7 +485,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 						wx.MessageBox(_(u'Some fields is empty or wrong ! try again!'))
 
 
-			if self.DfDir == AI_PATH+u'ML\\':
+			if self.DfDir == SRC_PATH+u'mla\\':
 				mylstml = MLpnl.getMData.AllML(u'join MLAlgo on MLAlgo.MLcod = MLinfo.MLcod')
 				print(mylstml)
 				tclslct = MLpnl.TLC1.GetSelection()

@@ -4,12 +4,10 @@
 # -*- coding: utf-8 -*-
 
 import Database.MenuSet2 as MS
-import wx
-import os
+from  Allimp import os, sys, wx
 from Config.Init import *
 
 _ = wx.GetTranslation
-
 
 class MainMenu():
     def __init__(self):
@@ -147,7 +145,7 @@ class AppMenu(wx.MenuBar):
     def __init__(self):
         wx.MenuBar.__init__(self, style=0)
         self.m = MenuData()
-        #print(self.m.menuBar())
+        #print(self.m)
         self.createMenuBar()
 
     def createMenuBar(self):
@@ -209,24 +207,15 @@ class AppMenu(wx.MenuBar):
         if self.FindMenu(Mbar) != -1:
             imnu = self.GetMenu(self.FindMenu(Mbar))
         else:
-            imnu = self._findmenu2(Mbar, Bar)
+            if Bar == 'S':
+                imnu = self._findsubmenu2(Mbar)
+            else:
+                imnu = self._findmenu2(Mbar, Bar)
             #imnu = self.FindMenuItem(mb.GetMenu,Mbar)
 
         iitm = imnu.Append(int(Data[0]), lbl, Data[5])
         if Data[3] != '':
             iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
-
-    def AddItem(self,Mbar,Data,Bar='B'):
-        if Bar == 'B':
-            imnu = self._BackMyMenu(Mbar)
-        else:
-            imnu = self._findsubmenu2(Mbar)
-            #print(imnu)
-        lbl = self.ChkShrtCut(Data)
-        iitm = imnu.Append(int(Data[0]),lbl,Data[5])
-        if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
-        #print(iitm)
 
     def AddSubMenu2(self,Mbar,Data,Bar=''):
         lbl = self.ChkShrtCut(Data)
@@ -234,19 +223,11 @@ class AppMenu(wx.MenuBar):
         if self.FindMenu(Mbar) != -1:
             imnu = self.GetMenu(self.FindMenu(Mbar))
         else:
-            imnu = self._findmenu2(Mbar, Bar)
+            if Bar == 'S':
+                imnu = self._findsubmenu(Mbar)
+            else:
+                imnu = self._findmenu2(Mbar, Bar)
         iitm = imnu.AppendSubMenu(self.createSubmenu(Data[0],lbl),lbl)
-        if Data[3] != '':
-            iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
-
-
-    def AddSubMenu(self,Mbar,Data,Bar='B'):
-        if Bar == 'B':
-            imnu = self._BackMyMenu(Mbar)
-        else:
-            imnu = self._findsubmenu2(Mbar)
-        lbl = self.ChkShrtCut(Data)
-        iitm = imnu.AppendSubMenu(self.createSubmenu(Data[0]),lbl)
         if Data[3] != '':
             iitm.SetBitmap(wx.Bitmap(ICONS_MENU + Data[3], wx.BITMAP_TYPE_ANY))
 
@@ -262,14 +243,36 @@ class AppMenu(wx.MenuBar):
         #print(itmmnu)
         itmmnu.AppendSeparator()
 
-    def AddCheck(self,Mbar,Data):
-        imnu = self._BackMyMenu(Mbar)
+    # def AddCheck(self,Mbar,Data,Bar=''):
+    #     imnu = self._BackMyMenu(Mbar)
+    #     lbl = self.ChkShrtCut(Data)
+    #     iitm = imnu.AppendCheckItem(int(Data[0]),lbl,Data[5])
+
+    def AddCheck2(self,Mbar,Data,Bar=''):
         lbl = self.ChkShrtCut(Data)
+        if self.FindMenu(Mbar) != -1:
+            imnu = self.GetMenu(self.FindMenu(Mbar))
+        else:
+            if Bar == 'S':
+                imnu = self._findsubmenu2(Mbar)
+            else:
+                imnu = self._findmenu2(Mbar, Bar)
         iitm = imnu.AppendCheckItem(int(Data[0]),lbl,Data[5])
 
-    def AddRadio(self,Mbar,Data):
-        imnu = self._BackMyMenu(Mbar)
+    # def AddRadio(self,Mbar,Data,Bar=''):
+    #     imnu = self._BackMyMenu(Mbar)
+    #     lbl = self.ChkShrtCut(Data)
+    #     iitm = imnu.AppendRadioItem(int(Data[0]), lbl)
+
+    def AddRadio2(self,Mbar,Data,Bar=''):
         lbl = self.ChkShrtCut(Data)
+        if self.FindMenu(Mbar) != -1:
+            imnu = self.GetMenu(self.FindMenu(Mbar))
+        else:
+            if Bar == 'S':
+                imnu = self._findsubmenu2(Mbar)
+            else:
+                imnu = self._findmenu2(Mbar, Bar)
         iitm = imnu.AppendRadioItem(int(Data[0]), lbl)
 
     def _findmenu2(self, Mbar, Bar):

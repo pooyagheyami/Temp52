@@ -1,10 +1,13 @@
 # In the name of God
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+# Run program here
+
+from Allimp import importlib
 
 import Database.MenuSet2 as MS
-import importlib
-import importlib.util
+#import importlib
+#import importlib.util
 from Config.Init import *
 
 
@@ -29,7 +32,7 @@ class Mymenu(object):
         #    return ''
 
     def submndir(self, itemsub):
-        self.directory = self.MySql.SubDir(itemsub)
+        self.directory = self.MySql.SubDir2(itemsub)
         return self.directory[0][0]
 
     def tooldir(self, itolid):
@@ -48,28 +51,26 @@ class Mymenu(object):
 
 def DoProgram2(itm,hndlr):
     M = Mymenu()
-    #print(itm,hndlr)
+
     if itm > 1000 and itm < 9000:
         P = M.program(itm)
         d = M.menudir(itm)
-        #print(P,d)
         if not d:
             d = M.submndir(itm)
 
     elif itm < 1000 and itm > 100:
         P = M.toogram(itm)
         d = M.tooldir(itm)
-        #print(P, d)
+
     elif itm > 9000:
         P = M.program(itm)
         d = 'GUI.Main'
-        #print(P, d)
+
     else:
         P = ''
         d = ''
         if hndlr != '':
             d,P = M.Runhdlr(hndlr)
-
 
     a = d+'.'+P
     #print(a)

@@ -40,6 +40,9 @@ class MyPanel1 ( wx.Panel ):
 
 		self.getMData = MS.GetData(u'Menu2.db', u'')
 		self.setMDate = MS.SetData(u'', u'', u'')
+		# Parameter Init
+		self.iSrc_api_Imp = self.getMData.GetImpCod('7777')[0][0]
+
 
 		self.Splt1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D|wx.SP_LIVE_UPDATE|wx.SP_NO_XP_THEME|wx.SP_THIN_SASH )
 		#self.Splt1.SetSashGravity( -1 )
@@ -255,6 +258,8 @@ class MyPanel1 ( wx.Panel ):
 		self.SetSizer( Vsz1 )
 		self.Layout()
 
+
+
 		# Connect Events
 		self.DVC1.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.slctmnu, id = wx.ID_ANY )
 		self.DVC1.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.slctitm, id=wx.ID_ANY)
@@ -318,8 +323,14 @@ class MyPanel1 ( wx.Panel ):
 			#print(af.ishasimport('GUI.API'), af.ishasfromim('GUI.API'))
 			self.DVC1.SetItemText(child, 0, pro[1])
 			self.DVC1.SetItemText(child, 1, str(pro[0]))
-			if af.ishasimport('GUI.API'):
-				atimp = af.ishasimport('GUI.API')[0].split(' ')[1].replace('GUI.API.','')
+			# if af.ishasimport('GUI.API'):
+			# 	atimp = af.ishasimport('GUI.API')[0].split(' ')[1].replace('GUI.API.','')
+			# 	subimp.append(atimp)
+			# 	child2 = self.DVC1.AppendItem(child, atimp)
+			# 	self.DVC1.SetItemText(child2, 0, atimp)
+			# 	self.DVC1.SetItemText(child2, 1, '7777')
+			if af.ishasimport(self.iSrc_api_Imp):
+				atimp = af.ishasimport(self.iSrc_api_Imp)[0].split(' ')[1].replace(self.iSrc_api_Imp+'.','')
 				subimp.append(atimp)
 				child2 = self.DVC1.AppendItem(child, atimp)
 				self.DVC1.SetItemText(child2, 0, atimp)
@@ -378,11 +389,16 @@ class MyPanel1 ( wx.Panel ):
 					if item[1] == txt and item[0] == int(cod) :
 						#print(item)
 					    self.fillfield(item,item[2])
+			# elif cod[0] == '7':
+			# 	self.thsfile = GUI_PATH+"API"+SLASH+txt+'.py'
+			# 	data = (cod,txt,'','-1','-1','-','GUI.API','','',None,None)
+			# 	self.fillfield(data,'')
+			# 	self.PrgDir1.SetPath(GUI_PATH+"API"+SLASH)
 			elif cod[0] == '7':
-				self.thsfile = GUI_PATH+"API"+SLASH+txt+'.py'
-				data = (cod,txt,'','-1','-1','-','GUI.API','','',None,None)
+				self.thsfile = SRC_PATH+"api"+SLASH+txt+'.py'
+				data = (cod,txt,'','-1','-1','-','Src.api','','',None,None)
 				self.fillfield(data,'')
-				self.PrgDir1.SetPath(GUI_PATH+"API"+SLASH)
+				self.PrgDir1.SetPath(SRC_PATH+"api"+SLASH)
 		else:
 			if 'All-in-One' in txt:
 				self.Desc.SetValue(u"Here a list of program that only in one file and when you do it all command execute")
@@ -546,14 +562,14 @@ class MyPanel1 ( wx.Panel ):
 		cod = self.DVC1.GetItemText(itm, 1)
 		af = Anlzfil(self.thsfile)
 
-		print(txt,cod,self.thsdcod,self.thsfile,self.thspath)
+		#print(txt,cod,self.thsdcod,self.thsfile,self.thspath)
 
 		if cod == '????':
 			if af.ishasmain():
-				print(u'This file main')
+				#print(u'This file main')
 				af.checkSyntx()
 				if af.ishasifin():
-					print(u'If is in file')
+					#print(u'If is in file')
 					af.checkSyntx()
 			if af.ishasframe():
 				mygnrt = Genrate2(self.thsfile)
@@ -594,7 +610,7 @@ class MyPanel1 ( wx.Panel ):
 						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1
 						newnom = int(dircode[0]) * 100 + len(lstcod) + 1
 					dlg.Destroy()
-					print(newname,dircode,patfil)
+					#print(newname,dircode,patfil)
 					mygnrt = Genrate(patfil.replace('..', MAP)+SLASH+newname+'.py')
 					mygnrt.createFrm(self.thsfile)
 

@@ -3,9 +3,7 @@
 # -*- coding: utf-8 -*-
 # Start some program and splash
 
-
-import wx
-import wx.adv
+from Allimp import wx
 from Config.Init import *
 
 class MySplashScreen(wx.adv.SplashScreen):
@@ -45,7 +43,7 @@ class MySplashScreen(wx.adv.SplashScreen):
         self.text = wx.StaticText(self,-1,"Loading...",pos=(0, rect.height-9),size=(new_size),style=wx.ALIGN_CENTRE_HORIZONTAL)
         self.text.SetBackgroundColour(wx.WHITE)
         self.text.SetForegroundColour(wx.BLACK)
-        #rect = self.GetClientRect()
+
         self.gauge = wx.Gauge(self,-1,range=50,size=(-1, 9),pos=(0, rect.height))
         #rect = self.GetClientRect()
 
@@ -63,7 +61,7 @@ class MySplashScreen(wx.adv.SplashScreen):
 
     def OnClose(self, evt):
         # Make sure the default handler runs too so this window gets destroyed
-        #evt.Skip()
+
         self.Hide()
         self.tmr.Stop()
         # if the timer is still running then go ahead and show the main frame now
@@ -75,12 +73,12 @@ class MySplashScreen(wx.adv.SplashScreen):
     def ShowMain(self):
         wx.CallAfter(wx.EndBusyCursor)
 
-        SIZE = wx.DisplaySize()
+        SIZE = wx.Size(eval(self.config.Read(u'WinSize')))
         frame = self.window.MainWin()
-        #frame = window2.MainWin()
+
         frame.SetSize(SIZE)
         frame.SetPosition((1, 1))
-        #frame.CenterOnScreen()
+
         frame.EnableFullScreenView(True)
         #frame.ShowFullScreen()
         frame.Show()

@@ -29,7 +29,7 @@ def main(panel=None):
     parent = panel.GetParent()
 
     frame = telframe(parent)
-    frame.SetTitle(u'Menu Bar Develop')
+    frame.SetTitle(u'Menus Develop')
     frame.SetSize((555, 460))
     frame.Show()
 

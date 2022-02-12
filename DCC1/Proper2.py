@@ -7,6 +7,7 @@
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
 
+
 import wx
 import wx.aui as wxaui
 import wx.adv
@@ -88,11 +89,14 @@ class MyPanel1 ( wx.Panel ):
         self.MyMenu = MS.GetData(u'Menu2.db', u'')
 
         LAuiP = [ l[0] for l in self.MyMenu.ListPanes() ]
+
         Statu = [u'name',u'date',u'time']
         #print(LAuiP)
 
         language = [LANGUAGE_LIST[lan] for lan in LANGUAGE_LIST]
+        DBtype   = [Database_type[dbt] for dbt in Database_type ]
         lan = [lan for lan in LANGUAGE_LIST ]
+        DBt = [Dtyp for Dtyp in Database_type]
 
         Vsz1 = wx.BoxSizer( wx.VERTICAL )
 
@@ -113,6 +117,9 @@ class MyPanel1 ( wx.Panel ):
         self.ifont = self.config.Read(u'Font')
         TBGname,self.TBGCol = self.config.Read(u'TBGColor').split(',')
         SBGname,self.SBGCol = self.config.Read(u'SBGColor').split(',')
+        Winsize = wx.Size(eval(self.config.Read(u'WinSize')))
+        #Winsize = (int(self.config.Read(u'WinSize').split(',')[0]),int(self.config.Read(u'WinSize').split(',')[1]))
+        #print(Winsize)
 
         mw = wx.GetTopLevelWindows()
 
@@ -127,8 +134,11 @@ class MyPanel1 ( wx.Panel ):
 
 
         conflst = {u"General properties":[(u'Enum',u"Language", u"Language",u"",language,lan,int(self.config.Read("Language")) ),
-                                          (u"Image",u"Splash",u"Splash",u"Use this file for Splash",self.config.Read('Splash'))],
+                                          (u"Image",u"Splash",u"Splash",u"Use this file for Splash",self.config.Read('Splash') ),
+                                          (u"Enum",u"Database type",u"DBtype",u"",DBtype,DBt,int(self.config.Read('DBtype')) )
+                                          ],
                    u"Main Window properties":[(u'String',u'Label of Window',u'Winname',u'Show label of Main window',self.config.Read(u'Winname')),
+                                              (u'Size',u'Window Size',u'WinSize',u'Set Main Window Size start',Winsize),
                                               (u'Bool',u"Back Ground Active",u"BGActive",u"UseCheckbox",eval(self.config.Read('BGActive'))),
                                               (u"Image",u"Background",u"Background",u"If Active BackGround Use this file",self.config.Read('Background')),
                                               #(u"Enum",u"Type of Menu",u"Menu",u"",[u'Normal',u'Flat'],[1,2],int(self.config.Read("Menu"))),
@@ -170,6 +180,8 @@ class MyPanel1 ( wx.Panel ):
                 elif itm[0] == u'String':
                     Items1.append(self.P1.Append( pg.StringProperty(itm[1],itm[2],itm[4])))
                     Items1[-1].SetHelpString(itm[3])
+                elif itm[0] == u'Size':
+                    Items1.append(self.P1.Append( SizeProperty(itm[1],itm[2],value=wx.Size(itm[4]))))
                 else:
                     print("something error")
 
@@ -177,19 +189,27 @@ class MyPanel1 ( wx.Panel ):
 
         MAP = os.getcwd()
         dirlst = {u'Main Directory and Path':[(u"Application Path",'AppPath',u"The Path of application and work program",MAP),
-                                              (u"Database Path",u'DBPath',u'',MAP+u'\\Database'),
-                                              (u"GUI API path",u'APIPath',u"The path of application program interface that each menu point to execute it",MAP+u'\\GUI'),
-                                              (u"Menu Programs Path",u'MnuPath',u'',MAP+u'\\GUI\\Program')],
-                  u"Resouce and images":[(u"Icon Menu Path",u'Icn32Path',u'',MAP+u'\\Res\\Icons\\Menu'),
-                                         (u"Icon Toolbar Path",u'Icn16Path',u'',MAP+u'\\Res\\Icons\\Tool'),
-                                         (u"Image and Pic Path",u'ImgPath',u'',MAP+u'\\Res\\Pics'),
-                                         (u"Splash Path",u'SplshPath',u'',MAP+u'\\Res\\Splash')],
+                                              (u"Database Path",u'DBPath',u'',MAP+u'\\Src\\DBF'),
+                                              (u"API source path",u'APIPath',u"The path of application program interface ",MAP+u'\\Src\\API'),
+                                              (u"Program of Menu Bar Path",u"PRGPath",u"",MAP+u"\\Src\\PRG"),
+                                              (u"Menu Programs Path",u'MnuPath',u'',MAP+u'\\GUI\\Program')
+                                              ],
+                  u"Resouce and images":[(u"Fonts Path",u'Fonts',u'',MAP+u'\\Res\\Fonts'),
+                                         (u"Icon Menu Path",u'MenuPath',u'',MAP+u'\\Res\\Icons\\Menu'),
+                                         (u"Icon Toolbar Path",u'ToolPath',u'',MAP+u'\\Res\\Icons\\Toolbar'),
+                                         (u"Image Path",u'ImgPath',u'',MAP+u'\\Res\\Images'),
+                                         (u"Picture Path",u'PicPath',u'',MAP+u'\\Res\\Pics'),
+                                         (u"Splash Path", u'SplshPath', u'', MAP + u'\\Res\\Splash')
+                                         ],
 
                   u"Other Path":[(u"Temp Path",u'TmpPath',u'',MAP+u'\\Temps'),
                                  (u"Log Path",u'LogPath',u'',MAP+u'\\Logs'),
                                  (u"Utility Path",u'UtilPath',u'',MAP+u'\\Utility'),
                                  (u"Config Path",u'ConPath',u'',MAP+u'\\Config'),
-                                 (u"Machine Learning Path",u'MLPath',u'',MAP+u'\\AI\\ML')]}
+                                 ],
+                  u"Machin Learning Source":[(u"Machine Learning Algorithm",u'MLAPath',u'',MAP+u'\\Src\\MLA'),
+                                             (u"Machine Learning Panel",u'MLPPath',u'',MAP+u'\\Src\\MLP')]
+                  }
         self.Itms = []
 
 

@@ -3,57 +3,15 @@
 # Windows and Panels main Frame File
 #! /usr/bin/env python
 
-import wx
+from Allimp import wx , os
+
+#import wx
 import wx.dataview
 import wx.aui
+
 from GUI.proman import Mymenu
 import Database.MenuSet2 as MS
-import os
 
-
-class MyLstPnl(object):
-    LPn = []
-    PrP = {}
-    def __init__(self):
-        dirfil = os.listdir('./GUI/AuiPanel/')
-        for f in dirfil:
-            if f[-3:] == '.py':
-                self.LPn.append(f)
-        self.LPn.remove( 'PAui.py')
-        #print(self.LPn)
-
-    def GetAuiPnl(self):
-        return self.LPn
-
-    def GetAuiPro(self):
-        with open('./GUI/AuiPanel/PAui.p') as fl:
-            lines = fl.readlines()
-        for l in lines:
-            self.PrP[l.split(',')[0]] = l.split(',')[1:]
-        return self.PrP
-
-    def GetAuiInfo(self,InfoList):
-        #print(InfoList)
-        myInfo = wx.aui.AuiPaneInfo()
-        if ' Left' in InfoList:
-            myInfo.Left()
-        if ' Right' in InfoList:
-            myInfo.Right()
-        if ' Top' in InfoList:
-            myInfo.Top()
-        if ' Bottom' in InfoList:
-            myInfo.Bottom()
-        if ' Center' in InfoList:
-            myInfo.Center()
-        if ' PinButton' in InfoList:
-            myInfo.PinButton(True)
-        if ' Dock' in InfoList:
-            myInfo.Dock()
-        if ' Resizable' in InfoList:
-            myInfo.Resizable()
-        if ' Hide' in InfoList:
-            myInfo.Hide()
-        return myInfo
 
 class MyLstPnl2(object):
     LPn = []
@@ -62,11 +20,12 @@ class MyLstPnl2(object):
         self.MyMenu = MS.GetData(u'Menu2.db', u'')
 
         self.lstpnl = self.MyMenu.AllPanes()
-        dirfil = os.listdir('./GUI/AuiPanel/')
+        #dirfil = os.listdir('./GUI/AuiPanel/')
+        dirfil = os.listdir('./Src/AUI/')
         for f in dirfil:
             if f[-3:] == '.py':
                 self.LPn.append(f)
-        self.LPn.remove('PAui.py')
+        #self.LPn.remove('PAui.py')
         #print(self.LPn)
         #print(self.lstpnl)
 
@@ -142,9 +101,6 @@ class MyLstPnl2(object):
             data4[s] = D[i]
             i += 1
         return data4
-
-
-
 
 
 def AuiInfoSet1(Data,myInfo):

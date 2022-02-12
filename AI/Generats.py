@@ -39,7 +39,7 @@ class Genrate(object):
     def gnr_imps(self):
         imprtxt = u"import wx\n"
         imprtxt += u"from  Config.Init import *\n"
-        imprtxt += u"import GUI.API."+self.impfil+" as pnl\n\n"
+        imprtxt += u"import Src.api."+self.impfil+" as pnl\n\n"
         return imprtxt
 
     def gnr_frm(self):
@@ -127,6 +127,12 @@ class Genrate2(object):
         iffil = u"if __name__ == '__main__':\n"
         iffil += u"\tmain()\n"
         return iffil
+
+
+class GenrDemo(Genrate):
+    def __init__(self,mypath):
+        Genrate.__init__(self,mypath+'\\Demo.py')
+        self.createFrm('SamPnl.py')
 
 
 

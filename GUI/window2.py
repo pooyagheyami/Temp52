@@ -3,37 +3,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-import wx
-import wx.aui
-#import wx.html
-#import wx.dataview
-import time
-
-from AI.WinDev import MWC
+from Allimp import *
 
 import GUI.MainMenu2 as MM
 import GUI.MainTool as MT
 import GUI.AuiPanel.PAui as PA
-import importlib
 import GUI.BG2 as BG
-
-#import Utility.eCalClak1 as C1
-#import Utility.DigitClack as DgK
-#import Utility.user as user
-from Config.Init import *
-
 import GUI.proman as pro
+
+from Config.Init import *
 
 _ = wx.GetTranslation
 
-
 class MainWin(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self,None,title=u'main',size=(1920,1200),name=u'main')
+        wx.Frame.__init__(self,None,title=u'',size=(-1,-1),name=u'main')
 
         # Get Program Config ===================
-
 
         self.config = wx.GetApp().GetConfig()
 
@@ -42,20 +28,15 @@ class MainWin(wx.Frame):
         label = self.config.Read(u'Winname')
         self.SetLabel(label)
         #self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.newmenu = True
 
-        #STBT = 'B'
-        #AuiCenter = 'A'
         fntis = self.config.Read(u'Font').split(',')
-        #print(fntis)
+
         if fntis[4] == 'True':
             undr = True
         else:
             undr = False
 
-        #info = wx.NativeFontInfo()
-        #info.FromUserString(self.config.Read(u'Font'))
-        #ifont = wx.Font(info)
-        #print(ifont.FaceName)
         ifont = wx.Font(int(fntis[0]), int(fntis[1]), int(fntis[2]), int(fntis[3]), undr, faceName=fntis[5])
         self.SetFont(ifont)
 
@@ -132,7 +113,7 @@ class MainWin(wx.Frame):
                 Wthlst.append(-1)
             i += 1
         self.SetStatusBar(statusBar)
-        #print(Wthlst)
+
         self.stnbr = len(Wthlst) - 1
         self.SetStatusWidths(Wthlst)
         self.SetStatusBarPane(0)
@@ -158,7 +139,6 @@ class MainWin(wx.Frame):
             else:
                 # self.itms.append( wx.MenuItem(self.m1, wx.ID_ANY, MnuDic[itm][0], wx.EmptyString) )
                 self.m1.Append(itm, self.MnuDic[itm][0])
-                # self.m1.Append(itm, self.itms[i])
                 #self.Bind(wx.EVT_MENU, self.OnPopupOne, id=MnuDic[itm][1])
                 i = i + 1
 
@@ -166,51 +146,37 @@ class MainWin(wx.Frame):
         self.m1.Destroy()
 
     def OnPopupOne(self, event):
-        # print(event,event.GetId())
         pmid = event.GetId()
-        #a = pro.DoProgram(self.MnuDic[pmid][1], 'A')
         a = pro.DoProgram2(self.MnuDic[pmid][1], '')
-        #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
-        #win1.SetSize(s)
         a.main(win1)
 
     def OnMenu(self, event):
         self.mid = event.GetId()
-        # print( self.mid )
-        #a = pro.DoProgram(self.mid, 'M')
         a = pro.DoProgram2(self.mid, '')
-        # print dir(a)
-        #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
-        #win1.SetSize(s)
         a.main(win1)
 
     def OnTool(self, event):
         self.tid = event.GetId()
-        # print( self.tid )
-        #a = pro.DoProgram(self.tid, 'T')
         a = pro.DoProgram2(self.tid, '')
-        # print dir(a)
-        #s = a.size() if 'size' in dir(a) else ()
         win1 = wx.Frame(self, -1)
-        #win1.SetSize(s)
         a.main(win1)
 
     def Toolbar(self):
+        #style = wx.TB_BOTTOM|wx.TB_DEFAULT_STYLE|wx.TB_DOCKABLE|wx.TB_FLAT|wx.TB_HORIZONTAL|wx.TB_HORZ_LAYOUT|
+        #wx.TB_HORZ_TEXT|wx.TB_NOALIGN|wx.TB_NODIVIDER|wx.TB_NOICONS|wx.TB_NO_TOOLTIPS|wx.TB_RIGHT|wx.TB_TEXT|wx.TB_VERTICAL
         self.tb = self.CreateToolBar(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT|wx.TB_TEXT)
         Tbd = MT.ToolData()
         Tbl = Tbd.ToolBarList()
         #print(Tbl)
-        tsize = (24, 24)
+        tsize = (24, 24) #<<<=====use Config
         self.tb.SetToolBitmapSize(tsize)
         for tl in Tbl:
             for t in Tbl[tl]:
                 if t[1] == '' or t[1] == None:
                     self.tb.AddSeparator()
                 else:
-                    #print(t)
-
                     self.tb.AddTool(t[0], t[1], wx.Bitmap(ICONS_TOOL+t[2],wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, t[1], t[3], None)
                     self.Bind(wx.EVT_TOOL, self.OnTool, id=t[0])
             self.tb.AddSeparator()
@@ -222,12 +188,12 @@ class MainWin(wx.Frame):
         MLT = MTBL.ToolBarList()
         i = 0
         for T in MLT:
-            #print(MLT[T])
+
             MTB = MT.MyAuiToolbar(self)
             MyTL = MTB.data
-            #print(MyTL)
+
             self.tool.append( MTB.CreatTool(MLT[T]) )
-            self.tool[i].SetToolBitmapSize(wx.Size(24, 24))
+            self.tool[i].SetToolBitmapSize(wx.Size(24, 24)) #<<<=== use Config
             self.tool[i].Realize()
             self.m_mgr.AddPane(self.tool[i], wx.aui.AuiPaneInfo().Name("tb"+str(i)).Caption("Toolbar").
                            ToolbarPane().Top().LeftDockable(True).RightDockable(False))
@@ -252,6 +218,7 @@ class MainWin(wx.Frame):
         self.m_mgr.AddPane( self.bmpwin, wx.aui.AuiPaneInfo() .CaptionVisible( False ) .Center() .CloseButton( False ).Dock().Resizable().FloatingSize( wx.Size( 800,600 )) )
 
     def NewMenu(self):
+        self.newmenu = True
         self.barMenu = wx.MenuBar()
         self.SetMenuBar(self.barMenu)
         return self.barMenu
