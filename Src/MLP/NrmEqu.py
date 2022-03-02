@@ -11,12 +11,14 @@ import wx
 import wx.xrc
 
 from . import MLUtil as MLU
-import AI.ML.NE_Reg as NER
+import Src.MLA.NE_Reg as NER
 
 import numpy as np
 from matplotlib import pyplot as plot
 from mpl_toolkits.mplot3d import Axes3D
+import os
 
+_ = wx.GetTranslation
 ###########################################################################
 ## Class P192
 ###########################################################################
@@ -223,8 +225,10 @@ class P19 ( wx.Panel ):
 		ner = NER.Normal_Equa()
 		theta = ner.Comput_Theta(X_matrix, y_Matrix)
 		print(theta)
-		print(type(theta))
+		print(theta.item(0,0),theta.item(1,0))
 		self.fldt.SetValue(str(theta))
+		self.Theta0 = theta.item(0,0)
+		self.Theta1 = theta.item(1,0)
 
 		event.Skip()
 
@@ -233,14 +237,38 @@ class P19 ( wx.Panel ):
 		event.Skip()
 
 	def cstplt( self, event ):
-		print('cust plot')
-		X = self.Xdata[:, 1]
+		#print('cust plot')
+		X = self.Xdata[:,1]
 		y = self.Ydata.transpose()
-		plot.plot(X, y, 'rx', markersize=10)
+		self.Y = []
+		for D in self.idata:
+			self.Y.append(self.Theta0+self.Theta1*float(D[0]))
+		plot.plot(X, y , 'rx', markersize=10)
 		plot.ylabel('data y')
 		plot.xlabel('data x')
-		plot.plot(X, y1, '-')
+		plot.plot(X, self.Y, '-')
 		plot.show()
-
 		event.Skip()
+
+	def Start(self, event):
+		dlg = wx.FileDialog(self, message=_("Choose Database"),
+		                    defaultDir=os.getcwd(),defaultFile="",
+		                    wildcard="Sqlite db file(*.db,*.sqlite,*,slite3,*.db3)|*.db;*.db3;*.sqlite|All file(*.*)|*.*",
+		                    style=wx.FD_OPEN | wx.FD_CHANGE_DIR)
+		if dlg.ShowModal() == wx.ID_OK:
+			paths = dlg.GetPaths()
+		# print(paths)
+		dlg.Destroy()
+
+		frm = wx.Dialog(self, -1)
+		pnl = MLU.MyPanel2(frm, paths[0])
+		frm.SetSize((600, 300))
+		frm.SetLabel(_(u'Select Table'))
+		frm.ShowModal()
+		self.flds = pnl.my_chois_fild
+		self.idata = pnl.mydata
+		frm.Destroy()
+		self.Sc1.SetValue(len(self.idata))
+		#chos = self.ChsBok.GetChoiceCtrl()
+		#return flds,idata
 

@@ -20,13 +20,22 @@ class MyLstPnl2(object):
         self.MyMenu = MS.GetData(u'Menu2.db', u'')
 
         self.lstpnl = self.MyMenu.AllPanes()
+        #self.hdlpne = self.MyMenu.getHndid('5555')
         #dirfil = os.listdir('./GUI/AuiPanel/')
+        PP = self.MyMenu.ProPane()
+        LstPPane = [P[3] for P in PP ]
         dirfil = os.listdir('./Src/AUI/')
         for f in dirfil:
-            if f[-3:] == '.py':
+            for p in PP:
+                if f.split('\\')[-1].replace('.py','') in p:
+                    self.PrP[p[2]] = f
+
+            if f[-3:] == '.py' and f.split('\\')[-1].replace('.py','') in LstPPane:
                 self.LPn.append(f)
+
+
         #self.LPn.remove('PAui.py')
-        #print(self.LPn)
+        #print(self.LPn,self.PrP)
         #print(self.lstpnl)
 
     def GetAuiPnl(self):

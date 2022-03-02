@@ -11,20 +11,21 @@ import wx
 import wx.xrc
 
 from . import MLUtil as MLU
-import AI.ML.NE_Reg as NER
+from AI.ML.SL_Reg import *
 
 import numpy as np
 from matplotlib import pyplot as plot
 from mpl_toolkits.mplot3d import Axes3D
 
 ###########################################################################
-## Class P192
+## Class P19
 ###########################################################################
 
 class P19 ( wx.Panel ):
 
 	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 250,250 ), style = wx.BORDER_RAISED|wx.TAB_TRAVERSAL, name = wx.EmptyString ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
 
 		self.flds = []
 		self.idata = []
@@ -97,54 +98,50 @@ class P19 ( wx.Panel ):
 
 		Vsp19.Add(Hsz14, 0, wx.EXPAND, 5)
 
-		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
+		Hsz1 = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.btn0 = wx.Button(self, wx.ID_ANY, u"Comput Thetas", wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz1.Add(self.btn0, 1, wx.ALL, 5)
+		self.Btn1 = wx.Button(self, wx.ID_ANY, u"Comput Thetas", wx.DefaultPosition, wx.DefaultSize, 0)
+		Hsz1.Add(self.Btn1, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
+		Vsp19.Add(Hsz1, 0, wx.EXPAND, 5)
 
-		Vsp19.Add( Hsz1, 0, wx.EXPAND, 5 )
+		Hsz2 = wx.BoxSizer(wx.HORIZONTAL)
 
-		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
+		self.lbl1 = wx.StaticText(self, wx.ID_ANY, u"Theta 0", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.lbl1.Wrap(-1)
 
-		self.lblt = wx.StaticText(self, wx.ID_ANY, u"Thetas", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lblt.Wrap(-1)
+		Hsz2.Add(self.lbl1, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-		Hsz2.Add(self.lblt, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+		self.fld1 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY)
+		Hsz2.Add(self.fld1, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-		self.fldt = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz2.Add(self.fldt, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+		Vsp19.Add(Hsz2, 0, wx.EXPAND, 5)
 
-		Vsp19.Add( Hsz2, 0, wx.EXPAND, 5 )
+		Hsz3 = wx.BoxSizer(wx.HORIZONTAL)
 
-		Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
+		self.lbl2 = wx.StaticText(self, wx.ID_ANY, u"Theta 1", wx.DefaultPosition, wx.DefaultSize, 0)
+		self.lbl2.Wrap(-1)
 
-		self.btn1 = wx.Button( self, wx.ID_ANY, u"Hyp. Plot", wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz3.Add( self.btn1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		Hsz3.Add(self.lbl2, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
+		self.fld2 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY)
+		Hsz3.Add(self.fld2, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-		Vsp19.Add( Hsz3, 0, wx.EXPAND, 5 )
+		Vsp19.Add(Hsz3, 0, wx.EXPAND, 5)
 
-		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
+		Hsz4 = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.btn2 = wx.Button( self, wx.ID_ANY, u"Cost. Plot", wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz4.Add( self.btn2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.fld3 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY)
+		Hsz4.Add(self.fld3, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
+		Vsp19.Add(Hsz4, 0, wx.EXPAND, 5)
 
-		Vsp19.Add( Hsz4, 0, wx.EXPAND, 5 )
+		Hsz5 = wx.BoxSizer(wx.HORIZONTAL)
 
-		Hsz5 = wx.BoxSizer( wx.HORIZONTAL )
+		self.Btn2 = wx.Button(self, wx.ID_ANY, u"Show Plot line", wx.DefaultPosition, wx.DefaultSize, 0)
+		Hsz5.Add(self.Btn2, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL , 5)
 
-		self.lbl3 = wx.StaticText( self, wx.ID_ANY, u"Hypatetis =  ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.lbl3.Wrap( -1 )
-
-		Hsz5.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.fldh = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
-		Hsz5.Add( self.fldh, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-
-		Vsp19.Add( Hsz5, 0, wx.EXPAND, 5 )
+		Vsp19.Add(Hsz5, 0, wx.EXPAND, 5)
 
 
 		self.SetSizer( Vsp19 )
@@ -155,15 +152,44 @@ class P19 ( wx.Panel ):
 		self.btnx.Bind(wx.EVT_BUTTON, self.inpx)
 		self.btny.Bind(wx.EVT_BUTTON, self.inpy)
 		self.btntt.Bind(wx.EVT_BUTTON, self.pltdata)
-		self.btn0.Bind(wx.EVT_BUTTON, self.CompThta)
-		self.btn1.Bind( wx.EVT_BUTTON, self.hplt )
-		self.btn2.Bind( wx.EVT_BUTTON, self.cstplt )
+		self.Btn1.Bind(wx.EVT_BUTTON, self.comput)
+		self.Btn2.Bind(wx.EVT_BUTTON, self.shwplot)
 
 	def __del__( self ):
 		pass
 
-
 	# Virtual event handlers, overide them in your derived class
+	def comput(self, event):
+		mylnr = Simple_Leaner()
+		X_seri = []
+		Y_seri = []
+		for D in self.idata:
+			X_seri.append(float(D[0]))
+			Y_seri.append(float(D[1]))
+		Theta0 = mylnr.Theta0(X_seri,Y_seri)
+		Theta1 = mylnr.Theta1(X_seri,Y_seri)
+
+		self.Y = []
+
+		self.fld1.SetValue(str(Theta0))
+		self.fld2.SetValue(str(Theta1))
+		self.fld3.SetValue('y = '+str(Theta0)+' + '+str(Theta1)+' . x1 ')
+		for D in self.idata:
+			self.Y.append(Theta0+Theta1*float(D[0]))
+		event.Skip()
+
+	def shwplot(self, event):
+		#print('press btn plot')
+		X = self.Xdata[:,1]
+		y = self.Ydata.transpose()
+		y1 = self.Y
+		plot.plot(X, y, 'rx', markersize=10)
+		plot.ylabel('data y')
+		plot.xlabel('data x')
+		plot.plot(X, y1, '-')
+		plot.show()
+		event.Skip()
+
 	def inptri( self, event ):
 		#print(self.idata)
 		#print(self.flds)
@@ -177,8 +203,8 @@ class P19 ( wx.Panel ):
 		Xm = pnl.xMtrx
 		Ym = pnl.yMtrx
 		frm.Destroy()
-		self.Xdata= np.matrix(Xm,dtype=float)
-		self.Ydata= np.matrix(Ym,dtype=float)
+		self.Xdata= np.matrix(Xm)
+		self.Ydata= np.matrix(Ym)
 
 		self.fldx.SetValue( 'np.matrix(xdata)' )
 		self.fldy.SetValue( 'np.matrix(ydata)' )
@@ -213,34 +239,3 @@ class P19 ( wx.Panel ):
 		plot.ylabel('data y')
 		plot.xlabel('data x')
 		plot.show()
-
-	def CompThta(self, event):
-		print(u'comput Theta')
-		print(self.flds)
-		print(self.idata)
-		X_matrix = self.Xdata
-		y_Matrix = self.Ydata
-		ner = NER.Normal_Equa()
-		theta = ner.Comput_Theta(X_matrix, y_Matrix)
-		print(theta)
-		print(type(theta))
-		self.fldt.SetValue(str(theta))
-
-		event.Skip()
-
-	def hplt( self, event ):
-		print('H plot')
-		event.Skip()
-
-	def cstplt( self, event ):
-		print('cust plot')
-		X = self.Xdata[:, 1]
-		y = self.Ydata.transpose()
-		plot.plot(X, y, 'rx', markersize=10)
-		plot.ylabel('data y')
-		plot.xlabel('data x')
-		plot.plot(X, y1, '-')
-		plot.show()
-
-		event.Skip()
-

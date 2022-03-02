@@ -168,6 +168,13 @@ class GetData:
     def ListPanes(self):
         return sq.wxsqltxt(self.DBF," select pans.panname from pans ")
 
+    def ProPane(self, ext=''):
+        return sq.wxsqltxt(self.DBF,""" select pans.panid, pans.panname, pans.handlerid, handler.prgname , handler.prgdir
+                                        from pans, handler  where pans.handlerid = handler.handlerid  %s""" %ext)
+
+    def getPane(self, panid='', ext=''):
+        return sq.wxsqltxt(self.DBF," select * from pans where pans.panid = %d  %s" %(int(panid),ext))
+
     def MLPansFils(self, ext=u''):
         return sq.wxsqltxt(self.DBF, ' select * from MLPane %s ' %ext )
 

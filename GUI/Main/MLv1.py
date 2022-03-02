@@ -30,7 +30,7 @@ def main(panel=None):
 
     frame = telframe(parent)
     frame.SetTitle(u'Machin Learning Design')
-    frame.SetSize((555, 480))
+    frame.SetSize((555, 500))
     frame.Show()
 
 

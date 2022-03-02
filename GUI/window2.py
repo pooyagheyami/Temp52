@@ -202,16 +202,22 @@ class MainWin(wx.Frame):
 
 
     def APnls2(self):
+        StartPane = eval(self.config.Read('Panes'))
         self.Pnls = []
         ML = PA.MyLstPnl2()
 
         for pnl in ML.lstpnl:
-            if pnl[1]+'.py' in ML.GetAuiPnl():
-                ii = importlib.import_module('GUI.AuiPanel.' + pnl[1])
+            #if pnl[1]+'.py' in ML.GetAuiPnl():
+            if pnl[6] in ML.PrP.keys():
+                ii = importlib.import_module('Src.AUI.' +  ML.PrP[pnl[6]].replace('.py',''))
                 mp = ii.MyPanel1(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
                 self.Pnls.append(mp)
                 PInfo = ML.GetAuiInfo(pnl[1])
                 self.m_mgr.AddPane(mp, PInfo)
+                if pnl[1] in StartPane:
+                    self.m_mgr.GetPane(pnl[1]).Show()
+                else:
+                    self.m_mgr.GetPane(pnl[1]).Hide()
 
     def BGrnd(self,BGF):
         self.bmpwin = BG.BGPanel(self,BGF)

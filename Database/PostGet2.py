@@ -15,13 +15,13 @@ class Get:
 		self.DBF = DBF
 
 		if engine == 'sqlite':
-			self.myengin = create_engine('sqlite:///'+self.DBF, echo=True)
+			self.myengin = create_engine('sqlite:///'+self.DBF, echo=False)
 		if engine == 'postgresql':
 			self.myengin = create_engine('postgresql://scott:tiger@localhost/'+self.DBF)
 			# psycopg2
-			#self.myengin = create_engine('postgresql+psycopg2://scott:tiger@localhost/mydatabase')
+			#self.myengin = create_engine('postgresql+psycopg2://scott:tiger@localhost/'+self.DBF)
 			# pg8000
-			#self.myengin = create_engine('postgresql+pg8000://scott:tiger@localhost/mydatabase')
+			#self.myengin = create_engine('postgresql+pg8000://scott:tiger@localhost/'+self.DBF)
 		if engine == 'mysql':
 			self.myengin = create_engine('mysql://scott:tiger@localhost/'+self.DBF)
 			# mysqlclient (a maintained fork of MySQL-Python)

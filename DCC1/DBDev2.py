@@ -248,10 +248,8 @@ class MyPanel1 ( wx.Panel ):
 		#print(Rprox.fetchall())
 		self.dbdata = Rprox.fetchall()
 		#print(self.dbdata2)
-
 		#self.dbdata = self.idbfl.GetFromDbf()
 		#mytxt = self.idbfl.openSQL(Src_dbf+'sqls'+SLASH+'DBFields')
-
 		#self.dbdata = self.idbfl.GetFromSql()
 		#print(self.dbdata)
 		self.DVC1.DeleteAllItems()

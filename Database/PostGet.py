@@ -11,8 +11,8 @@ class Get:
         self.Data = Data
 
         if file != '':
-            #sqlfile = DATABASE_PATH + 'sqls' + SLASH + file
-            sqlfile = Src_dbf + 'sqls' + SLASH + file
+            sqlfile = DATABASE_PATH + 'sqls' + SLASH + file
+            #sqlfile = Src_dbf + 'sqls' + SLASH + file
             self.SQLtxt = self.openSql(sqlfile)
 
     def openSql(self, sqlfile):

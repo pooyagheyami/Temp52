@@ -381,7 +381,7 @@ class MyPanel1 ( wx.Panel ):
 		self.lbl9.SetLabel(_(u"Directory: ")+mydir)
 
 	def fillnull(self):
-		data = (0,'','','-1;-1',0,'',0,'','','','TTFFTTTFFFFT','','','','','Dock;FTTTTT','-1;-1;0;0')
+		data = (0,'','','-1;-1',0,'',50000,'','','','TTFFTTTFFFFT','','','','','Dock;FTTTTT','-1;-1;0;0')
 		self.fillinfo(data)
 		self.fld1.SetValue('')
 
@@ -401,8 +401,32 @@ class MyPanel1 ( wx.Panel ):
 			if self.prgfld.GetValue() != '':
 				hndlid = self.findhndlr(self.prgfld.GetValue().replace('.py','')) #find handlerid
 
-			#print(Up1)
-			D1 = [int(Up1[0]), Up1[2], Up1[7], Up1[4], int(Up1[8]), codinfo, hndlid, Up1[1]]
+			mypan = self.MyMenu.getPane(Up1[0])
+			codinfo = mypan[0][5]
+			print(Up1,mypan,codinfo)
+			D1 = [ Up1[2], Up1[7], Up1[4], int(Up1[8]),  hndlid, Up1[1]]
+			self.DoMenu.Table = u'pans'
+			self.DoMenu.Upditem( ' panname = ? , pandok = ?, pansiz = ?, panlyr = ? , handlerid = ? , acclvlid = ? \
+			                     Where panid = %d ' %int(Up1[0]) ,D1 )
+			if self.chs2.GetStringSelection() != 'Dock':
+				self.s1 = self.chs2.GetStringSelection()+';'+self.s1.split(';')[1]
+
+			stng = self.fld6.GetValue()
+
+			D2 = [ Up1[3], stng, Up1[5], self.bst_siz, self.min_siz, self.max_siz, self.s1, self.s2]
+			self.DoMenu.Table = u'panifo'
+			self.DoMenu.Upditem(u" caption = ?, setting = ?, resize = ?, bstsiz = ?, minsiz = ?, maxsiz = ?, docking = ?, position = ? \
+			                       Where paninfoid = '%s' " %codinfo, D2)
+
+			D3 = [ 1, 'FFFF', 1]
+			self.DoMenu.Table = u'access'
+			self.DoMenu.Upditem(u" userid = ? , acclvl = ? , disenable = ?   Where acclvlid = '%s' " % Up1[1], D3)
+
+			wx.MessageBox(_(u'Pane is successful Update '))
+
+			self.DVC1.DeleteAllItems()
+			self.filllist()
+			self.Refresh()
 
 		event.Skip()
 
@@ -441,8 +465,8 @@ class MyPanel1 ( wx.Panel ):
 		#mw = self.FindWindowByName('main')
 		#mw.m_mgr.
 		#print(self.fld3.GetValue())
-		a2 = 'GUI.AuiPanel.'+self.fld3.GetValue()
-
+		#a2 = 'Src.AUI.'+self.fld3.GetValue()
+		a2 = 'Src.AUI.' + self.prgfld.GetValue().replace('.py','')
 		try:
 			m = importlib.import_module(a2)
 			self.Frm = wx.Frame(self, -1, pos=wx.DefaultPosition, size=wx.DefaultSize)
@@ -468,7 +492,7 @@ class MyPanel1 ( wx.Panel ):
 			if self.prgfld.GetValue() == '':
 				hndlid = 50000 + int(Data1[0])
 				import shutil
-				shutil.copyfile(GUI_PATH+'AuiPanel\\tempane.py',GUI_PATH+'AuiPanel\\'+Data1[2]+'.py')
+				shutil.copyfile(GUI_PATH+'Temp\\tempane.py',Src_aui+Data1[2]+'.py')
 			else:
 				hndlid, hndldir = self.MyMenu.getHndlr(self.prgfld.GetValue().replace('.py',''))[0]
 				if hndlid == '' or hndlid == None:
@@ -503,7 +527,10 @@ class MyPanel1 ( wx.Panel ):
 
 	def gnrcod( self, event ):
 		strng = 'abcdefghijklmnopqrstuvwxyz'
-		lcod = self.items[-1][0]
+		if len(self.items) > 0:
+			lcod = self.items[-1][0]
+		else:
+			lcod = 10
 		self.fld1.SetValue(str(int(lcod)+1))
 		self.fld2.SetValue(str(int(lcod)+1)+'pn'+strng[(lcod+1)//10-1]+strng[(lcod+1)%10])
 
@@ -566,7 +593,7 @@ class MyPanel1 ( wx.Panel ):
 		if wx.FindWindowByName(u'List of Program') == None:
 			import DCC1.ProgDev2 as DP
 			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
-			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			pnl = DP.MyPanel1(ifrm,[self.GetParent(),self.prgfld.GetValue().replace('.py','')])
 			ifrm.SetSize((555, 460))
 			ifrm.SetTitle(u'List of Program')
 			ifrm.Show()

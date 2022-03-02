@@ -30,7 +30,7 @@ def main(panel=None):
 
     frame = telframe(parent)
     frame.SetTitle(u'Pane Aui Develop')
-    frame.SetSize((555, 460))
+    frame.SetSize((555, 500))
     frame.Show()
 
 

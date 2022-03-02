@@ -213,12 +213,12 @@ class MyMenuBar1 ( wx.MenuBar ):
 		elif extmnu == u'ML':
 			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
 			                 (93,_(u'Import Axes 3D'),u'',self.impa3d)]
-			mymnu[_(u'ML Dev')] = [(50,_(u'Add this file'),u'',self.toML)]
+			#mymnu[_(u'ML Dev')] = [(50,_(u'Add this file'),u'',self.toML)]
 		elif extmnu == u'AL':
 			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
 			                 (93,_(u'Import Axes 3D'),u'',self.impa3d),(94,u'',u'',u''),
 			                 (95,_(u'ML Utility(Y select)'),u'',self.impmlu),(96,_(u'ML Utility(Show Matrix)'),u'',self.impmlu)]
-			mymnu[_(u'ML Dev')] = [(50, _(u'Add this file'), u'', self.toML)]
+			#mymnu[_(u'ML Dev')] = [(50, _(u'Add this file'), u'', self.toML)]
 
 		self.Itms = []
 		m = 0
@@ -241,9 +241,9 @@ class MyMenuBar1 ( wx.MenuBar ):
 		if extmnu == u"Pro":
 			self.DfDir = SRC_PATH
 		elif extmnu == u'ML':
-			self.DfDir = SRC_PATH+'mla\\'
+			self.DfDir = Src_mla #SRC_PATH+'MLA\\'
 		elif extmnu == u'AL':
-			self.DfDir = SRC_PATH+"mlp\\"
+			self.DfDir = Src_mlp #SRC_PATH+"MLP\\"
 		else:
 			self.DfDir = MAP
 
@@ -280,8 +280,8 @@ class MyMenuBar1 ( wx.MenuBar ):
 				wx.MessageBox(_(u'Please work in this file or close it then use new file'))
 			else:
 				#print(u'untitle file')
-				if self.DfDir == GUI_PATH+"MLPane\\":
-					self.pnl.newstc(GUI_PATH + u'MLPane\\Untitle.py')
+				if self.DfDir == Src_mlp:   #+"MLPane\\":
+					self.pnl.newstc(GUI_PATH + u'Temp\\Muntitle.py')
 				else:
 					self.pnl.newstc(GUI_PATH+u'Temp\\untitle.py')
 				self.GetParent().SetLabel(u'untitle')
@@ -312,6 +312,9 @@ class MyMenuBar1 ( wx.MenuBar ):
 		else:
 			self.SrcTxt.SaveFile(self.pyfile)
 			wx.MessageBox(_(u'You save to file change successful.'))
+			self.pnl.ischanged = False
+			self.GetParent().SetLabel(self.pyfile)
+
 		event.Skip()
 
 	def savasit(self, event):
@@ -444,13 +447,13 @@ class MyMenuBar1 ( wx.MenuBar ):
 		if self.pnl.pyFile == GUI_PATH+u'Temp\\untitle.py':
 			wx.MessageBox(_(u'Please save your work then Do this perosse.'))
 			self.savasit(event)
-		elif self.pnl.pyFile == GUI_PATH+u'MLPane\\Untitle.py':
+		elif self.pnl.pyFile == GUI_PATH+u'Temp\\Muntitle.py':
 			wx.MessageBox(_(u'Please save your work then Do this perosse.'))
 			self.savasit(event)
 		else:
 			print(self.DfDir)
 			MLpnl = self.GetGrandParent()
-			if self.DfDir == SRC_PATH+u'mlp\\':
+			if self.DfDir == Src_mlp: #SRC_PATH+u'mlp\\':
 				mylstml = MLpnl.getMData.AllML(u'join MLPane on MLinfo.MLPid = MLPane.MLPid')
 				print(mylstml)
 				tclslct = MLpnl.TLC1.GetSelection()
@@ -485,7 +488,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 						wx.MessageBox(_(u'Some fields is empty or wrong ! try again!'))
 
 
-			if self.DfDir == SRC_PATH+u'mla\\':
+			if self.DfDir == Src_mla: #SRC_PATH+u'mla\\':
 				mylstml = MLpnl.getMData.AllML(u'join MLAlgo on MLAlgo.MLcod = MLinfo.MLcod')
 				print(mylstml)
 				tclslct = MLpnl.TLC1.GetSelection()
@@ -543,112 +546,3 @@ class MyMenuBar1 ( wx.MenuBar ):
 
 	def tst(self, event):
 		event.Skip()
-
-###########################################################################
-## Class MyPanel4
-###########################################################################
-
-class MyPanel4 ( wx.Panel ):
-
-	def __init__( self, parent,lebls,data, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 481,188 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-
-		Vsz1 = wx.BoxSizer( wx.VERTICAL )
-
-		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.lbl1 = wx.StaticText( self, wx.ID_ANY, lebls[0], wx.DefaultPosition, wx.Size( 110,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
-		self.lbl1.Wrap( -1 )
-
-		Hsz1.Add( self.lbl1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.fld1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz1.Add( self.fld1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.lbl4 = wx.StaticText(self, wx.ID_ANY, _(u"Alg. id"), wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lbl4.Wrap(-1)
-		Hsz1.Add(self.lbl4, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self.fld4 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(70, -1), 0)
-		Hsz1.Add(self.fld4, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-		Vsz1.Add( Hsz1, 1, wx.EXPAND, 5 )
-
-		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.lbl2 = wx.StaticText( self, wx.ID_ANY, lebls[1], wx.DefaultPosition, wx.Size( 110,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
-		self.lbl2.Wrap( -1 )
-
-		Hsz2.Add( self.lbl2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.fld2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
-		self.fld2.SetToolTip(_(u"Example: GD  EN  GLM  MLE"))
-		Hsz2.Add( self.fld2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.lbl3 = wx.StaticText( self, wx.ID_ANY, lebls[2], wx.DefaultPosition, wx.Size( 95,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
-		self.lbl3.Wrap( -1 )
-
-		Hsz2.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.fld3 = wx.TextCtrl( self, wx.ID_ANY, str(data[0]), wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz2.Add( self.fld3, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-
-		Vsz1.Add( Hsz2, 1, wx.EXPAND, 5 )
-
-		# Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
-		#
-		# self.lbl4 = wx.StaticText( self, wx.ID_ANY, u"ML Algorithm Code", wx.DefaultPosition, wx.Size( 110,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
-		# self.lbl4.Wrap( -1 )
-		#
-		# Hsz3.Add( self.lbl4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		#
-		# self.fld4 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
-		# Hsz3.Add( self.fld4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		#
-		# self.lbl5 = wx.StaticText( self, wx.ID_ANY, u"ML Algorithm File", wx.DefaultPosition, wx.Size( 95,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
-		# self.lbl5.Wrap( -1 )
-		#
-		# Hsz3.Add( self.lbl5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		#
-		# self.fld5 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		# Hsz3.Add( self.fld5, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		#
-		#
-		# Vsz1.Add( Hsz3, 1, wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
-		Hsz4 = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.btn1 = wx.Button( self, wx.ID_ANY, _(u"Cancle"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz4.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.btn2 = wx.Button( self, wx.ID_ANY, _(u"Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
-		Hsz4.Add( self.btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-
-
-		Vsz1.Add( Hsz4, 0, wx.ALIGN_RIGHT, 5 )
-
-
-		self.SetSizer( Vsz1 )
-		self.Layout()
-
-		# Connect Events
-		self.btn1.Bind( wx.EVT_BUTTON, self.cncl )
-		self.btn2.Bind( wx.EVT_BUTTON, self.aply )
-
-	def __del__( self ):
-		pass
-
-
-	# Virtual event handlers, overide them in your derived class
-	def cncl( self, event ):
-		self.acpt = False
-		q = self.GetParent()
-		q.Close()
-
-	def aply( self, event ):
-		self.acpt = True
-		q = self.GetParent()
-		q.Close()
-
-

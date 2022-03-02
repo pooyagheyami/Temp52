@@ -9,13 +9,14 @@
 
 import wx
 import wx.xrc
+import AI.ML.GA_Reg as GAR
 
 from . import MLUtil as MLU
-import AI.ML.NE_Reg as NER
 
 import numpy as np
 from matplotlib import pyplot as plot
 from mpl_toolkits.mplot3d import Axes3D
+
 
 ###########################################################################
 ## Class P192
@@ -99,21 +100,30 @@ class P19 ( wx.Panel ):
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn0 = wx.Button(self, wx.ID_ANY, u"Comput Thetas", wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz1.Add(self.btn0, 1, wx.ALL, 5)
+		self.lblr = wx.StaticText( self, wx.ID_ANY, u"LR a :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lblr.Wrap( -1 )
+
+		self.lblr.SetToolTip( u"Learning ratting" )
+
+		Hsz1.Add( self.lblr, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.Rate = wx.SpinCtrlDouble( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 100, 0.01, 0.01 )
+		self.Rate.SetDigits( 3 )
+		Hsz1.Add( self.Rate, 0, wx.ALL, 5 )
 
 
 		Vsp19.Add( Hsz1, 0, wx.EXPAND, 5 )
 
 		Hsz2 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lblt = wx.StaticText(self, wx.ID_ANY, u"Thetas", wx.DefaultPosition, wx.DefaultSize, 0)
-		self.lblt.Wrap(-1)
+		self.lblI = wx.StaticText( self, wx.ID_ANY, u"Iteration", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lblI.Wrap( -1 )
 
-		Hsz2.Add(self.lblt, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+		Hsz2.Add( self.lblI, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.fldt = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-		Hsz2.Add(self.fldt, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+		self.Iter1 = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
+		Hsz2.Add( self.Iter1, 0, wx.ALL, 5 )
+
 
 		Vsp19.Add( Hsz2, 0, wx.EXPAND, 5 )
 
@@ -135,13 +145,13 @@ class P19 ( wx.Panel ):
 
 		Hsz5 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.lbl3 = wx.StaticText( self, wx.ID_ANY, u"Hypatetis =  ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.lbl3 = wx.StaticText( self, wx.ID_ANY, u"Theta ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.lbl3.Wrap( -1 )
 
 		Hsz5.Add( self.lbl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.fldh = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
-		Hsz5.Add( self.fldh, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.fld10 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		Hsz5.Add( self.fld10, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
 		Vsp19.Add( Hsz5, 0, wx.EXPAND, 5 )
@@ -155,7 +165,7 @@ class P19 ( wx.Panel ):
 		self.btnx.Bind(wx.EVT_BUTTON, self.inpx)
 		self.btny.Bind(wx.EVT_BUTTON, self.inpy)
 		self.btntt.Bind(wx.EVT_BUTTON, self.pltdata)
-		self.btn0.Bind(wx.EVT_BUTTON, self.CompThta)
+		#self.btn0.Bind(wx.EVT_BUTTON, self.CompThta)
 		self.btn1.Bind( wx.EVT_BUTTON, self.hplt )
 		self.btn2.Bind( wx.EVT_BUTTON, self.cstplt )
 
@@ -179,7 +189,9 @@ class P19 ( wx.Panel ):
 		frm.Destroy()
 		self.Xdata= np.matrix(Xm,dtype=float)
 		self.Ydata= np.matrix(Ym,dtype=float)
-
+		self.X1 = np.array(Xm, dtype=float)
+		self.y1 = np.array(Ym, dtype=float)
+		print(self.y1)
 		self.fldx.SetValue( 'np.matrix(xdata)' )
 		self.fldy.SetValue( 'np.matrix(ydata)' )
 
@@ -214,33 +226,45 @@ class P19 ( wx.Panel ):
 		plot.xlabel('data x')
 		plot.show()
 
-	def CompThta(self, event):
-		print(u'comput Theta')
-		print(self.flds)
-		print(self.idata)
-		X_matrix = self.Xdata
-		y_Matrix = self.Ydata
-		ner = NER.Normal_Equa()
-		theta = ner.Comput_Theta(X_matrix, y_Matrix)
-		print(theta)
-		print(type(theta))
-		self.fldt.SetValue(str(theta))
-
-		event.Skip()
-
 	def hplt( self, event ):
 		print('H plot')
+		alpha = self.Rate.GetValue()
+		iterat = self.Iter1.GetValue()
+		theta = np.zeros(2)
+		y = self.Ydata.transpose()
+		m = y.size
+		X = np.vstack((np.ones(m), self.X1.T)).T
+
+		Cstfunc = GAR.Cust_Func()
+
+		CF = Cstfunc.Comput(self.X1, self.y1, theta )
+		print(CF)
+		(theta, J_history) = Cstfunc.Gradient_descent(self.X1, self.y1, theta, alpha, iterat)
+		print(theta)
+		print(J_history)
+		plot.plot(self.X1[:, 1], self.y1, 'rx', markersize=10)
+		plot.ylabel('Y data')
+		plot.xlabel('X data')
+		plot.plot(self.X1[:, 1], self.X1.dot(theta), '-')
+		plot.show()
 		event.Skip()
 
 	def cstplt( self, event ):
 		print('cust plot')
-		X = self.Xdata[:, 1]
-		y = self.Ydata.transpose()
-		plot.plot(X, y, 'rx', markersize=10)
-		plot.ylabel('data y')
-		plot.xlabel('data x')
-		plot.plot(X, y1, '-')
+		Cstfunc = GAR.Cust_Func()
+		theta0_vals = np.linspace(-10, 10, 100)
+		theta1_vals = np.linspace(-1, 4, 100)
+		J_vals = np.zeros((theta0_vals.size, theta1_vals.size))
+		for i in range(theta0_vals.size):
+			for j in range(theta1_vals.size):
+				t = np.array([theta0_vals[i], theta1_vals[j]])
+				J_vals[i, j] = Cstfunc.Comput(self.X1, self.y1, t)
+		plot.contour(theta0_vals, theta1_vals, J_vals, levels=np.logspace(-2, 3, 20))
 		plot.show()
-
+		fig = plot.figure()
+		ax = fig.add_subplot(111, projection='3d')
+		t0, t1 = np.meshgrid(theta0_vals, theta1_vals)
+		ax.plot_surface(t0, t1, J_vals)
+		plot.show()
 		event.Skip()
 

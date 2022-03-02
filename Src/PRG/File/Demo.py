@@ -4,7 +4,7 @@
 
 import wx
 from  Config.Init import *
-import Src.API.ToolBar1 as pnl
+import Src.API.SamPnl as pnl
 
 class telframe(wx.Frame):
 	def __init__(self,parent):

@@ -41,28 +41,29 @@ class Anlzfil(object):
     def checkSyntx(self):
         with open(self.pyFile, 'r') as f:
             whris = re.search(r"if\s__name__\s==\s\'__main__\':", f.read())
-            whmis = re.search(r'def\smain\(panel=None\):',f.read())
-            #print(whris.span()[0])
-            #print(whris.span()[1])
+            whmis = re.search(r'(.+main.+)||[main]',f.read())
+            #print(whris.group().split(' '))
             if whris:
-
-                mainis = re.search(r'main',f.read())
-                print(u'main found:',mainis)
-            print(whmis)
+                mainis = re.search(r'def\smain',f.read())
+                mainis2= re.search(r'...\smain\s\(panel.+\)\:',f.read())
+                #print(u'main found:',mainis,mainis2)
+            #print(whmis)
+            return whris
 
 
     def ishasmain(self):
         with open(self.pyFile, 'r') as f:
             whris = re.search(r'def\smain', f.read())
             if whris:
-                print(whris.group().split(' '))
+                #print(whris.group().split(' '))
                 return whris.group().split(' ')[1]
 
     def ishasifin(self):
         with open(self.pyFile, 'r') as f:
-            whris = re.search(r"if\s__name__", f.read())
+            #whris = re.search(r"if\s__name__", f.read())
+            whris = re.search(r"if\s__name__\s==\s\'__main__\':", f.read())
             if whris:
-                print(whris.group().split(' '))
+                #print(whris.group().split(' '))
                 return whris.group().split(' ')[1]
 
     def ishasframe(self):

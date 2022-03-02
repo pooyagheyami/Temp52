@@ -4,7 +4,7 @@
 
 import wx
 from  Config.Init import *
-import GUI.API.Hello1 as pnl
+import Src.API.Hello1 as pnl
 
 class telframe(wx.Frame):
 	def __init__(self,parent):

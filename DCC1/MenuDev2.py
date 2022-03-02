@@ -862,7 +862,7 @@ class MyPanel1 ( wx.Panel ):
 		if wx.FindWindowByName(u'List of Program') == None:
 			import DCC1.ProgDev2 as DP
 			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
-			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			pnl = DP.MyPanel1(ifrm,[self.GetParent(),self.prgfld.GetValue()])
 			ifrm.SetSize((555, 460))
 			ifrm.SetTitle(u'List of Program')
 			ifrm.Show()
@@ -1058,7 +1058,7 @@ class MyPanel3 ( wx.Panel ):
 
         Hsz2.Add(self.txt4, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        self.dirct = wx.DirPickerCtrl(self, wx.ID_ANY, SRC_PATH+u'prg'+SLASH+self.idirct, _(u"Select a folder"), wx.DefaultPosition,
+        self.dirct = wx.DirPickerCtrl(self, wx.ID_ANY, Src_prg+self.idirct, _(u"Select a folder"), wx.DefaultPosition,
                                       wx.DefaultSize, wx.DIRP_DEFAULT_STYLE | wx.DIRP_SMALL)
         Hsz2.Add(self.dirct, 1, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
@@ -1072,10 +1072,10 @@ class MyPanel3 ( wx.Panel ):
         #self.box2 = wx.CheckBox(self, wx.ID_ANY, _(u"Hiden"), wx.DefaultPosition, wx.DefaultSize, 0)
         #Hsz3.Add(self.box2, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        if self.Data[4][0][2] == '0000':
-            self.box2.SetValue(True)
-        if self.Data[4][0][3] == 0:
-            self.box1.SetValue(True)
+        # if self.Data[4][0][2] == '0000':
+        #     self.box2.SetValue(True)
+        # if self.Data[4][0][3] == 0:
+        #     self.box1.SetValue(True)
 
         #Vsz1.Add(Hsz3, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -1180,8 +1180,9 @@ class MyPanel3 ( wx.Panel ):
 		    mydir = self.dirct.GetPath()
 		    #self.newdir = mydir.replace(Src_prg, u"Src.prg.")
 		    #self.hdddir = mydir.replace(Src_prg, u'..\\Src\\prg\\')
-		    self.newdir = mydir.replace(Src_prg, self.iSrc_prg)
+		    #self.newdir = mydir.replace(Src_prg, self.iSrc_prg)
 		    self.hdddir = mydir.replace(Src_prg, self.iSrc_dir)
+
 		    if self.finddir(self.hdddir) != '':
 			    dircod = self.finddir(self.hdddir)
 			    #dircod = self.GetMenu.GetDirCod(self.newdir)
@@ -1191,11 +1192,13 @@ class MyPanel3 ( wx.Panel ):
 			    dircod = str(data2)+'1'
 			    self.SetMenu.Table = u'Guidir'
 			    self.SetMenu.Additem(u' Dir, prgdir, hdddir', (self.newdir,dircod,self.hdddir))
-			    os.mkdir(mydir)
+			    if not os.path.isdir(mydir):
+				    os.mkdir(mydir)
 			    os.chdir(mydir)
 			    #print(mydir)
-			    with open(u'__init__.py',u'w+') as f:
-				    f.write('')
+			    if not os.path.isfile(mydir+SLASH+u'__init__.py'):
+				    with open(u'__init__.py',u'w+') as f:
+					    f.write('')
 
 		    #print(mydir)
 		    GenrDemo(mydir)

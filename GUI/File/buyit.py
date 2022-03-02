@@ -3,7 +3,7 @@
 #!usr/bin/env python
 
 import wx
-import GUI.API.Pnl0 as Pnl0
+import Src.API.Pnl0 as Pnl0
 from  Config.Init import *
 
 class telframe(wx.Frame):

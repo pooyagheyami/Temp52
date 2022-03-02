@@ -6,6 +6,7 @@
 ##
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
+import string
 
 import wx
 import wx.xrc
@@ -53,8 +54,6 @@ class MyPanel1 ( wx.Panel ):
 		self.TTC1.AppendColumn(_(u'Toolbar Name'), wx.COL_WIDTH_DEFAULT, wx.ALIGN_LEFT, wx.COL_RESIZABLE)
 
 		Vsz2.Add( self.TTC1, 1, wx.ALL|wx.EXPAND, 5 )
-
-		self.fillitem()
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -255,6 +254,8 @@ class MyPanel1 ( wx.Panel ):
 		self.Splt1.SplitVertically( self.P1, self.P2, 244 )
 		Vsz1.Add( self.Splt1, 1, wx.EXPAND, 5 )
 
+		self.fillitem()
+
 
 		self.SetSizer( Vsz1 )
 		self.Layout()
@@ -348,10 +349,13 @@ class MyPanel1 ( wx.Panel ):
 	def actitm(self, event):
 		#self.slctitm = event.GetEventObject().GetItemText(event.GetItem())
 		ps = self.TTC1.GetSelections()
+
 		for itm in self.altol:
-			if int(self.TTC1.GetItemText(ps[0], 0)) == itm[0]:
+			if not self.TTC1.GetItemText(ps[0], 0).isdigit():
+				pass
+			elif int(self.TTC1.GetItemText(ps[0], 0)) == itm[0]:
 				self.mydata = itm
-				#print(self.mydata)
+
 				if itm[1] == None:
 					data = [itm[0], u'-----', u'separator', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'FFFF', 1]
 					self.setflied(data)
@@ -367,13 +371,13 @@ class MyPanel1 ( wx.Panel ):
 		self.fld1.SetValue(str(Data[0]))
 		self.fld2.SetValue(Data[6])
 		self.fld3.SetValue(Data[1])
-		self.IcnFile1.SetPath(ICONS_TOOL)
+		self.IcnFile1.SetPath(ICONS_TOOL+Data[2])
 		if Data[2] == u'separator':
 			self.btmp1.SetBitmap(icon.separator.GetBitmap())
 		elif Data[2] == u'image.png':
 			self.btmp1.SetBitmap(icon.image.GetBitmap())
 		else:
-			self.btmp1.SetBitmap(wx.Bitmap(self.IcnFile1.GetPath()+Data[2], wx.BITMAP_TYPE_ANY))
+			self.btmp1.SetBitmap(wx.Bitmap(self.IcnFile1.GetPath(), wx.BITMAP_TYPE_ANY))
 		#self.btmp1.SetBitmap(wx.Bitmap(self.IcnFile1.GetPath(), wx.BITMAP_TYPE_ANY))
 		self.fld4.SetValue(Data[3])
 		self.fld6.SetValue(Data[4])
@@ -438,6 +442,7 @@ class MyPanel1 ( wx.Panel ):
 
 	def edtit( self, event ):
 		thsdata = self.getfield()
+
 		if int(thsdata[1]) // 100 != int(thsdata[0]):
 			wx.MessageBox(_('Please press Add button and then press [...] generator cod button. Group and cod NOT match'))
 			return 1
@@ -618,7 +623,7 @@ class MyPanel1 ( wx.Panel ):
 
 	def findhandler(self, hndlrnm):
 		if hndlrnm == '':
-			return 10001
+			return 10000
 		else:
 			codid , self.prgdir = self.MyMenu.getHndlr(hndlrnm)[0]
 			return codid
@@ -627,11 +632,11 @@ class MyPanel1 ( wx.Panel ):
 		if wx.FindWindowByName(u'List of Program') == None:
 			import DCC1.ProgDev2 as DP
 			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
-			pnl = DP.MyPanel1(ifrm,[self.GetParent()])
+			pnl = DP.MyPanel1(ifrm,[self.GetParent(),self.prgfld.GetValue().replace('.py','')])
 			ifrm.SetSize((555, 460))
 			ifrm.SetTitle(u'List of Program')
 			ifrm.Show()
-			print( ifrm.TransferDataFromWindow() )
+			#print( ifrm.TransferDataFromWindow() )
 		else:
 			wx.MessageBox(_("Double Program: Please Close Program Develop then Do this item"))
 		event.Skip()
@@ -655,10 +660,18 @@ class MyPanel1 ( wx.Panel ):
 				tb.AddTool(int(D[1]), str(D[3]), wx.Bitmap(ICONS_TOOL+iD[2]), wx.NullBitmap, wx.ITEM_NORMAL, str(D[5]), str(D[6]))
 			tb.Realize()
 		elif TBP == '2':
-			print(D,iD)
 			mw = self.FindWindowByName('main')
+			print(D, iD, len(mw.tool))
 			if len(mw.tool) < D[0]:
-				MyAuiToolbar.CreatTool(iD)
+				MTB = MyAuiToolbar(mw)
+				MyTL = [iD]
+				mw.tool.append(MTB.CreatTool(MyTL))
+
+				mw.tool[-1].SetToolBitmapSize(wx.Size(24, 24))
+				mw.tool[-1].Realize()
+				mw.m_mgr.AddPane(mw.tool[-1], wx.aui.AuiPaneInfo().Name("tb"+str(D[0])).Caption("Toolbar").
+                           ToolbarPane().Top().LeftDockable(True).RightDockable(False))
+				#MyAuiToolbar.CreatTool(tbData)
 			else:
 				tb = mw.tool[D[0]-1]
 				print(tb)

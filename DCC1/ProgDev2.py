@@ -36,6 +36,7 @@ class MyPanel1 ( wx.Panel ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		Vsz1 = wx.BoxSizer( wx.VERTICAL )
+
 		self.FTF = For_This_Frame
 
 		self.getMData = MS.GetData(u'Menu2.db', u'')
@@ -61,8 +62,6 @@ class MyPanel1 ( wx.Panel ):
 		self.Col1 = self.DVC1.AppendColumn( _(u"Program name"),  200, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		self.Col2 = self.DVC1.AppendColumn( _(u"ID"),  25, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
 		Vsz2.Add( self.DVC1, 1, wx.ALL|wx.EXPAND, 5 )
-
-		self.filllist()
 
 		Hsz1 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -252,6 +251,8 @@ class MyPanel1 ( wx.Panel ):
 		self.Splt1.SplitVertically( self.P1, self.P2, 254 )
 		Vsz1.Add( self.Splt1, 1, wx.EXPAND, 5 )
 
+		self.filllist()
+
 		self.fromhere()
 
 
@@ -303,17 +304,20 @@ class MyPanel1 ( wx.Panel ):
 
 		subimp = []
 		for pro in self.my_data:
-			#print(pro)
+			#print(pro[2])
 			thsfil = MAP + pro[8][2:] + SLASH + pro[1] + '.py'
 			af = Anlzfil(thsfil)
 			if pro[2] == '5555':
 				child = self.DVC1.AppendItem(self.root2, pro[1])
 
-			elif pro[2] < '5555' and pro[2] > '100':
-				child = self.DVC1.AppendItem(self.root3, pro[1])
+			elif pro[2] < '5555' :
+				if pro[0] > 999:
+					child = self.DVC1.AppendItem(self.root3, pro[1])
+				if pro[0] < 999:
+					child = self.DVC1.AppendItem(self.root1, pro[1])
 
-			elif pro[2] < '100':
-				child = self.DVC1.AppendItem(self.root1, pro[1])
+			#elif pro[0] < 100:
+			#	child = self.DVC1.AppendItem(self.root1, pro[1])
 
 			elif pro[2] >= '6000':
 				child = self.DVC1.AppendItem(self.root1, pro[1])
@@ -362,8 +366,24 @@ class MyPanel1 ( wx.Panel ):
 			self.DVC1.SetItemText(child2, 0, nm)
 			self.DVC1.SetItemText(child2, 1, '????')
 
+		if len(self.FTF) > 0:
+			fitm = self.DVC1.GetFirstItem()
+			#print(fitm,self.FTF[1])
+			iitm = self.findthis(self.FTF[1],fitm)
+			slct = self.DVC1.Select(iitm)
+			self.slctitm(slct)
+
+	def findthis(self, mytxt,fitm):
+		if self.DVC1.GetItemText(fitm,0) == mytxt:
+			return fitm
+		else:
+			fitm = self.DVC1.GetNextItem(fitm)
+			return self.findthis(mytxt,fitm)
+
 	def slctmnu( self, event ):
 		#print(self.DVC1.GetSelection())
+		#self.DVC1.SetFocus()
+		#self.DVC1.Select(1)
 		#print(self.DVC1.GetRootItem())
 		event.Skip()
 
@@ -384,7 +404,7 @@ class MyPanel1 ( wx.Panel ):
 						self.thspath = l.replace(txt,'')
 						self.thsdcod = self.getMData.AllGuiDir(" where Guidir.hdddir = '%s' "%self.thspath.replace(MAP,'..').rstrip(SLASH) )[0][1]
 
-			elif cod[0] == '5' or cod[0] == '1' or cod[0] == '6':
+			elif cod != '7777':
 				for item in self.my_data:
 					if item[1] == txt and item[0] == int(cod) :
 						#print(item)
@@ -394,11 +414,11 @@ class MyPanel1 ( wx.Panel ):
 			# 	data = (cod,txt,'','-1','-1','-','GUI.API','','',None,None)
 			# 	self.fillfield(data,'')
 			# 	self.PrgDir1.SetPath(GUI_PATH+"API"+SLASH)
-			elif cod[0] == '7':
-				self.thsfile = SRC_PATH+"api"+SLASH+txt+'.py'
-				data = (cod,txt,'','-1','-1','-','Src.api','','',None,None)
+			elif cod == '7777':
+				self.thsfile = Src_api+txt+'.py' #SRC_PATH+"api"+SLASH+txt+'.py'
+				data = (cod,txt,'','-1','-1','-','Src.API','','',None,None)
 				self.fillfield(data,'')
-				self.PrgDir1.SetPath(SRC_PATH+"api"+SLASH)
+				self.PrgDir1.SetPath(Src_api)   #(SRC_PATH+"api"+SLASH)
 		else:
 			if 'All-in-One' in txt:
 				self.Desc.SetValue(u"Here a list of program that only in one file and when you do it all command execute")
@@ -565,12 +585,29 @@ class MyPanel1 ( wx.Panel ):
 		#print(txt,cod,self.thsdcod,self.thsfile,self.thspath)
 
 		if cod == '????':
+			if af.ishasifin():
+				m = af.ishasmain()
+				#print(m)
+				if af.ishasmain():
+					#print(self.thsdcod)
+					lstcod = self.getMData.getHndid(self.thsdcod)
+					#print(lstcod)
+					newcod = int(self.thsdcod[0]) * 10 + len(lstcod) + 1
+					newnom = int(self.thsdcod[0]) * 100 + len(lstcod) + 1
+					data = [newcod, txt.replace('.py', ''), self.thsdcod, '-1', -1, newnom]
+					self.setMDate.Table = 'handler'
+					self.setMDate.Additem(" handlerid, prgname, prgdir, paramtr, public, prgno", data)
+
 			if af.ishasmain():
 				#print(u'This file main')
-				af.checkSyntx()
 				if af.ishasifin():
+					print(af.checkSyntx())
+				else:
+					print("Please Add if __name__=='__main__' to end of file")
+
+				#if af.ishasifin():
 					#print(u'If is in file')
-					af.checkSyntx()
+				#	af.checkSyntx()
 			if af.ishasframe():
 				mygnrt = Genrate2(self.thsfile)
 				mygnrt.gnratLine(False,True,True,True,af.ishasframe())
@@ -588,6 +625,7 @@ class MyPanel1 ( wx.Panel ):
 				if af.ishaspanel() == 'MyPanel1':
 					dlg = MyDialog1(self)
 					dlg.ShowModal()
+
 					if dlg.filname:
 						newname = dlg.filname
 						dircode = self.getMData.GetDirCod2(dlg.pathfil)[0][0]
@@ -595,13 +633,17 @@ class MyPanel1 ( wx.Panel ):
 						patfil = dlg.pathfil
 						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1 * 10 + int(dircode[-1])
 						newnom = int(dircode[0]) * 100 + len(lstcod) + 1 * 10 + int(dircode[-1])
+						mygnrt = Genrate(patfil.replace('..', MAP) + SLASH + newname + '.py')
+						mygnrt.createFrm(self.thsfile)
 
 					elif dlg.box1:
-						newname = txt
-						dircode = '5555'
+						newname = txt.replace('.py','')
+						dircode = self.thsdcod #'5555'
+						patfil = self.thspath
 						lstcod = self.getMData.getHndid(dircode)
 						newcod = int(dircode[0]) * 10000 + len(lstcod) + 1
 						newnom = int(dircode[0]) * 10 + len(lstcod) + 1
+
 
 					else:
 						newname = txt[0].upper()+txt[len(txt)/2].upper()
@@ -611,8 +653,7 @@ class MyPanel1 ( wx.Panel ):
 						newnom = int(dircode[0]) * 100 + len(lstcod) + 1
 					dlg.Destroy()
 					#print(newname,dircode,patfil)
-					mygnrt = Genrate(patfil.replace('..', MAP)+SLASH+newname+'.py')
-					mygnrt.createFrm(self.thsfile)
+
 
 					data = [newcod, newname, dircode, '-1', -1, newnom]
 					self.setMDate.Table = 'handler'
