@@ -94,7 +94,7 @@ class Anlzfil(object):
                 return whris2
 
 
-def GetPamelImport(filewopy):
+def GetPanelImport(filewopy):
     f = filewopy+'.py'
 
 def AnalizdbText(dbdatatxt):

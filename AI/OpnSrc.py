@@ -210,15 +210,15 @@ class MyMenuBar1 ( wx.MenuBar ):
 			                 (83,_(u'line-putdata'),_(u'put data to fields textctrl'),self.put_lin),
 			                 (84,_(u'line-fillnull'),_(u'fill empty record in all data'),self.null_lin)]
 
-		elif extmnu == u'ML':
+		elif extmnu == u'MLA':
 			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
 			                 (93,_(u'Import Axes 3D'),u'',self.impa3d)]
-			#mymnu[_(u'ML Dev')] = [(50,_(u'Add this file'),u'',self.toML)]
+			#mymnu[_(u'MLA Dev')] = [(50,_(u'Add this file'),u'',self.toML)]
 		elif extmnu == u'AL':
 			mymnu[_(u'Add')] = [(91,_(u'Import Numpy'),u'',self.impnum),(92,_(u'Import matplotlib'),u'',self.impmat),
 			                 (93,_(u'Import Axes 3D'),u'',self.impa3d),(94,u'',u'',u''),
-			                 (95,_(u'ML Utility(Y select)'),u'',self.impmlu),(96,_(u'ML Utility(Show Matrix)'),u'',self.impmlu)]
-			#mymnu[_(u'ML Dev')] = [(50, _(u'Add this file'), u'', self.toML)]
+			                 (95,_(u'MLA Utility(Y select)'),u'',self.impmlu),(96,_(u'MLA Utility(Show Matrix)'),u'',self.impmlu)]
+			#mymnu[_(u'MLA Dev')] = [(50, _(u'Add this file'), u'', self.toML)]
 
 		self.Itms = []
 		m = 0
@@ -240,7 +240,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 
 		if extmnu == u"Pro":
 			self.DfDir = SRC_PATH
-		elif extmnu == u'ML':
+		elif extmnu == u'MLA':
 			self.DfDir = Src_mla #SRC_PATH+'MLA\\'
 		elif extmnu == u'AL':
 			self.DfDir = Src_mlp #SRC_PATH+"MLP\\"
@@ -465,7 +465,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 					dlg = wx.Dialog(self.GetFrame(), -1)
 					pnl = MyPanel4(dlg, lebls, data)
 					dlg.SetSize((480, 190))
-					dlg.SetLabel(_(u'Add ML to List'))
+					dlg.SetLabel(_(u'Add MLA to List'))
 					dlg.ShowModal()
 					if pnl.acpt:
 						algnm = pnl.fld1.GetValue()
@@ -502,7 +502,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 					dlg = wx.Dialog(self.GetFrame(), -1)
 					pnl = MyPanel4(dlg, lebls, data)
 					dlg.SetSize((480, 190))
-					dlg.SetLabel(_(u'Add ML to List'))
+					dlg.SetLabel(_(u'Add MLA to List'))
 					dlg.ShowModal()
 					if pnl.acpt:
 						algnm = pnl.fld1.GetValue()
@@ -539,7 +539,7 @@ class MyMenuBar1 ( wx.MenuBar ):
 			#dlg = wx.Dialog(self.GetFrame(), -1)
 			#pnl = MyPanel4(dlg,lebls,data)
 			#dlg.SetSize((480,190))
-			#dlg.SetLabel(u'Add ML to List')
+			#dlg.SetLabel(u'Add MLA to List')
 			#dlg.ShowModal()
 			#dlg.Destroy()
 

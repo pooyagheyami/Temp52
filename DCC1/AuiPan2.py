@@ -354,6 +354,7 @@ class MyPanel1 ( wx.Panel ):
 				self.fillinfo(tem)
 
 	def fillinfo(self, Data):
+		#print(Data)
 		self.fld1.SetValue(str(Data[0]))
 		self.fld2.SetValue(Data[7])
 		self.fld3.SetValue(Data[1])
@@ -591,13 +592,14 @@ class MyPanel1 ( wx.Panel ):
 
 	def prglst( self, event ):
 		if wx.FindWindowByName(u'List of Program') == None:
-			import DCC1.ProgDev2 as DP
-			ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
-			pnl = DP.MyPanel1(ifrm,[self.GetParent(),self.prgfld.GetValue().replace('.py','')])
-			ifrm.SetSize((555, 460))
-			ifrm.SetTitle(u'List of Program')
-			ifrm.Show()
-			#print(ifrm.TransferDataFromWindow())
+			if self.prgfld.GetValue() != '':
+				import DCC1.ProgDev2 as DP
+				ifrm = wx.Frame(self, -1, style=wx.FRAME_FLOAT_ON_PARENT | wx.DEFAULT_FRAME_STYLE)
+				pnl = DP.MyPanel1(ifrm,[self.GetParent(),self.prgfld.GetValue().replace('.py','')])
+				ifrm.SetSize((555, 500))
+				ifrm.SetTitle(u'List of Program')
+				ifrm.Show()
+			    #print(ifrm.TransferDataFromWindow())
 		else:
 			wx.MessageBox(_("Double Program: Please Close Program Develop then Do this item"))
 			pass

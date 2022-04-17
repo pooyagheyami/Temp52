@@ -3,6 +3,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# import os
+# import sys
+# import glob
+# import time
+#
+# import importlib
+# import importlib.util
+#
+# import wx
+# import wx.adv
+# import wx.aui
+# import wx.dataview
 from Allimp import *
 
 import GUI.MainMenu2 as MM
@@ -29,14 +41,12 @@ class MainWin(wx.Frame):
         self.SetLabel(label)
         #self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
         self.newmenu = True
-
         fntis = self.config.Read(u'Font').split(',')
 
         if fntis[4] == 'True':
             undr = True
         else:
             undr = False
-
         ifont = wx.Font(int(fntis[0]), int(fntis[1]), int(fntis[2]), int(fntis[3]), undr, faceName=fntis[5])
         self.SetFont(ifont)
 
@@ -76,13 +86,20 @@ class MainWin(wx.Frame):
         #self.BGrnd(BakGrnd)
         self.Bind(wx.EVT_RIGHT_DOWN, self.domouse)
         self.Bind(wx.EVT_CONTEXT_MENU, self.setmenu)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
         self.m_mgr.Update()
         self.Centre(wx.BOTH)
 
     def __del__(self):
-        self.timer.Stop()
         self.m_mgr.UnInit()
+
+    def OnClose(self, event):
+        if 'timer' in dir(self):
+            if self.timer.IsRunning():
+                self.timer.Stop()
+                del self.timer
+        self.Destroy()
 
     def Notify(self):
         t = time.localtime(time.time())
@@ -97,6 +114,7 @@ class MainWin(wx.Frame):
         statusBar = self.CreateStatusBar(len(lststat) + 1,
                                          wx.STB_ELLIPSIZE_END | wx.STB_ELLIPSIZE_MIDDLE | wx.STB_SHOW_TIPS | wx.STB_SIZEGRIP,
                                          wx.ID_ANY)
+
         # statusBar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
         for st in lststat:
             if st == 'time':
@@ -108,9 +126,14 @@ class MainWin(wx.Frame):
                 t = time.localtime(time.time())
                 self.SetStatusText(time.strftime("%d-%b-%Y", t), i)
                 Wthlst.append(90)
-            else:
-                self.SetStatusText(st, i)
+            elif st == 'path':
+                ipath = os.getcwd() #  self.config.Read('AppPath')
+                #print(ipath)
+                self.SetStatusText(ipath,i)
                 Wthlst.append(-1)
+            #else:
+            #    self.SetStatusText(st, i)
+            #    Wthlst.append(-1)
             i += 1
         self.SetStatusBar(statusBar)
 
@@ -127,7 +150,7 @@ class MainWin(wx.Frame):
     def setmenu(self, event):
         self.MnuDic = {1: [_(u'Menu Change'), 9999], 2: [_(u'Toolbar Change'), 9998], 3: [_(u'Panes Change'), 9997], 4: [u'', 0],
                        5: [_(u'Databases...'), 9996], 6: [_(u'Programs...'), 9995], 7: [_(u'Add Tools...'), 9994], 8: [u'', 0],
-                       9: [_(u'ML Design...'), 9993], 10: [u'', 0], 11: [_(u'Settings...'), 9992]}
+                       9: [_(u'MLA Design...'), 9993], 10: [u'', 0], 11: [_(u'Settings...'), 9992]}
         self.m1 = wx.Menu()
 
         self.itms = []
@@ -207,7 +230,7 @@ class MainWin(wx.Frame):
         ML = PA.MyLstPnl2()
 
         for pnl in ML.lstpnl:
-            #if pnl[1]+'.py' in ML.GetAuiPnl():
+            #if pnl[1]+'.py' in MLA.GetAuiPnl():
             if pnl[6] in ML.PrP.keys():
                 ii = importlib.import_module('Src.AUI.' +  ML.PrP[pnl[6]].replace('.py',''))
                 mp = ii.MyPanel1(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)

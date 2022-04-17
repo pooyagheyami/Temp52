@@ -39,7 +39,7 @@ class Genrate(object):
     def gnr_imps(self):
         imprtxt = u"import wx\n"
         imprtxt += u"from  Config.Init import *\n"
-        imprtxt += u"import Src.api."+self.impfil+" as pnl\n\n"
+        imprtxt += u"import Src.GUI."+self.impfil+" as pnl\n\n"
         return imprtxt
 
     def gnr_frm(self):

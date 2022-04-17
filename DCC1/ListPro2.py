@@ -6,6 +6,7 @@
 ##
 ## PLEASE DO *NOT* EDIT THIS FILE!
 ###########################################################################
+import os
 
 import wx
 import wx.xrc
@@ -18,7 +19,12 @@ import Database.MenuSet2 as MS
 import Database.PostGet as PG
 import GUI.proman as pro
 import importlib
-import importlib.util
+#import importlib.util
+
+import AI.Analiz
+import AI.OpnSrc as OS
+from AI.Analiz import *
+from AI.Generats import *
 
 _ = wx.GetTranslation
 
@@ -48,8 +54,8 @@ class MyPanel1 ( wx.Panel ):
 		Vsz2.Add( self.Titr1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
 		self.TLC1 = wx.dataview.TreeListCtrl( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.TL_DEFAULT_STYLE )
-		self.TLC1.AppendColumn( _(u"ID"), wx.COL_WIDTH_DEFAULT, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
-		self.TLC1.AppendColumn( _(u"Name"), wx.COL_WIDTH_DEFAULT, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.TLC1.AppendColumn( _(u"Name"), 200, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.TLC1.AppendColumn( _(u"ID"), 25, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
 
 		Vsz2.Add( self.TLC1, 1, wx.EXPAND |wx.ALL, 5 )
 
@@ -143,8 +149,8 @@ class MyPanel1 ( wx.Panel ):
 		self.fld1 = wx.TextCtrl( self.P2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		Hsz12.Add( self.fld1, 1, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
 
-		self.btn1 = wx.Button( self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
-		Hsz12.Add( self.btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.btn8 = wx.Button( self.P2, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
+		Hsz12.Add( self.btn8, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 
 		Vsz3.Add( Hsz12, 0, wx.EXPAND, 5 )
@@ -164,8 +170,8 @@ class MyPanel1 ( wx.Panel ):
 
 		Hsz14 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.btn3 = wx.Button( self.P2, wx.ID_ANY, _(u"Download"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
-		Hsz14.Add( self.btn3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.btn9 = wx.Button( self.P2, wx.ID_ANY, _(u"Download"), wx.DefaultPosition, wx.DefaultSize, wx.BU_EXACTFIT )
+		Hsz14.Add( self.btn9, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.gug1 = wx.Gauge( self.P2, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
 		self.gug1.SetValue( 0 )
@@ -205,11 +211,14 @@ class MyPanel1 ( wx.Panel ):
 		self.Splt1.SplitVertically( self.P1, self.P2, 266 )
 		Vsz1.Add( self.Splt1, 1, wx.EXPAND, 5 )
 
+		self.filllist()
+
 
 		self.SetSizer( Vsz1 )
 		self.Layout()
 
 		# Connect Events
+		self.TLC1.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.slctitm, id=wx.ID_ANY)
 		self.CntSrv.Bind( wx.EVT_BUTTON, self.consrv )
 		self.btn1.Bind( wx.EVT_BUTTON, self.addit )
 		self.btn2.Bind( wx.EVT_BUTTON, self.editit )
@@ -218,9 +227,9 @@ class MyPanel1 ( wx.Panel ):
 		self.btn5.Bind( wx.EVT_BUTTON, self.upd )
 		self.btn6.Bind( wx.EVT_BUTTON, self.aply )
 		self.btn7.Bind( wx.EVT_BUTTON, self.gnrt )
-		self.btn1.Bind( wx.EVT_BUTTON, self.mnuid )
+		self.btn8.Bind( wx.EVT_BUTTON, self.mnuid )
 		self.dir2.Bind( wx.EVT_DIRPICKER_CHANGED, self.thsdir )
-		self.btn3.Bind( wx.EVT_BUTTON, self.dnlod )
+		self.btn9.Bind( wx.EVT_BUTTON, self.dnlod )
 		self.chk1.Bind( wx.EVT_CHECKBOX, self.chkdon )
 
 	def __del__( self ):
@@ -228,16 +237,133 @@ class MyPanel1 ( wx.Panel ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def filllist(self):
+
+		Aroot = self.TLC1.GetRootItem()
+		self.root1 = self.TLC1.AppendItem(Aroot, "Free Programs you can Download")
+		self.root2 = self.TLC1.AppendItem(Aroot, "Programs in your Account")
+		#self.root3 = self.TLC1.AppendItem(Aroot, "Programs you Upload for sell")
+		self.root4 = self.TLC1.AppendItem(Aroot, "Ziped Programs you downloaded")
+		self.root5 = self.TLC1.AppendItem(Aroot, "Programs file in your HDD ")
+
+		dirct = ['Free','Account','Downloads']
+		#roots = [self.root1,self.root2,self.root3,self.root4]
+		roots = [self.root1, self.root2, self.root4]
+		i=0
+		for d in dirct:
+			mylist = os.listdir(UTILITY_PATH+d+'\\')
+			for fil in mylist:
+				if fil != '__init__.py':
+					myfil = fil.replace(UTILITY_PATH+d+'\\','')
+					mychld = self.TLC1.AppendItem(roots[i],d)
+					self.TLC1.SetItemText(mychld,0,myfil)
+					self.TLC1.SetItemText(mychld,1,'>>>')
+			i += 1
+		dirdt2 = ['API','AUI','GUI','MLA','MLP','PRG']
+		dcods = {'API':6122,'AUI':6155,'PRG':6111,'GUI':6177,'MLA':6133,'MLP':6144}
+		for d in dirdt2:
+			mylist = os.listdir(UTILITY_PATH+'Fount\\'+d+'\\')
+			mychild = self.TLC1.AppendItem(self.root5, 'HardDisk')
+			self.TLC1.SetItemText(mychild, 0, d)
+			self.TLC1.SetItemText(mychild,1,str(dcods[d])[-3:])
+			for file in mylist:
+				if file != '__init__.py':
+					#myfile = file #file.replace(UTILITY_PATH+'Fount\\'+d+'\\','')
+					#mychild = self.TLC1.AppendItem(self.root5, 'HardDisk')
+					child2 = self.TLC1.AppendItem(mychild, d)
+					self.TLC1.SetItemText(child2,0,file)
+					self.TLC1.SetItemText(child2,1,str(dcods[d]))
+
+
+	def fillfilds(self, Data):
+		self.Descr.SetValue(Data[0])
+		self.fld1.SetValue(Data[1])
+		self.dir2.SetPath(Data[2])
+		self.Refresh()
+		self.Layout()
+
+
+	def slctitm(self, event):
+		D = ['','','']
+		self.fillfilds(D)
+		itm = self.TLC1.GetSelection()
+		txt = self.TLC1.GetItemText(itm, 0)
+		cod = self.TLC1.GetItemText(itm, 1)
+		par = self.TLC1.GetItemParent(itm)
+		rot = self.TLC1.GetItemText(par, 0)
+		#print(txt,cod,rot)
+		if txt == 'API':
+			Discrpt = "This group of program is very simple \n only for item that no need GUI frame or panel"
+			Pathsrc = Src_api
+		elif txt == 'AUI':
+			Discrpt = "This group of program for Aui Pane file\n That you can use in application "
+			Pathsrc = Src_aui
+		elif txt == 'GUI':
+			Discrpt = "This group of program only a designed Panel \n they used by other program in PRG source"
+			Pathsrc = Src_gui
+		elif txt == 'PRG':
+			Discrpt = "This group of program run by menu item in app \n each menubar has a same subdirectory you create it"
+			Pathsrc = Src_prg
+		elif txt == 'MLA':
+			Discrpt = "This group of program is for Machine Learning Algorithm\n you can use it in MLA part that use by MLP"
+			Pathsrc = Src_mla
+		elif txt == 'MLP':
+			Discrpt = "Machine learning Panel has Design for Algorithm \n You can see help document for how to use it "
+			Pathsrc = Src_mlp
+		else:
+			Discrpt = ""
+			Pathsrc = ""
+
+
+		D = [Discrpt,'',Pathsrc]
+		self.fillfilds(D)
+		if '.py' in txt:
+			self.thsfile = UTILITY_PATH+'Fount\\'+rot+SLASH+txt
+		else:
+			self.thsfile = ''
+		#print(self.thsfile)
+
+
+
 	def consrv( self, event ):
+		import socket
+		host = socket.gethostbyname(socket.gethostname())
+		print(host)
 		event.Skip()
+
 
 	def addit( self, event ):
 		event.Skip()
 
 	def editit( self, event ):
+		itm = self.TLC1.GetSelection()
+		par = self.TLC1.GetItemParent(itm)
+		rot = self.TLC1.GetItemText(par, 0)
+		if self.thsfile != '' and rot == "Programs file in your HDD ":
+			self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
+			# self.Pnl = PyPanel(self.Frm, self.thsfile)
+			self.Pnl = OS.SrcPanel(self.Frm, self.thsfile)
+			self.Frm.SetMenuBar(OS.MyMenuBar1(u'Pro'))
+			self.Frm.SetSize((700, 560))
+			self.Frm.SetLabel(self.thsfile)
+			self.Frm.Show()
 		event.Skip()
 
 	def delit( self, event ):
+		if self.thsfile != '':
+			answr = wx.MessageBox("Are you sure to Delete %s from your Hard Drive?"%self.thsfile,'Warrning', wx.YES_NO)
+			if answr == 2:
+				if os.path.isfile(self.thsfile):
+					try:
+						os.remove(self.thsfile)
+						wx.MessageBox(_("File Successfully Remove from HardDisk"))
+					except os.error:
+						print(os.error)
+				else:
+					wx.MessageBox(_("File Open or dose not exist please close it or check Harddisk"))
+		self.TLC1.DeleteAllItems()
+		self.filllist()
+		self.Refresh()
 		event.Skip()
 
 	def prw( self, event ):
@@ -267,5 +393,6 @@ class MyPanel1 ( wx.Panel ):
 	def Splt1OnIdle( self, event ):
 		self.Splt1.SetSashPosition( 266 )
 		self.Splt1.Unbind( wx.EVT_IDLE )
+
 
 

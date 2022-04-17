@@ -20,7 +20,7 @@ import Database.PostGet2 as PG2
 import Database.MenuSet2 as MS
 
 import importlib
-import importlib.util
+#import importlib.util
 
 from AI.Analiz import *
 import AI.OpnSrc as OS
@@ -56,7 +56,7 @@ class MyPanel1 ( wx.Panel ):
 
 		#chis1Choices = [ u"Supervised Learning (11)",u"Semi-Supervised Learning (15)",u"Unsupervised Learning (21)",u"Reinforcement Learning (31)" ]
 		chis1Choices = [l for l in OpenListML()[0].values()]
-		chis1Choices.append("All ML source file in HDD ")
+		chis1Choices.append("All MLA source file in HDD ")
 		self.chis1 = wx.Choice( self.P1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, chis1Choices, 0 )
 		self.chis1.SetSelection( 0 )
 		#Vsz2.Add( self.chis1, 0, wx.ALL|wx.EXPAND, 5 )
@@ -297,7 +297,7 @@ class MyPanel1 ( wx.Panel ):
 
 	def MLsting(self, event):
 		itxt = fil2txt(CONFIG_PATH+"MLmethod.ini")
-		dlg = wx.Dialog(self, -1, "Setting of ML Coding")
+		dlg = wx.Dialog(self, -1, "Setting of MLA Coding")
 		pnl = MyPanel3(dlg, CONFIG_PATH+"MLmethod.ini", itxt)
 		dlg.SetSize((380,380))
 		dlg.ShowModal()
@@ -332,7 +332,7 @@ class MyPanel1 ( wx.Panel ):
 		newfile = GUI_PATH + 'Temp\\untitle.py'
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
 		self.Pnl = OS.SrcPanel(self.Frm, newfile)
-		self.Frm.SetMenuBar(OS.MyMenuBar1(u'ML'))
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'MLA'))
 		self.Frm.SetSize((700, 500))
 		self.Frm.SetLabel(u'untitle.py')
 		self.Frm.Show()
@@ -351,7 +351,7 @@ class MyPanel1 ( wx.Panel ):
 
 		self.Frm = wx.Frame(self, style=wx.CAPTION | wx.CLOSE_BOX | wx.FRAME_FLOAT_ON_PARENT | wx.TAB_TRAVERSAL)
 		self.Pnl = OS.SrcPanel(self.Frm,  thsfile )
-		self.Frm.SetMenuBar(OS.MyMenuBar1(u'ML'))
+		self.Frm.SetMenuBar(OS.MyMenuBar1(u'MLA'))
 		self.Frm.SetSize((700, 500))
 		self.Frm.SetLabel( thsfile )
 		self.Frm.Show()
@@ -472,7 +472,7 @@ class MyPanel1 ( wx.Panel ):
 		dlg = wx.Dialog(self, -1)
 		pnl = MyPanel5(dlg, lebls, data)
 		dlg.SetSize((480, 190))
-		dlg.SetLabel(_(u'Add ML to List'))
+		dlg.SetLabel(_(u'Add MLA to List'))
 		dlg.ShowModal()
 		if pnl.acpt:
 			algnm = pnl.fld1.GetValue()
@@ -796,7 +796,7 @@ class MyPanel5 ( wx.Panel ):
 
 		# Hsz3 = wx.BoxSizer( wx.HORIZONTAL )
 		#
-		# self.lbl4 = wx.StaticText( self, wx.ID_ANY, u"ML Algorithm Code", wx.DefaultPosition, wx.Size( 110,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
+		# self.lbl4 = wx.StaticText( self, wx.ID_ANY, u"MLA Algorithm Code", wx.DefaultPosition, wx.Size( 110,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
 		# self.lbl4.Wrap( -1 )
 		#
 		# Hsz3.Add( self.lbl4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -804,7 +804,7 @@ class MyPanel5 ( wx.Panel ):
 		# self.fld4 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
 		# Hsz3.Add( self.fld4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		#
-		# self.lbl5 = wx.StaticText( self, wx.ID_ANY, u"ML Algorithm File", wx.DefaultPosition, wx.Size( 95,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
+		# self.lbl5 = wx.StaticText( self, wx.ID_ANY, u"MLA Algorithm File", wx.DefaultPosition, wx.Size( 95,-1 ), wx.ALIGN_CENTER_HORIZONTAL )
 		# self.lbl5.Wrap( -1 )
 		#
 		# Hsz3.Add( self.lbl5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )

@@ -66,11 +66,11 @@ class GetData:
             WHERE mitem.itemid = %s  """ %itemid)
 
 
-    def MnuDir(self,itemid=''):
-        return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
-              FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
-			  JOIN menubar ON handler.prgdir = menubar.mbarid
-              WHERE mitem.itemid =  %s  """ %itemid)
+    # def MnuDir(self,itemid=''):
+    #     return  sq.wxsqltxt(self.DBF, """SELECT menubar.mbardir
+    #           FROM mitem  JOIN handler  ON mitem.handlerid = handler.handlerid
+	# 		  JOIN menubar ON handler.prgdir = menubar.mbarid
+    #           WHERE mitem.itemid =  %s  """ %itemid)
 
     def MnuDir2(self,itemid=''):
         return sq.wxsqltxt(self.DBF, """SELECT Guidir.Dir
@@ -189,6 +189,12 @@ class GetData:
 
     def MLPanid(self, Apnm=u''):
         return sq.wxsqsnd(self.DBF,u'MLinfo',u'MLPid',u'MLname',Apnm )
+
+    def User(self, Ext=''):
+        return sq.wxsqltxt(self.DBF,u" select * from security %s" %Ext)
+
+    def Access(self, Ext=''):
+        return sq.wxsqltxt(self.DBF,u" select * from access %s" %Ext)
 
 
 
